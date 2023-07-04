@@ -1,3 +1,14 @@
+// bookmark listener
+chrome.bookmarks.onCreated.addListener(function (bookmark) {
+    chrome.bookmarks.get(bookmark, function (bookmarks) {
+        if (bookmarks && bookmarks.length > 0 && bookmarks[0].url) {
+            const bookmarkedUrl = bookmarks[0].url
+            console.log("new bookmark added. url from background: ", bookmarkedUrl)
+        }
+    });
+});
+
+// message listener
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     let pageInfo = request.pageInfo;
 
@@ -23,4 +34,22 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
             console.error('Error:', error);
         });
     });
+});
+
+// content.js connection checker
+chrome.runtime.onConnect.addListener(function(port) {
+    if (port.name === "contentScriptConnection") {
+      console.log("Content script connected!");
+  
+      // Example: Sending a message to the content script
+      port.postMessage({ message: "Hello from the background script!" });
+  
+      // Example: Receiving a message from the content script
+      port.onMessage.addListener(function(message) {
+        console.log("Received message from content script:", message);
+      });
+    }
+    else{
+        console.log("onConnect does not work")
+    }
 });

@@ -8,7 +8,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
           // Adding bookmarks
           collectInfoButton.addEventListener('click', function() {
-            chrome.bookmarks.create({ title: tab.title, url: tab.url }, function (bookmark) {
+            chrome.bookmarks.create({ title: activeTab.title, url: activeTab.url }, function (bookmark) {
               console.log('Page bookmarked:', bookmark);
               alert('Page bookmarked!');
           });
