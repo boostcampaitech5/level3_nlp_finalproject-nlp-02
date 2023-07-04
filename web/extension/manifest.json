@@ -4,8 +4,11 @@
   "version": "0.1",
   "description": "Automatically tags your pages",
   "permissions": [
+    "bookmarks",
     "activeTab",
     "tabs",
+    "storage",
+    "scripting",
     "identity.email",
     "identity"
   ],
