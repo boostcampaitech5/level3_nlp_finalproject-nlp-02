@@ -14,7 +14,7 @@ text = ''' '''
 
 model_name = 'text-davinci-003'
 
-prompt_user = ''' Q: ᴥ{}ᴥ 사이에 들어갈 문서에 어울리는 5개의 태그를 알려줘. 추가 정보: 태그 형식은 #영어(한글)이야. \n\n ᴥ''' + text + " ᴥ \n A: "
+prompt_user = ''' Q: ᴥ{}ᴥ 사이에 들어갈 문서에 어울리는 5개의 태그를 알려줘. 추가 정보1: 태그 형식은 #영어(한글). \n 추가 정보2: 한글로만 이루어진 문서라도 #english(한글)이렇게 작성해 줘. \n\n ᴥ''' + text + " ᴥ \n A: "
 
 response = openai.Completion.create(
     model = model_name,
