@@ -1,21 +1,31 @@
 {
-    "manifest_version": 2,
-    "name": "My Chrome Extension",
-    "version": "1.0",
-    "browser_action": {
-      "default_icon": "icon.png",
-      "default_popup": "popup.html"
+  "manifest_version": 3,
+  "name": "SpeedWagon",
+  "version": "0.1",
+  "description": "Automatically tags your pages",
+  "permissions": [
+    "activeTab",
+    "tabs",
+    "identity.email",
+    "identity"
+  ],
+  "background": {
+    "service_worker": "background/background.js"
+  },
+  "action": {
+    "default_icon": {
+      "128": "icon.png"
     },
-    "permissions": [
-      "activeTab",
-      "tabs",
-      "storage"
-    ],
-    "content_scripts": [
-      {
-        "matches": ["<all_urls>"],
-        "js": ["content.js"]
-      }
-    ]
-  }
-  
+    "default_popup": "popup.html"
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["contentScript.js"],
+      "run_at": "document_idle"
+    }
+  ],
+  "host_permissions": [
+    "<all_urls>"
+  ]
+}
