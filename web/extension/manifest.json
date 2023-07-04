@@ -1,21 +1,28 @@
 {
-    "manifest_version": 2,
-    "name": "My Chrome Extension",
-    "version": "1.0",
-    "browser_action": {
-      "default_icon": "icon.png",
-      "default_popup": "popup.html"
-    },
-    "permissions": [
-      "activeTab",
-      "tabs",
-      "storage"
-    ],
-    "content_scripts": [
-      {
-        "matches": ["<all_urls>"],
-        "js": ["content.js"]
-      }
-    ]
-  }
+  "manifest_version": 3,
+  "name": "My Chrome Extension",
+  "version": "1.0",
+  "action": {
+    "default_icon": "icon.png",
+    "default_popup": "popup.html"
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "permissions": [
+    "bookmarks",
+    "activeTab",
+    "tabs",
+    "storage",
+    "scripting",
+    "identity",
+    "identity.email"
+  ],
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>", "*://*/*"],
+      "js": ["content.js"]
+    }
+  ]
+}
   

@@ -1,35 +1,35 @@
-document.addEventListener('DOMContentLoaded', function() {
+// Function to handle the bookmarking process
+function bookmarkCurrentPage() {
+  // Query the active tab
+  chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
+    var tab = tabs[0];
+    console.log(tab)
+    // Bookmark the current page
+    chrome.bookmarks.create({ title: tab.title, url: tab.url }, function (bookmark) {
+      console.log('Page bookmarked:', bookmark);
+      alert('Page bookmarked!');
+    });
+
+    // Send messages to background
+    chrome.runtime.sendMessage({ IsBookmarkClick: true });
+
+    // Get bookmarked urls' content(본문내용) - interaction with content.js
+    chrome.tabs.sendMessage(tab.id, {action: 'get_page_contents'}, function(response) {
+      if (response && response.contents) {
+        var pageContents = response.contents;
+        console.log(pageContents)
+
+        chrome.runtime.sendMessage({ pageContents: pageContents });
+      }
+      else{
+        alert('Failed to retrieve page contents.')
+      }
+    });
+  });
+}
+
+// Add an event listener to the button
+document.addEventListener('DOMContentLoaded', function () {
   var bookmarkButton = document.getElementById('bookmarkButton');
-  var exportButton = document.getElementById('exportButton');
-
-  bookmarkButton.addEventListener('click', function() {
-    chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-      var url = tabs[0].url;
-      var title = tabs[0].title;
-
-      // Bookmark the page
-      chrome.bookmarks.create({title: title, url: url}, function(bookmark) {
-        alert('Page bookmarked successfully!');
-      });
-    });
-  });
-
-  exportButton.addEventListener('click', function() {
-    chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-      var tab = tabs[0];
-
-      // Send a message to the content script to retrieve the page's contents
-      chrome.tabs.sendMessage(tab.id, {action: 'get_page_contents'}, function(response) {
-        if (response && response.contents) {
-          // Process the page contents (e.g., save to a file, display in a popup, etc.)
-          var pageContents = response.contents;
-          console.log(pageContents);
-          // You can perform further processing or export the contents as needed
-          alert('Page contents exported!' + pageContents);
-        } else {
-          alert('Failed to retrieve page contents.');
-        }
-      });
-    });
-  });
+  bookmarkButton.addEventListener('click', bookmarkCurrentPage);
 });
