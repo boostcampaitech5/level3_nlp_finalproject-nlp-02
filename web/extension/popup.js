@@ -1,35 +1,26 @@
-// Function to handle the bookmarking process
-function bookmarkCurrentPage() {
-  // Query the active tab
-  chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
-    var tab = tabs[0];
-    console.log(tab)
-    // Bookmark the current page
-    chrome.bookmarks.create({ title: tab.title, url: tab.url }, function (bookmark) {
-      console.log('Page bookmarked:', bookmark);
-      alert('Page bookmarked!');
-    });
+document.addEventListener('DOMContentLoaded', function() {
+  var collectInfoButton = document.getElementById('collectInfo');
+      // Query for the active tab in the current window
+      chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+          var activeTab = tabs[0];
+          console.log(typeof activeTab)
+          console.log(activeTab)
 
-    // Send messages to background
-    chrome.runtime.sendMessage({ IsBookmarkClick: true });
+          // Adding bookmarks
+          collectInfoButton.addEventListener('click', function() {
+            chrome.bookmarks.create({ title: tab.title, url: tab.url }, function (bookmark) {
+              console.log('Page bookmarked:', bookmark);
+              alert('Page bookmarked!');
+          });
 
-    // Get bookmarked urls' content(본문내용) - interaction with content.js
-    chrome.tabs.sendMessage(tab.id, {action: 'get_page_contents'}, function(response) {
-      if (response && response.contents) {
-        var pageContents = response.contents;
-        console.log(pageContents)
-
-        chrome.runtime.sendMessage({ pageContents: pageContents });
-      }
-      else{
-        alert('Failed to retrieve page contents.')
-      }
-    });
+          // Send a message to the active tab to collect page info
+          chrome.tabs.sendMessage(activeTab.id, {"message": "collect_page_info"}, function(response) {
+            if (response && response.pageInfo) {
+              let pageInfo = response.pageInfo
+              alert(pageInfo)
+            };
+              console.log(response)
+          });
+      });
   });
-}
-
-// Add an event listener to the button
-document.addEventListener('DOMContentLoaded', function () {
-  var bookmarkButton = document.getElementById('bookmarkButton');
-  bookmarkButton.addEventListener('click', bookmarkCurrentPage);
 });
