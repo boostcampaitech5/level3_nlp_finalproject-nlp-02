@@ -3,14 +3,20 @@ from django.http import HttpResponse
 
 
 def index(request):
-    return HttpResponse("Hello, World. You're at the polls index.")
+    return HttpResponse("API 앱의 index 테스트 성공")
 
-def test(request):
-    return render(request, 'html/test_form.html')
+def test_request(request):
+    return render(request, 'html/test_request.html')
 
-def inference(request):
+def test_response(request):
     db = {}
 
-    
+    db['id'] = request.GET['id']
+    db['pwd'] = request.GET['pwd']
 
-    return render(request, "html/inference.html")
+    return render(request, "html/test_response.html", db)
+
+def inference(request):
+    print(request.POST)
+
+    return HttpResponse("성공적으로 받기")
