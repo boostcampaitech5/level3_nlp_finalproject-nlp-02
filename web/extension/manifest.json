@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "SpeedWagon",
-  "version": "0.1",
+  "version": "0.3",
   "description": "Automatically tags your pages",
   "permissions": [
     "bookmarks",

@@ -1,31 +1,51 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <link href="https://fonts.googleapis.com/css?family=Inter&display=swap" rel="stylesheet" />
-        <link href="./css/main.css" rel="stylesheet" />
-        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
-        <title>Bookmark Page</title>
-        <script src="popup.js"></script>
-    </head>
-    <body>
-            <div class="v1_10"></div>
-   
-            <input type="text" class="flexible-textbox" />
-            <span class="NAME">Title</span>
+  <head>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inter&display=swap" />
+    <link rel="stylesheet" href="./css/main.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,-25" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbit&display=swap" rel="stylesheet">
 
-            <select  class="flexible-textbox2">
-                <option value="option1">Option 1</option>
-                <option value="option2">Option 2</option>
-                <option value="option3">Option 3</option>
-            </select>
-            <span class="Folder">Folder</span>
+    <title>Bookmark Page</title>
+    <script src="popup.js"></script>
 
-            <div class="button_save">
-                <button id="collectInfo">Save Bookmark</button>
-            </div>
-            <span class="icon">
-            <span class="material-symbols-outlined">place_item</span>
-            </span>
-            
-    </body>
+    <style>
+      textarea {
+        font-size: 3px;
+      }
+    </style>
+    
+  </head>
+  <body>
+    <div class="v1_10"></div>
+
+      <input type="text" class="flexible-textbox" />
+      <span class="NAME">Tags</span>
+
+      <div id="selectedFolderName" class="flexible-textbox2"></div>
+      <span class="Folder">Folder</span>
+
+      <!-- <div class="toggle"></div> -->
+
+      <button id="openModal">Open Bookmarks</button>
+      <div class="button_save">
+        <button id="collectInfo" disabled>
+            <span class="material-symbols-outlined">manage_search</span>Collect Page Info</button>
+      </div>
+        
+      <!-- The Modal -->
+      <div id="myModal" class="modal">
+        <!-- Modal content -->
+        <div class="modal-content">
+          <span class="close">&larr;</span>
+          <ul id="bookmarkTree" class="tree"></ul>
+        </div>
+      </div>
+    </div>
+
+  </body>
 </html>
