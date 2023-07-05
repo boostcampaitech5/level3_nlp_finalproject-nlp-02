@@ -3,6 +3,7 @@
 
 ### custom ###
 .empty
+.*
 
 ### Django ###
 *.log
