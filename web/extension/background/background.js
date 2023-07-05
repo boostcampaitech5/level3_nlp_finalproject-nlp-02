@@ -23,13 +23,13 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 
     // Send data to Server
     fetch('http://101.101.211.226:30006/API/inference', {
-      method: 'POST',
+      method: 'PATCH',
       headers: {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify(totalInfo)
     })
-    // .then(response => response.json())
+    .then(response => console.log(response.json()))
     .catch((error) => {
       console.error('Error:', error);
     });
