@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-a3urwj+oy125lw5zmv((j27+-&8s)fn)cn&acx8%ersm1mzlbl
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False # 디버그 선택 여부
 
-ALLOWED_HOSTS = ['101.101.211.226'] # 접속할 ip 지정
+ALLOWED_HOSTS = ['*'] # 접속할 ip 지정
 
 
 # Application definition
@@ -38,7 +38,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'API' # APP 추가
+    # APP 추가
+    'API',
+    'SERVICE',
 ]
 
 MIDDLEWARE = [
@@ -105,13 +107,13 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/4.2/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'ko-KR'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Seoul'
 
 USE_I18N = True
 
-USE_TZ = True
+USE_TZ = False
 
 
 # Static files (CSS, JavaScript, Images)
