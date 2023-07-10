@@ -5,7 +5,7 @@
 .empty
 data/datasets/*
 data/Tistory/*
-model/config/use_config/*
+model/config/use/*
 model/results/*
 
 ### Django ###
