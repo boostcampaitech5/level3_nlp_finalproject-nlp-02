@@ -3,8 +3,8 @@
 
 ### custom ###
 .empty
-data/datasets/*
-data/Tistory/*
+data/datasets*
+data/Tistory*
 model/config/use/*
 model/results/*
 
