@@ -1,0 +1,28 @@
+실험명: 실험명
+seed: 42
+model:
+  model_name: 
+  model_path: # finetuning이라면 pretrained의 경로를, 아니라면 model_name을 그대로 써주세요
+  pretrain: # null, korquad_1.0.csv, aug_v1.csv, aug_v2.csv, korquad_1.0_noun_adj.csv
+  num_attention_heads: 12
+  attention_probs_dropout_prob: 0.1
+  num_hidden_layers: 12
+  hidden_dropout_prob: 0.1
+  option: # question_masking, cnn, both, original
+tokenizer:
+  max_seq_length: 384
+  pad_to_max_length: False
+  doc_stride: 128
+  max_answer_length: 30
+option:
+  overwrite_cache: False
+  eval_retrieval: True
+  num_clusters: 64
+  top_k_retrieval: 40
+  use_faiss: False
+  batch_size: 16
+  use_fuzz: False
+  check_retrieved_score: True
+wandb:
+  id: forbuds0103
+  project: Final_project

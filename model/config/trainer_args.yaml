@@ -1,0 +1,109 @@
+output_dir: 파일 저장 경로
+seed: 시드
+overwrite_output_dir: False
+do_train: True
+do_eval: True
+do_predict: False
+evaluation_strategy: 'no'
+prediction_loss_only: False
+predict_with_generate: True  #평가 중에 요약을 생성하여 각 epoch에 대한 ROUGE 점수를 계산할 수 있도록
+per_device_train_batch_size: 8
+per_device_eval_batch_size: 8
+per_gpu_train_batch_size:  # int
+per_gpu_eval_batch_size:  # int
+gradient_accumulation_steps: 1
+eval_accumulation_steps:  # int
+eval_delay: 0.0
+learning_rate: 0.00005
+weight_decay: 0.0
+adam_beta1: 0.9
+adam_beta2: 0.999
+adam_epsilon: 0.00000001
+max_grad_norm: 1.0
+num_train_epochs: 3.0
+max_steps: -1
+lr_scheduler_type: linear
+warmup_ratio: 0.0
+warmup_steps: 0
+log_level: passive
+log_level_replica: warning
+log_on_each_node: True
+logging_dir:  # str
+logging_strategy: steps
+logging_first_step: False
+logging_steps: 500.0
+logging_nan_inf_filter: True
+save_strategy: steps
+save_steps: 500.0
+save_total_limit: 2  # int
+save_safetensors: False
+save_on_each_node: False
+no_cuda: False
+use_mps_device: False
+data_seed:  # int
+jit_mode_eval: False
+use_ipex: False
+bf16: False
+fp16: True
+fp16_opt_level: '01'
+half_precision_backend: auto
+bf16_full_eval: False
+fp16_full_eval: False
+tf32: 
+local_rank: -1
+ddp_backend: # str
+tpu_num_cores: # int
+tpu_metrics_debug: False
+debug: ''
+dataloader_drop_last: False
+eval_steps: 
+dataloader_num_workers: 0
+past_index: -1
+run_name:  # str
+disable_tqdm:  # bool
+remove_unused_columns: True
+label_names:  # List[str]
+load_best_model_at_end: False
+metric_for_best_model:  # str
+greater_is_better:  # bool
+ignore_data_skip: False
+sharded_ddp: ''
+fsdp: ''
+fsdp_min_num_params: 0
+fsdp_config:  # str
+fsdp_transformer_layer_cls_to_wrap:  # str
+deepspeed:  # str
+label_smoothing_factor: 0.0
+optim: adamw_hf
+optim_args:  # str
+adafactor: False
+group_by_length: False
+length_column_name: length
+report_to: 'wandb' # List[str]
+ddp_find_unused_parameters:  # bool
+ddp_bucket_cap_mb:  # int
+dataloader_pin_memory: True
+skip_memory_metrics: True
+use_legacy_prediction_loop: False
+push_to_hub: False
+resume_from_checkpoint:  # str
+hub_model_id:  # str
+hub_strategy: every_save
+hub_token:  # str
+hub_private_repo: False
+gradient_checkpointing: False
+include_inputs_for_metrics: False
+fp16_backend: auto
+push_to_hub_model_id:  # str
+push_to_hub_organization:  # str
+push_to_hub_token:  # str
+mp_parameters: ''
+auto_find_batch_size: False
+full_determinism: False
+torchdynamo:  # str
+ray_scope: last
+ddp_timeout: 1800
+torch_compile: False
+torch_compile_backend:  # str
+torch_compile_mode:  # str
+xpu_backend:  # str
