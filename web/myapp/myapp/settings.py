@@ -50,10 +50,11 @@ INSTALLED_APPS = [
 
     'rest_framework',
     'rest_framework.authtoken',
-    'rest_framework_simplejwt',
     
     'dj_rest_auth',
     'dj_rest_auth.registration',
+
+    'sslserver',
 ]
 
 MIDDLEWARE = [
@@ -141,12 +142,12 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # 소셜 로그인 설정
 AUTHENTICATION_BACKENDS = (
-    'django.contrib.auth.backends.ModelBackend',
-    'allauth.account.auth_backends.AuthenticationBackend'
+    'django.contrib.auth.backends.ModelBackend', # 기존 장고 인증 기능
+    'allauth.account.auth_backends.AuthenticationBackend' # 소셜 로그인 인증 기능
 )
 
 SITE_ID = 1 # 사이트 한 개만 사용
-LOGIN_REDIRECT_URL = '/SERVICE'
+LOGIN_REDIRECT_URL = '/SERVICE/google/callback'
 
 REST_USE_JWT = True # dj_rest_auth.registration.views.SocialLoginView를 사용하기 위해 필요
 REST_FRAMEWORK = {
