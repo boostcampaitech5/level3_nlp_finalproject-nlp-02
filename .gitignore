@@ -2,7 +2,9 @@
 # Edit at https://www.toptal.com/developers/gitignore?templates=visualstudiocode,jupyternotebooks,python,flask,linux,git,django
 
 ### custom ###
-.*
+.empty
+data/datasets/*
+model/config/use_config/*
 
 ### Django ###
 *.log
