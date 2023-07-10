@@ -16,12 +16,13 @@ class Bookmarks(models.Model):
     userId = models.ForeignKey('UserInfo', on_delete=models.CASCADE, db_column='userId')
     userEmail = models.CharField(max_length=40)
     url = models.TextField()
-    context = models.TextField()
+    title = models.TextField(null=True, default='post title')       # url's post title
+    bookmarkTitle = models.TextField(null=True, default=title)      # user defined
+    content = models.TextField(null=True, default='')               # url's post content
+    folderName = models.TextField(null=True)
+    tag = models.TextField(null=True, default='Null')
     # date = models.DateTimeField(auto_now_add=True)
-    folder = models.TextField()
-    tag = models.TextField()
     # bookmarked_date = models.DateTimeField(blank=True, null=True)
-    # tag = models.CharField(max_length=10)
         
     def __str__(self):
         return str(self.userId)
