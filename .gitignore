@@ -6,6 +6,7 @@
 data/datasets/*
 data/Tistory/*
 model/config/use_config/*
+model/results/*
 
 ### Django ###
 *.log
