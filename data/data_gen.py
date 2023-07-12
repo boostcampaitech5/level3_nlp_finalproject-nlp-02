@@ -14,8 +14,8 @@ warnings.filterwarnings(action='ignore')
 openai.api_key = ''
 df=pd.read_csv('/opt/ml/level3_nlp_finalproject-nlp-02/data/datasets/Tistory_summarize.csv')
 index = 10
-text = df.iloc[10]['summarize']
-title = '\n≈'+df.iloc[10]['title']+'≈\n'
+text = df.iloc[index]['summarize']
+title = '\n≈'+df.iloc[index]['title']+'≈\n'
 
 model_name = 'text-davinci-003'
 
