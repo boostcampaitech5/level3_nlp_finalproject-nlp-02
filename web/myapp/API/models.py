@@ -13,7 +13,8 @@ class UserInfo(models.Model):
 
 # Child
 class Bookmarks(models.Model):
-    userId = models.ForeignKey('UserInfo', on_delete=models.CASCADE, db_column='userId')
+    userNumber = models.ForeignKey('UserInfo', on_delete=models.CASCADE, db_column='userNumber')
+    userId = models.CharField(max_length=30)
     userEmail = models.CharField(max_length=40)
     url = models.TextField()
     title = models.TextField(null=True, default='post title')       # url's post title

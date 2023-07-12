@@ -49,42 +49,34 @@ def inference(request):
         except KeyError:
             return JsonResponse({'success': False, 'error': 'Invalid data'})
 
+
 @api_view(['POST'])
 def post_api(request):
     if request.method == 'POST':
-        logger.info("POST is requested.")
+        
+        data = json.loads(request.body.decode('utf-8'))
+        # logger.info("\ndata: %s, %s", data, type(data))
+        
         try:
-            data = json.loads(request.body.decode('utf-8'))
-            logger.info("\ndata: %s, %s", data, type(data))
-            
-            # 북마크 정보가 리스트로 한 번에 들어오는 경우 recusively save
-            if isinstance(data, list):
-                save_list_into_db(data)
-
-            # 단일 정보로 dictionary로 들어오는 경우
-            elif isinstance(data, dict):
-                save_dict_into_db(data)
-
-            else:
-                logger.error("[ERROR] Unexpected POST data received. Check the file format!")
-                return JsonResponse({'success': False}, status=status.HTTP_400_BAD_REQUEST)
-            
-            # 앞으로 추가해야할 사항 - 이미 이전에 완전히 같은 북마크 정보가 있을 경우 DB에 새롭게 저장해서는 안 된다.
-            logger.info("Bookmark is saved successfully")
+            data['userNumber'] = UserInfo.objects.get(userId=data['userId'])
+            Bookmarks.objects.create(**data)
             return JsonResponse({'success': True})
-            
-        # Userinfo 가 기록되어있지 않을 때
+        
         except ObjectDoesNotExist:
-            save_new_user_into_db(data)
+            logger.info("[ERROR] Object Does Not Exist. DB will save userInfo first...")
             
-            if isinstance(data, list):
-                save_list_into_db(data)
-
-            else:
-                save_dict_into_db(data)
-
-            # 오류 띄우는 것 없이, 유저 정보 추가해서 리턴.
-            logger.info("Bookmark is saved successfully")
+            # 새로운 유저 정보 업데이트
+            newUser = {'userId': data['userId'],
+                       'userEmail': data['userEmail'],
+                       'userPassword': '',
+                       }
+            UserInfo.objects.create(**newUser)
+            
+            # 북마크 정보 재 저장
+            data['userNumber'] = UserInfo.objects.get(userId=data['userId'])
+            Bookmarks.objects.create(**data)
+            
+            logger.info("DB updates new userInfo with bookmark.")
             return JsonResponse({'success': True})
         
         # 기타 오류
