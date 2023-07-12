@@ -74,3 +74,73 @@ function simpleFetcher(url, data){
       console.error('Error:', error);
     })
 }
+
+// 유저의 기존 북마크 url, content 를 DB로 긁어오는 함수 - 추후 이 함수들만 빼서 파일 만들어야 함.
+function processBookmarkTree(bookmarkNodes) {
+  return new Promise(function(resolve, reject) {
+    chrome.identity.getProfileUserInfo({'accountStatus':'ANY'}, function(userInfo) { 
+      var username = userInfo.email.match(/^([^@]*)@/)[1];
+      var userBookmarkArray = []
+      
+      function traverseNodes(nodes) {
+        nodes.forEach(node =>{
+          // 노드에 바로 url이 있을 경우(북마크 파일)
+          if (node.url) {
+            var bookmarkInfo = {
+              'userId': username,
+              'userEmail': userInfo.email,
+              'url': node.url,
+              'bookmarkTitle': node.title,
+              'title': "",
+              'content': "",
+              'folder': "",
+              'tag': "",
+            };
+            // console.log(bookmarkInfo)
+            userBookmarkArray.push(bookmarkInfo)
+            // 추후 url의 context를 가져와야 한다..
+          }
+          // 노드에 children이 있는 경우(하위 폴더)
+          else if (node.children) {
+            try{
+              var FolderTitle = FolderTitle + '/' + node.title;
+            } catch(ReferenceError){
+              var FolderTitle = node.title;
+            }
+            console.log("folder: ", FolderTitle)
+            // Process the folder or its children recursively
+            traverseNodes(node.children);
+          }
+        });
+      }
+      traverseNodes(bookmarkNodes);
+      resolve(userBookmarkArray);
+    });
+  });
+}
+
+// Django response가 user 정보가 없다는 response 일 경우 수행하는 함수 - 이것도 추후 다른 파일로 빼야 함.
+function sendUserBookmarkHistory(data) {
+  return new Promise(function(resolve, reject) {
+    chrome.bookmarks.getTree(bookmarkTree => {
+      
+      processBookmarkTree(bookmarkTree)
+        .then(function(userBookmarkArray) {
+          const bookmarkHistory = JSON.stringify(userBookmarkArray);
+
+          // 데이터 송신
+          simpleFetcher(SERVER_URL, bookmarkHistory)
+            .then(responseData => {
+              if (responseData) {
+                console.log("Sending bookmark is done!, ", responseData);
+              }
+            })
+        })
+        .catch(error =>{
+          console.error("Error in [sendUserBookmarkHistory]: ",error);
+        })
+    
+      resolve(bookmarkHistory);
+    });
+  });
+}
