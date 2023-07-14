@@ -62,16 +62,13 @@ class Dataloader(pl.LightningDataModule):
         x: pd.DataFrame
 
         Returns:
-        inputs: Dict({'input_ids', 'token_type_ids', 'attention_mask'}), 각 tensor(num_data, max_length)
+        inputs: Dict({'input_ids', 'labels', 'attention_mask'}), 각 tensor(num_data, max_length)
         """
         
-        concat_entity = []
-        for sub_ent, obj_ent in zip(x['subject_entity'], x['object_entity']):
-            concat_entity.append(obj_ent + " [SEP] " + sub_ent)
+        data_list = [f"### 명령어: {row['instruction']}\n\n### 맥락: {row['input']}\n\n답변: {row['tag1']} {row['tag2']} {row['tag3']} {row['tag4']} {row['tag5']}" for _ , row in x.iterrows()]
 
         inputs = self.tokenizer(
-            concat_entity,
-            list(x['sentence']),
+            data_list,
             return_tensors='pt',
             padding=True,
             truncation=True,

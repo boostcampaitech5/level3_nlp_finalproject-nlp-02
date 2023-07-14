@@ -5,7 +5,6 @@ import pytorch_lightning as pl
 import pickle
 
 from utils import metrics
-from utils.data_controller import load_types2labelnum
 from . import lr_schedule_controller
 
 class Model(pl.LightningModule):
@@ -22,11 +21,11 @@ class Model(pl.LightningModule):
         self.optim = torch.optim.AdamW
         
 
-    def forward(self, input_ids, attention_mask, token_type_ids):
+    def forward(self, input_ids, attention_mask, labels):
         outputs = self.LM(
             input_ids=input_ids,
             attention_mask=attention_mask,
-            token_type_ids=token_type_ids,
+            labels=labels,
             output_hidden_states=True
         )
         
@@ -37,7 +36,7 @@ class Model(pl.LightningModule):
         outputs = self(
             input_ids=x['input_ids'],
             attention_mask=x['attention_mask'],
-            token_type_ids=x['token_type_ids']
+            labels=x['labels']
         )
         loss = self.loss_func(outputs['logits'], y)
         
@@ -52,16 +51,18 @@ class Model(pl.LightningModule):
         outputs = self(
             input_ids=x['input_ids'],
             attention_mask=x['attention_mask'],
-            token_type_ids=x['token_type_ids']
+            labels=x['labels']
         )
         loss = self.loss_func(outputs['logits'], y)
-        self.log("val_loss", loss)
+        
+        self.log("val_loss", loss)  
 
-        metric = metrics.compute_metrics(
-            F.softmax(outputs['logits'], dim=-1), y)
-        self.log('val_micro_f1_Score', metric['micro f1 score'])
-        self.log('val_AUPRC', metric['auprc'])
-        self.log('val_acc', metric['accuracy'])
+        # metric = metrics.compute_metrics(
+        #     F.softmax(outputs['logits'], dim=-1), y)
+        # self.log('val_micro_f1_Score', metric['micro f1 score'])
+        # self.log('val_AUPRC', metric['auprc'])
+        # self.log('val_acc', metric['accuracy'])
+
 
         return loss
 
@@ -70,12 +71,22 @@ class Model(pl.LightningModule):
         outputs = self(
             input_ids=x['input_ids'],
             attention_mask=x['attention_mask'],
-            token_type_ids=x['token_type_ids']
+            labels=x['labels']
         )
-        probs = F.softmax(outputs['logits'], dim=-1)
-        preds = np.argmax(probs.cpu().numpy(), axis=-1)
-
-        return preds, probs.tolist()
+                
+        gened = self.LM.generate(
+            **self.tokenizer(
+                f"### 질문: {x}\n\n### 답변:", 
+                return_tensors='pt', 
+                return_token_type_ids=False
+            ), 
+            max_new_tokens=256,
+            early_stopping=True,
+            do_sample=True,
+            eos_token_id=2,
+        )
+        
+        return self.tokenizer.decode(gened[0])
 
     def confusion_matrix_inference(self, x):
         outputs = self(

@@ -1,6 +1,8 @@
 import os
+import os
 import argparse
 
+from pytorch_lightning import Callback
 from datetime import datetime, timezone, timedelta
 from glob import glob
 
@@ -41,11 +43,55 @@ def get_add_special_tokens():
     
     return arr
 
+def print_trainable_parameters(model):
+    """
+    Prints the number of trainable parameters in the model.
+    """
+    trainable_params = 0
+    all_param = 0
+    for _, param in model.named_parameters():
+        all_param += param.numel()
+        if param.requires_grad:
+            trainable_params += param.numel()
+    print(
+        f"trainable params: {trainable_params} || all params: {all_param} || trainable%: {100 * trainable_params / all_param}"
+    )
 
-def save_csv(submit, pred_label, probs, save_path, folder_name, filename='last'):
-    submit['pred_label'] = pred_label
-    submit['probs'] = probs
-    submit.to_csv(f'{save_path}/{folder_name}_{filename}_submit.csv', index=False)
+
+class LoRACheckpoint(Callback):
+    def __init__(self, monitor, save_top_k, dirpath, mode) :
+        super().__init__()
+        self.dirpath = dirpath
+        self.monitor = monitor
+        self.save_top_k = save_top_k
+        self.mode = mode
+        self.checkpoints = []
+
+    def on_validation_end(self, trainer, pl_module):
+        current_value = trainer.callback_metrics.get(self.monitor)
+        if current_value is None:
+            print(f"Monitored metric {self.monitor} not found.")
+            return
+
+        if len(self.checkpoints) < self.save_top_k or self._is_improvement(current_value):
+            # Save the model
+            filename = self.dirpath + f"/{trainer.current_epoch}-{current_value:.4f}"
+            pl_module.LM.save_pretrained(filename)
+            self.checkpoints.append((current_value, filename))
+
+            if len(self.checkpoints) > self.save_top_k:
+                worst_value, worst_filename = min(self.checkpoints, key=lambda x: x[0] if self.mode == 'max' else -x[0])
+                os.remove(worst_filename)
+                self.checkpoints.remove((worst_value, worst_filename))
+
+    def _is_improvement(self, current_value):
+        worst_value = min(self.checkpoints, key=lambda x: x[0] if self.mode == 'max' else -x[0])[0] if self.checkpoints else None
+        return current_value > worst_value if self.mode == 'max' else current_value < worst_value
+
+
+def save_csv(generated_predict, save_path, folder_name, filename='last'):
+    
+    generated_predict.to_csv(f'{save_path}/{folder_name}_{filename}_submit.csv', index=False)
 
 
 if __name__ == "__main__":

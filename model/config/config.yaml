@@ -22,6 +22,11 @@ train:
     smooth_scale: 0.0 # 일반 CE 쓰고싶을 경우 0.0
     rdrop: False
     rdrop_alpha: 1.0
+  adapt:
+    peft: # QLoRA,LoRAFull, LoRAfp16, original
+    r: 
+    alpha:
+    dropout:
   optim: 옵티마이저 함수명
   token_max_len: 100
   patience: 5

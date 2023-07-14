@@ -8,13 +8,14 @@ import wandb
 
 from tqdm.auto import tqdm
 from tag_models.models import Model
-from utils import utils, data_controller
-from transformers import AutoTokenizer, AutoModelForCausalLM
+from utils import utils, data_controller, print_trainable_parameters, LoRACheckpoint
+from transformers import AutoTokenizer, AutoModelForCausalLM, BitsAndBytesConfig
 from pytorch_lightning.callbacks import ModelCheckpoint
 from pytorch_lightning.callbacks.early_stopping import EarlyStopping
 from pytorch_lightning.loggers import WandbLogger
 from pytorch_lightning.callbacks import LearningRateMonitor
 from shutil import copyfile
+from peft import prepare_model_for_kbit_training, LoraConfig, get_peft_model, PeftModel, PeftConfig
 
 import warnings
 warnings.filterwarnings('ignore')
@@ -43,6 +44,7 @@ if __name__ == "__main__":
     """---Train---"""
     # 데이터 로더와 모델 가져오기
     tokenizer = AutoTokenizer.from_pretrained(CFG['train']['model_name'])
+    tokenizer.pad_token = tokenizer.eos_token
     #CFG['train']['special_tokens_list'] = utils.get_add_special_tokens()
     #tokenizer.add_special_tokens({
     #    'additional_special_tokens': CFG['train']['special_tokens_list']
@@ -50,13 +52,56 @@ if __name__ == "__main__":
     
     dataloader = data_controller.Dataloader(tokenizer, CFG)
     
-    LM = AutoModelForCausalLM.from_pretrained(
-        pretrained_model_name_or_path=CFG['train']['model_name'],
-        torch_dtype = torch.float16 if CFG['train']['halfprecision'] else 'auto',
-        low_cpu_mem_usage=True,
-        output_hidden_states=True,
-        output_attentions=True).to(device=f"cuda", non_blocking=True)
+    #QLoRA
+    if CFG['adapt']['peft'] == 'QLoRA':
         
+        bnb_config = bnb_config = BitsAndBytesConfig(
+            load_in_4bit=True,
+            bnb_4bit_use_double_quant=True,
+            bnb_4bit_quant_type="nf4",
+            bnb_4bit_compute_dtype=torch.bfloat16)
+        
+        LM = AutoModelForCausalLM.from_pretrained(
+            pretrained_model_name_or_path=CFG['train']['model_name'],
+            quantization_config=bnb_config,
+            device_map={"":0},
+            low_cpu_mem_usage=True).to(device=f"cuda", non_blocking=True)
+        
+        LM.gradient_checkpointing_enable()
+        LM = prepare_model_for_kbit_training(LM)
+        
+        peft_config = LoraConfig(r=CFG['adapt']['r'], 
+            lora_alpha=CFG['adapt']['r'], 
+            target_modules=["query_key_value"], 
+            lora_dropout=CFG['adapt']['dropout'], 
+            bias="none", 
+            task_type="CAUSAL_LM")
+        
+        LM = get_peft_model(LM, peft_config)
+    
+    #LoRAFull
+    elif CFG['adapt']['peft'] == 'LoRAFull':
+        
+        LM = AutoModelForCausalLM.from_pretrained(
+            pretrained_model_name_or_path=CFG['train']['model_name'],
+            low_cpu_mem_usage=True).to(device=f"cuda", non_blocking=True)
+        
+    #LoRAfp16
+    elif CFG['adapt']['peft'] == 'LoRAfp16':
+        
+        LM = AutoModelForCausalLM.from_pretrained(
+            pretrained_model_name_or_path=CFG['train']['model_name'],
+            torch_dtype=torch.float16,
+            low_cpu_mem_usage=True).to(device=f"cuda", non_blocking=True)
+        
+    #Full-Finetuning
+    else:
+        
+        LM = AutoModelForCausalLM.from_pretrained(
+        pretrained_model_name_or_path=CFG['train']['model_name'],
+        low_cpu_mem_usage=True).to(device=f"cuda", non_blocking=True)
+    
+    print_trainable_parameters(LM)
     
     LM.resize_token_embeddings(len(tokenizer))
     model = Model(LM, tokenizer, CFG)
@@ -65,23 +110,28 @@ if __name__ == "__main__":
     callbacks = [lr_monitor]
     
     # check point
-    checkpoint = ModelCheckpoint(monitor='val_micro_f1_Score',
-                                 save_top_k=CFG['train']['save_top_k'],
-                                 save_last=False,
-                                 save_weights_only=True,
-                                 verbose=True,
-                                 dirpath=f"{save_path}/checkpoints",
-                                 filename="{epoch}-{val_micro_f1_Score:.4f}",
-                                 mode='max')
+    checkpoint = ModelCheckpoint(monitor='val_loss',
+        save_top_k=CFG['train']['save_top_k'],
+        save_last=False,
+        save_weights_only=True,
+        verbose=True,
+        dirpath=f"{save_path}/checkpoints",
+        filename="{epoch}-{val_loss:.4f}",
+        mode='min') if CFG['adapt']['peft'] == 'original' else \
+    LoRACheckpoint(monitor='val_loss',
+        save_top_k=CFG['train']['save_top_k'],
+        dirpath = f"{save_path}/checkpoints",
+        mode = 'min')
     
     callbacks.append(checkpoint)
     
     # Earlystopping
     if CFG['option']['early_stop']:
         early_stopping = EarlyStopping(
-            monitor='val_micro_f1_Score', patience=CFG['train']['patience'], mode='max', verbose=True)
+            monitor='val_loss', patience=CFG['train']['patience'], mode='max', verbose=True)
         callbacks.append(early_stopping)
-    # fit
+    #
+    # Trainer
     trainer = pl.Trainer(accelerator='gpu',
                          precision="16-mixed" if CFG['train']['halfprecision'] else 32,
                          accumulate_grad_batches=CFG['train']['gradient_accumulation'],
@@ -93,35 +143,24 @@ if __name__ == "__main__":
                          callbacks=callbacks,
                          )
 
+    """---fit---"""
+
     trainer.fit(model=model, datamodule=dataloader)
 
     """---Inference---"""
-    def inference_model(model, dataloader):
-        predictions = trainer.predict(model=model, datamodule=dataloader)
-
-        num2label = data_controller.load_num2label()
-        pred_label, probs = [], []
-        for prediction in predictions:
-            for pred in prediction[0]:
-                pred_label.append(num2label[pred])
-            for prob in prediction[1]:
-                probs.append(list(map(float, prob)))
-
-        return pred_label, probs
-
-    pred_label, probs = inference_model(model, dataloader)
+    
+    generated_predict = trainer.predict(model=model, datamodule=dataloader)
 
     """---save---"""
-    # save submit
-    submit = pd.read_csv('./code/prediction/sample_submission.csv')
-
-    utils.save_csv(submit, pred_label, probs, save_path, folder_name)
+    generated_predict = pd.Series(generated_predict)
+    utils.save_csv(generated_predict, save_path, folder_name)
 
     if checkpoint in callbacks:
         for ckpt_name in tqdm(os.listdir(f"{save_path}/checkpoints"), desc="inferencing_ckpt"):
             print("Now...  "+ ckpt_name)
-            checkpoint = torch.load(f"{save_path}/checkpoints/{ckpt_name}")
-            model.load_state_dict(checkpoint['state_dict'])
+            
+            peft_config = PeftConfig.from_pretrained(ckpt_name)
+            model.LM = PeftModel.from_pretrained(model, ckpt_name)
 
-            pred_label, probs = inference_model(model, dataloader)
-            utils.save_csv(submit, pred_label, probs, save_path, folder_name, ckpt_name.split('=')[-1][:7])
+            generated_predict = trainer.redict(model=model, datamodule=dataloader)
+            utils.save_csv(generated_predict, save_path, folder_name, ckpt_name.split('-')[-1][:7])
