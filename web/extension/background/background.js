@@ -11,28 +11,48 @@ chrome.bookmarks.onCreated.addListener(function (bookmark) {
 });
 
 // message listener  
-// send bookmark information to server
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-  let pageInfo = request.pageInfo;
+  if (request.message === 'collect_page_info') {
+    let pageInfo = request.pageInfo;
 
-  chrome.identity.getProfileUserInfo({'accountStatus':'ANY'}, function(userProfile) { 
-    const userName = userProfile.email.match(/^([^@]*)@/)[1];
+    chrome.identity.getProfileUserInfo({'accountStatus':'ANY'}, function(userProfile) { 
+      const userName = userProfile.email.match(/^([^@]*)@/)[1];
 
-    // Merge pageInfo and userInfo into totalInfo
-    userInfo = {'userId': userName, 'userEmail': userProfile['email']}
-    const totalInfo = Object.assign(pageInfo, userInfo);
-    console.log(totalInfo)
-    console.log(typeof totalInfo)
+      // Merge pageInfo and userInfo into totalInfo
+      userInfo = {'userId': userName, 'userEmail': userProfile['email']}
+      const totalInfo = Object.assign(pageInfo, userInfo);
+      console.log(totalInfo)
+      console.log(typeof totalInfo)
 
-    // 북마크 정보 전송
-    simpleFetcher(SERVER_URL, totalInfo)
+      // 북마크 정보 전송
+      simpleFetcher(SERVER_URL, totalInfo)
+        .then(responseData => {
+          if (responseData) {
+            console.log("Sending bookmark is done!, ", responseData);
+          }
+        })
+    });
+  }
+
+  if (request.anotherPage) {
+    // Handle the extracted content here
+    console.log("background, ", request.anotherPage);
+  }
+
+  // 북마크 정보 수신 후 fetch
+  if (request.message === 'export_bookmark_history'){
+    // console.log("export_bookmark_history message received!")  // 동작 확인 완료
+
+    bookmarkHistory = request.bookmarkHistory;
+    console.log("bookmarkHistory: ", bookmarkHistory);
+
+    simpleFetcher(SERVER_URL, bookmarkHistory)
       .then(responseData => {
         if (responseData) {
-          console.log("Sending bookmark is done!, ", responseData);
+          console.log("Sending bookmarkHistory is done!, ", responseData);
         }
       })
-
-  });
+  }
 });
 
 // content.js connection checker
@@ -120,7 +140,7 @@ function processBookmarkTree(bookmarkNodes) {
 }
 
 // Django response가 user 정보가 없다는 response 일 경우 수행하는 함수 - 이것도 추후 다른 파일로 빼야 함.
-function sendUserBookmarkHistory(data) {
+function sendUserBookmarkHistory() {
   return new Promise(function(resolve, reject) {
     chrome.bookmarks.getTree(bookmarkTree => {
       

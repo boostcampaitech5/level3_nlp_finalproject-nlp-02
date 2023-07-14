@@ -1,20 +1,36 @@
 // message listener
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
+  console.log("chrome.runtime.onMessage.addListener called!! ")
   if (request.message === 'collect_page_info') {
     // Gather the pageInfo from DOM
-    let pageInfo = {
+    const pageInfo = {
       title: document.title,
       url: window.location.href,
-      docs: document.body.innerText,
+      content: document.body.innerText,
     };
-
-    // Send response to the popup script
-    sendResponse({pageInfo: pageInfo})
+    console.log("hd", pageInfo)
+    // Send response to the popup script - 이게 애초부터 계속 undefined이다...
+    sendResponse({pageInfo: pageInfo});
 
     // Send the data to the background script
-    chrome.runtime.sendMessage({pageInfo: pageInfo}, function(response) {
+    chrome.runtime.sendMessage({message: 'collect_page_info', pageInfo: pageInfo}, function(response) {
       console.log(response);
     });
+  }
+
+  // collect only page's content
+  else if (request.message === 'collect_page_only_content') {
+    const rawContent = {
+      content: document.body.innerText
+    };
+    // console.log("rconent: ", rcontent);
+    sendResponse({ message: 'collect_page_only_content', onlyPage: rawContent });
+
+    // Send the data to the background script
+    chrome.runtime.sendMessage({ message: 'collect_page_only_content', onlyPage: rawContent }, function(response) {
+      console.log(response);
+    });
+    return true;
   }
 });
 

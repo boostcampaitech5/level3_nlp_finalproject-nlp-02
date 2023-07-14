@@ -134,6 +134,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
   var collectInfoButton = document.getElementById("collectInfo");
   var bookmarkTree = document.getElementById("bookmarkTree");
+  var exportBookmarkHistory = document.getElementById("exportBookmarkHistory");
+  var openAppPage = document.getElementById("openAppPage");
 
   // Loading menus for bookmark hierarchy...
   chrome.bookmarks.getTree(function (bookmarkTreeNodes) {
@@ -197,6 +199,7 @@ document.addEventListener("DOMContentLoaded", function () {
     // Get current tab
     chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
       var activeTab = tabs[0];
+      // console.log("active tab: ", activeTab);
 
       // Bookmarking the current tab
       chrome.bookmarks.create(
@@ -219,10 +222,139 @@ document.addEventListener("DOMContentLoaded", function () {
           if (response && response.pageInfo) {
             console.log(response);
             let pageInfo = response.pageInfo;
-            alert(pageInfo);
+            alert(response.pageInfo.content);
+          }
+          else {
+            console.log("Something went wrong.");
           }
         }
       );
     });
   });
+
+  // Export bookmark 버튼이 눌렸을 경우
+  exportBookmarkHistory.addEventListener("click", function () {
+    // 1. 북마크 히스토리를 탐색한다.
+    // 2. 북마크 히스토리 url을 토대로 content 를 긁어온다.
+    // 3. 이를 fetch 하여 서버로 보낸다.
+
+    chrome.bookmarks.getTree(bookmarkTree => {
+      processBookmarkTree(bookmarkTree)
+      // 북마크 정보 생성되면 then ->
+        .then(bookmarkHistory => {
+          const promises = bookmarkHistory.map(bookmark => {
+            return fetch(bookmark.url)
+              .then(response => {
+                if (!response.ok) {
+                  throw new Error("Error fetching URL: " + bookmark.url);
+                }
+                return response.text();
+              })
+              .then(response => {
+                if (response.ok){
+                  console.log("response is valid!")
+                }
+
+                // content, title 긁어오기
+                var parser = new DOMParser();
+                var doc = parser.parseFromString(response, "text/html");
+                const title = doc.title;
+                const content = doc.body.innerText;
+
+                bookmark.title = title;
+                bookmark.content = content;
+                return bookmark;
+              })
+              .catch(error => {
+                // console.error("Error, ", bookmark.url);
+              });
+          });
+          return Promise.all(promises)
+        })
+        .then(bookmarkHistory => {
+          // 백그라운드로 userBookmark 정보 전송
+          // chrome.runtime.sendMessage({ message: "export_bookmark_history", bookmarkHistory: promises }, function(response){
+          //   console.log("response: ", response);
+          // });
+          
+          // console.log("promises: ", promises);
+          console.log("bookmarkHistory: ", bookmarkHistory);
+
+          simpleFetcher('http://118.67.131.212:30005/API/post_history/', bookmarkHistory)
+            .then(responseData => {
+              if (responseData) {
+                console.log("Sending bookmarkHistory is done!, ", responseData);
+              }
+              else {
+                console.log("fetcher error.")
+              }
+            })
+        });
+    });
+  });
 });
+
+// 심플한 fetch 함수 구현
+function simpleFetcher(url, data){
+  return fetch(url, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(data)
+    })
+    .then((response) => {
+      if (response.ok) {
+        return response.json();
+      } else {
+        throw new Error('Network response is not ok')
+      }
+    })
+    .catch(error =>{
+      console.error('Error:', error);
+    })
+}
+
+// 유저의 기존 북마크 url, content 를 DB로 긁어오는 함수 - 추후 이 함수들만 빼서 파일 만들어야 함.
+function processBookmarkTree(bookmarkNodes) {
+  return new Promise(function(resolve, reject) {
+    chrome.identity.getProfileUserInfo({'accountStatus':'ANY'}, function(userInfo) { 
+      var username = userInfo.email.match(/^([^@]*)@/)[1];
+      var userBookmarkArray = []
+      
+      function traverseNodes(nodes) {
+        nodes.forEach(node =>{
+          // 노드에 바로 url이 있을 경우(북마크 파일)
+          if (node.url) {
+            var bookmarkInfo = {
+              'userId': username,
+              'userEmail': userInfo.email,
+              'url': node.url,
+              'bookmarkTitle': node.title,
+              'title': "",
+              'content': "",
+              'folder': "",
+              'tag': "",
+            };
+            // console.log(bookmarkInfo)
+            userBookmarkArray.push(bookmarkInfo)
+            // 추후 url의 context를 가져와야 한다..
+          }
+          // 노드에 children이 있는 경우(하위 폴더)
+          else if (node.children) {
+            try{
+              var FolderTitle = FolderTitle + '/' + node.title;
+            } catch(ReferenceError){
+              var FolderTitle = node.title;
+            }
+            console.log("folder: ", FolderTitle)
+            // Process the folder or its children recursively
+            traverseNodes(node.children);
+          }
+        });
+      }
+      traverseNodes(bookmarkNodes);
+      resolve(userBookmarkArray);
+    });
+  });
+}
