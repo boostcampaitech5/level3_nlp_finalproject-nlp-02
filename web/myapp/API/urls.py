@@ -10,5 +10,6 @@ urlpatterns = [
     path('test_response/', views.test_response, name='test_response'),
     path('inference/', views.inference, name='inference'),
     path('post/', views.post_api, name='post'),
-    path('get/', views.get_api, name='post')
+    path('get/', views.get_api, name='post'),
+    path('post_history/', views.post_history, name='post_history')
 ]

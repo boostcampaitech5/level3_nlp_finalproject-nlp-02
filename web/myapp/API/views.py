@@ -1,3 +1,5 @@
+import os
+import sys
 import json
 import logging
 
@@ -11,6 +13,10 @@ from rest_framework import status
 from .models import UserInfo, Bookmarks
 from .utils import *
 from .serializers import PostSerializer
+
+# dl_model_path = '../../model/models/'
+sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..', '..', 'model'))
+from models.tagging_model import get_tag_from_model
 
 logger = logging.getLogger(__name__)
 
@@ -59,9 +65,7 @@ def post_api(request):
         
         try:
             data['userNumber'] = UserInfo.objects.get(userId=data['userId'])
-            Bookmarks.objects.create(**data)
-            return JsonResponse({'success': True})
-        
+
         except ObjectDoesNotExist:
             logger.info("[ERROR] Object Does Not Exist. DB will save userInfo first...")
             
@@ -72,17 +76,63 @@ def post_api(request):
                        }
             UserInfo.objects.create(**newUser)
             
-            # 북마크 정보 재 저장
-            data['userNumber'] = UserInfo.objects.get(userId=data['userId'])
-            Bookmarks.objects.create(**data)
-            
-            logger.info("DB updates new userInfo with bookmark.")
-            return JsonResponse({'success': True})
+            logger.info("DB updates new userInfo.")
         
         # 기타 오류
         except Exception as e:
             logger.exception("[Exception] Unexpected error occurred while saving the bookmark.")
             return Response({'success': False}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
+        # Foreign key 재 업데이트
+        data['userNumber'] = UserInfo.objects.get(userId=data['userId'])
+        
+        # 딥러닝 모델로부터 태그 정보 inference
+        # tags = get_tag_from_model(data['content'])
+        # data['tag'] = tags  # sample tag for now
+        
+        # 북마크 정보 저장
+        Bookmarks.objects.create(**data)
+        return JsonResponse({'success': True})
+        
+    else:
+        logger.error("[ERROR] Illegal request is requested.")
+        return JsonResponse({'success': False}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
+
+# user bookmark history 정보 송신 및 DB 저장
+@api_view(['POST'])
+def post_history(request):
+    if request.method == 'POST':
+        
+        data = json.loads(request.body.decode('utf-8'))
+        print("post_history requested!")
+        
+        try:
+            data[0]['userNumber'] = UserInfo.objects.get(userId=data[0]['userId'])  # bulk 이니까, 첫 데이터로 try.
+
+        except ObjectDoesNotExist:
+            logger.info("[ERROR] Object Does Not Exist. DB will save userInfo first...")
+            
+            # 새로운 유저 정보 업데이트
+            newUser = {'userId': data[0]['userId'],
+                       'userEmail': data[0]['userEmail'],
+                       'userPassword': '',
+                       }
+            UserInfo.objects.create(**newUser)
+        
+        # bulk 처리.
+        for bookmark_data in data:
+            try:
+                bookmark_data['userNumber'] = UserInfo.objects.get(userId=bookmark_data['userId'])
+            except:
+                pass    # undefined 인 경우는 pass.
+        logger.info("DB updates new userInfo.")
+        
+        # 북마크 정보 저장
+        bookmark_objects = [Bookmarks(**bookmark_data) for bookmark_data in data if bookmark_data]
+        Bookmarks.objects.bulk_create(bookmark_objects)
+        
+        return JsonResponse({'success': True})
 
     else:
         logger.error("[ERROR] Illegal request is requested.")
