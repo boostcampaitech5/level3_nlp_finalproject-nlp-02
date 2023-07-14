@@ -1,238 +1,127 @@
-### 외부 라이브러리 ###
 import os
+import argparse
+import torch
 import yaml
-import wandb
 import pandas as pd
+import pytorch_lightning as pl
+import wandb
 
-from datasets import (
-    Dataset,
-    DatasetDict,
-    Features,
-    Value,
-    load_from_disk
-)
-from transformers import (
-    AutoConfig,
-    AutoModelForSeq2SeqLM,
-    AutoTokenizer,
-    DataCollatorWithPadding,
-    EvalPrediction,
-    TrainingArguments,
-    set_seed,
-    Seq2SeqTrainer
-)
 from tqdm.auto import tqdm
-from shutil import copyfile
-
-### 우리가 만든 라이브러리 ###
+from tag_models.models import Model
 from utils import utils, data_controller
-from models import *
+from transformers import AutoTokenizer, AutoModelForCausalLM
+from pytorch_lightning.callbacks import ModelCheckpoint
+from pytorch_lightning.callbacks.early_stopping import EarlyStopping
+from pytorch_lightning.loggers import WandbLogger
+from pytorch_lightning.callbacks import LearningRateMonitor
+from shutil import copyfile
 
 import warnings
 warnings.filterwarnings('ignore')
 
-
-### MAIN ###
-printer = utils.Printer()
-
-# config 불러오기
-printer.start('config 불러오기')
-with open('config/use/use_config.yaml') as f:
-    CFG = yaml.load(f, Loader=yaml.FullLoader)
-with open('config/use/use_trainer_args.yaml') as f:
-    TRAIN_ARGS = yaml.load(f, Loader=yaml.FullLoader)
-printer.done()
-
-# transformers에서 seed 고정하기
-printer.start('SEED 고정하기')
-set_seed(CFG['seed'])
-TRAIN_ARGS['seed'] = CFG['seed']
-TRAIN_ARGS['per_device_train_batch_size'] = CFG['option']['batch_size']
-printer.done()
-
 if __name__ == "__main__":
-    # 실험 폴더 생성
-    printer.start('실험 폴더 생성')
-    folder_name, save_path = utils.get_folder_name(CFG)
-    TRAIN_ARGS['output_dir'] = save_path + "/train"
-    printer.done()
-    # config 복사
-    printer.start("config 저장중...")
-    copyfile('config/use/use_config.yaml',save_path+'/use_config.yaml')
-    copyfile('config/use/use_trainer_args.yaml',save_path+'/use_trainer_args.yaml')
-    printer.done()
+    """---Setting---"""
+    # argsparse 이용해서 실험명 가져오기
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-n', '--exp_name', type=str)
+    args = parser.parse_args()
+    # args.exp_name이 None이면 assert False라서 에러 발생 시키기
+    assert args.exp_name is not None, "실험명을 입력해주세요."
+    # config 파일 불러오기
+    with open('./config/use_config.yaml') as f:
+        CFG = yaml.load(f, Loader=yaml.FullLoader)
+    # 실험 결과 파일 생성 및 폴더명 가져오기
+    folder_name, save_path = utils.get_folder_name(CFG, args)
+    copyfile('use_config.yaml',f"{save_path}/config.yaml")
+    pl.seed_everything(CFG['seed'])
     # wandb 설정
-    wandb.init(name=folder_name, project=CFG['wandb']['project'], 
-               config=CFG, entity=CFG['wandb']['id'], dir=save_path)
-    # 데이터셋 가져오기
-    printer.start('train/test 데이터셋 가져오기')
-    train_dataset = load_from_disk('input/data/datasets/train_dataset')
-    printer.done()
-    # Trainer의 Args 객체 가져오기
-    printer.start('Trainer Args 가져오기')
-    training_args = TrainingArguments(**TRAIN_ARGS)
-    printer.done()
+    wandb_logger = wandb.init(
+        name=folder_name, project="final_project", entity=CFG['wandb']['id'], dir=save_path)
+    wandb_logger = WandbLogger()
+    wandb_logger.experiment.config.update(CFG)
 
-    # config, tokenizer, model 가져오기
-    printer.start('HuggingFace에서 모델 및 토크나이저 가져오기')
-    config = AutoConfig.from_pretrained(CFG['model']['model_name'])
-    if 'bert' in CFG['model']['model_name'] and 'roberta' not in CFG['model']['model_name']:  # 수정 필요
-        config.num_attention_heads = CFG['model']['num_attention_heads']
-        config.attention_probs_dropout_prob = CFG['model']['attention_probs_dropout_prob']
-        config.num_hidden_layers = CFG['model']['num_hidden_layers']
-        config.hidden_dropout_prob = CFG['model']['hidden_dropout_prob']
-    tokenizer = AutoTokenizer.from_pretrained(CFG['model']['model_name'], use_fast=True) # rust tokenizer if use_fast == True else python tokenizer
-    # model_class = eval(CFG['model']['select_option'][CFG['model']['option']])
-    model = AutoModelForSeq2SeqLM.from_pretrained(CFG['model']['model_name'])
-    printer.done()
+    """---Train---"""
+    # 데이터 로더와 모델 가져오기
+    tokenizer = AutoTokenizer.from_pretrained(CFG['train']['model_name'])
+    #CFG['train']['special_tokens_list'] = utils.get_add_special_tokens()
+    #tokenizer.add_special_tokens({
+    #    'additional_special_tokens': CFG['train']['special_tokens_list']
+    #})
+    
+    dataloader = data_controller.Dataloader(tokenizer, CFG)
+    
+    LM = AutoModelForCausalLM.from_pretrained(
+        pretrained_model_name_or_path=CFG['train']['model_name'],
+        torch_dtype = torch.float16 if CFG['train']['halfprecision'] else 'auto',
+        low_cpu_mem_usage=True,
+        output_hidden_states=True,
+        output_attentions=True).to(device=f"cuda", non_blocking=True)
+        
+    
+    LM.resize_token_embeddings(len(tokenizer))
+    model = Model(LM, tokenizer, CFG)
+    
+    lr_monitor = LearningRateMonitor(logging_interval='step')
+    callbacks = [lr_monitor]
+    
+    # check point
+    checkpoint = ModelCheckpoint(monitor='val_micro_f1_Score',
+                                 save_top_k=CFG['train']['save_top_k'],
+                                 save_last=False,
+                                 save_weights_only=True,
+                                 verbose=True,
+                                 dirpath=f"{save_path}/checkpoints",
+                                 filename="{epoch}-{val_micro_f1_Score:.4f}",
+                                 mode='max')
+    
+    callbacks.append(checkpoint)
+    
+    # Earlystopping
+    if CFG['option']['early_stop']:
+        early_stopping = EarlyStopping(
+            monitor='val_micro_f1_Score', patience=CFG['train']['patience'], mode='max', verbose=True)
+        callbacks.append(early_stopping)
+    # fit
+    trainer = pl.Trainer(accelerator='gpu',
+                         precision="16-mixed" if CFG['train']['halfprecision'] else 32,
+                         accumulate_grad_batches=CFG['train']['gradient_accumulation'],
+                         max_epochs=CFG['train']['epoch'],
+                         default_root_dir=save_path,
+                         log_every_n_steps=1,
+                         val_check_interval=0.25,           # 1 epoch 당 valid loss 4번 체크: 학습여부 빠르게 체크
+                         logger=wandb_logger,
+                         callbacks=callbacks,
+                         )
 
-    # 토큰화를 위한 파라미터 설정
-    printer.start('토큰화를 위한 파라미터 설정')
-    CFG['tokenizer']['max_seq_length'] = min(CFG['tokenizer']['max_seq_length'],
-                                             tokenizer.model_max_length)
-    fn_kwargs = {
-        'tokenizer': tokenizer,
-        'pad_on_right': tokenizer.padding_side == "right", # Padding에 대한 옵션을 설정합니다. | (question|context) 혹은 (context|question)로 세팅 가능합니다.
-        "CFG": CFG,
-    }
-    printer.done()
-    if training_args.do_train:
-        # train/valid 데이터셋 정의
-        printer.start('train/valid 데이터셋 정의')
-        if CFG['model']['pretrain']:
-            aug_df = pd.read_csv('/opt/ml/level3_nlp_finalproject-nlp-02/data/datasets/' + CFG['model']['pretrain'])
-            new_data = Dataset.from_pandas(aug_df)
-            train_data = new_data
-            print('Pretrain with this new dataset\n\n')
-            print(train_data)
-        else:
-            train_data = train_dataset['train']
-            print('finetuning or just train with original dataset')
-            print(train_data)
-        val_data = train_dataset['validation']
-        print(val_data)
-        printer.done()
+    trainer.fit(model=model, datamodule=dataloader)
 
-        # 데이터 토큰나이징
-        printer.start("train 토크나이징")   #수정
-        fn_kwargs['column_names']= train_data.column_names
-        train_data = train_data.map(
-            data_controller.train_tokenizing,
-            batched=True,
-            num_proc=None,
-            remove_columns=train_data.column_names,
-            load_from_cache_file=not False,
-            fn_kwargs=fn_kwargs
-        )
-        printer.done()
-        printer.start("val 토크나이징")
-        fn_kwargs['column_names']= val_data.column_names
-        val_data = val_data.map(
-            data_controller.val_tokenizing,
-            batched=True,
-            num_proc=None,
-            remove_columns=val_data.column_names,
-            load_from_cache_file=not False,
-            fn_kwargs=fn_kwargs
-        )
-        printer.done()
+    """---Inference---"""
+    def inference_model(model, dataloader):
+        predictions = trainer.predict(model=model, datamodule=dataloader)
 
-        # Data collator
-        # flag가 True이면 이미 max length로 padding된 상태입니다.
-        # 그렇지 않다면 data collator에서 padding을 진행해야합니다.
-        data_collator = DataCollatorWithPadding(
-            tokenizer, pad_to_multiple_of=8 if training_args.fp16 else None  #수정
-        )
+        num2label = data_controller.load_num2label()
+        pred_label, probs = [], []
+        for prediction in predictions:
+            for pred in prediction[0]:
+                pred_label.append(num2label[pred])
+            for prob in prediction[1]:
+                probs.append(list(map(float, prob)))
 
-        # Trainer 초기화
-        printer.start("Trainer 초기화")
-        trainer = Seq2SeqTrainer(
-            model=model,
-            args=training_args,
-            train_dataset=train_data,
-            eval_dataset=val_data,
-            eval_examples=train_dataset["validation"],
-            tokenizer=tokenizer,
-            data_collator=data_collator,
-            post_process_function=post_processing_function,  #수정
-            compute_metrics=utils.compute_metrics,  #수정
-        )
-        printer.done()
+        return pred_label, probs
 
-        # Training
-        printer.start("학습중...")
-        train_result = trainer.train()
-        trainer.save_model()
-        printer.done()
-        printer.start("모델 및 metrics 저장")
-        metrics = train_result.metrics
-        metrics['train_samples'] = len(train_data)
+    pred_label, probs = inference_model(model, dataloader)
 
-        trainer.log_metrics("train", metrics)
-        trainer.save_metrics("train", metrics)
-        trainer.save_state()
+    """---save---"""
+    # save submit
+    submit = pd.read_csv('./code/prediction/sample_submission.csv')
 
-        output_train_file = os.path.join(training_args.output_dir, "train_results.txt")
+    utils.save_csv(submit, pred_label, probs, save_path, folder_name)
 
-        with open(output_train_file, "w") as writer:
-            for key, value in sorted(train_result.metrics.items()):
-                writer.write(f"{key} = {value}\n")
+    if checkpoint in callbacks:
+        for ckpt_name in tqdm(os.listdir(f"{save_path}/checkpoints"), desc="inferencing_ckpt"):
+            print("Now...  "+ ckpt_name)
+            checkpoint = torch.load(f"{save_path}/checkpoints/{ckpt_name}")
+            model.load_state_dict(checkpoint['state_dict'])
 
-        # State 저장
-        trainer.state.save_to_json(
-            os.path.join(training_args.output_dir, "trainer_state.json")
-        )
-        printer.done()
-
-        # val 평가
-        printer.start("val 평가")
-        metrics = trainer.evaluate()
-
-        metrics["val_samples"] = len(val_data)
-
-        trainer.log_metrics("val", metrics)
-        trainer.save_metrics("val", metrics)
-        printer.done()
-
-    else:
-        # Trainer 초기화
-        data_collator = DataCollatorWithPadding(
-            tokenizer, pad_to_multiple_of=8 if training_args.fp16 else None  #수정
-        )
-        printer.start("Trainer 초기화")
-        trainer = Seq2SeqTrainer(
-            model=model,
-            args=training_args,
-            tokenizer=tokenizer,
-            data_collator=data_collator,
-            post_process_function=post_processing_function,  #수정
-            compute_metrics=utils.compute_metrics,  #수정
-        )
-        printer.done()
-
-    # predict 단계
-    training_args.do_eval = False
-    training_args.do_predict = True
-    training_args.output_dir = save_path + '/test'
-    test_dataset = load_from_disk('input/data/datasets/test_dataset')
-    test_data = test_dataset['validation']
-
-    printer.start("test 토크나이징")
-    fn_kwargs['column_names']= test_data.column_names
-    test_data = test_data.map(
-        data_controller.val_tokenizing,
-        batched=True,
-        num_proc=None,
-        remove_columns=test_data.column_names,
-        load_from_cache_file=not False,
-        fn_kwargs=fn_kwargs
-    )
-    printer.done()
-    printer.start("predict 수행중...")
-    predictions = trainer.predict(
-        test_dataset=test_data,
-        test_examples=test_dataset['validation']
-    )
-    printer.done()
-
-    print("main_process 끝 ^_^")
+            pred_label, probs = inference_model(model, dataloader)
+            utils.save_csv(submit, pred_label, probs, save_path, folder_name, ckpt_name.split('=')[-1][:7])
