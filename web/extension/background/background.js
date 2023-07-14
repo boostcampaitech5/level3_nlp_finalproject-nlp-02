@@ -110,10 +110,10 @@ function processBookmarkTree(bookmarkNodes) {
               'userId': username,
               'userEmail': userInfo.email,
               'url': node.url,
-              'bookmarkTitle': node.title,
               'title': "",
+              'bookmarkTitle': node.title,
               'content': "",
-              'folder': "",
+              'folderName': "",
               'tag': "",
             };
             // console.log(bookmarkInfo)

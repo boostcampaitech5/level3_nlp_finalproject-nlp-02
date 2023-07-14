@@ -221,8 +221,8 @@ document.addEventListener("DOMContentLoaded", function () {
         function (response) {
           if (response && response.pageInfo) {
             console.log(response);
-            let pageInfo = response.pageInfo;
-            alert(response.pageInfo.content);
+            // let pageInfo = response.pageInfo;
+            // alert(pageInfo);
           }
           else {
             console.log("Something went wrong.");
@@ -330,10 +330,10 @@ function processBookmarkTree(bookmarkNodes) {
               'userId': username,
               'userEmail': userInfo.email,
               'url': node.url,
-              'bookmarkTitle': node.title,
               'title': "",
+              'bookmarkTitle': node.title,
               'content': "",
-              'folder': "",
+              'folderName': "",
               'tag': "",
             };
             // console.log(bookmarkInfo)
