@@ -1,3 +1,5 @@
+const SERVER_URL = 'http://118.67.131.212:30005/API/'
+
 // // Bookmarks node traversing search function (folder version)
 // function traverseBookmarks(bookmarkTreeNodes, bookmarkFoldersDropdown) {
 //   for (let i = 0; i < bookmarkTreeNodes.length; i++) {
@@ -280,7 +282,7 @@ document.addEventListener("DOMContentLoaded", function () {
           // console.log("promises: ", promises);
           console.log("bookmarkHistory: ", bookmarkHistory);
 
-          simpleFetcher('http://118.67.131.212:30005/API/post_history/', bookmarkHistory)
+          simpleFetcher(SERVER_URL + 'post_history/', bookmarkHistory)
             .then(responseData => {
               if (responseData) {
                 console.log("Sending bookmarkHistory is done!, ", responseData);
