@@ -8,7 +8,7 @@ import wandb
 
 from tqdm.auto import tqdm
 from tag_models.models import Model
-from utils import utils, data_controller, print_trainable_parameters, LoRACheckpoint
+from utils import utils, data_controller
 from transformers import AutoTokenizer, AutoModelForCausalLM, BitsAndBytesConfig
 from pytorch_lightning.callbacks import ModelCheckpoint
 from pytorch_lightning.callbacks.early_stopping import EarlyStopping
@@ -33,7 +33,7 @@ if __name__ == "__main__":
         CFG = yaml.load(f, Loader=yaml.FullLoader)
     # 실험 결과 파일 생성 및 폴더명 가져오기
     folder_name, save_path = utils.get_folder_name(CFG, args)
-    copyfile('use_config.yaml',f"{save_path}/config.yaml")
+    copyfile('./config/use_config.yaml',f"{save_path}/config.yaml")
     pl.seed_everything(CFG['seed'])
     # wandb 설정
     wandb_logger = wandb.init(
@@ -65,7 +65,7 @@ if __name__ == "__main__":
             pretrained_model_name_or_path=CFG['train']['model_name'],
             quantization_config=bnb_config,
             device_map={"":0},
-            low_cpu_mem_usage=True).to(device=f"cuda", non_blocking=True)
+            low_cpu_mem_usage=True)
         
         LM.gradient_checkpointing_enable()
         LM = prepare_model_for_kbit_training(LM)
@@ -101,7 +101,7 @@ if __name__ == "__main__":
         pretrained_model_name_or_path=CFG['train']['model_name'],
         low_cpu_mem_usage=True).to(device=f"cuda", non_blocking=True)
     
-    print_trainable_parameters(LM)
+    utils.print_trainable_parameters(LM)
     
     LM.resize_token_embeddings(len(tokenizer))
     model = Model(LM, tokenizer, CFG)
@@ -118,7 +118,7 @@ if __name__ == "__main__":
         dirpath=f"{save_path}/checkpoints",
         filename="{epoch}-{val_loss:.4f}",
         mode='min') if CFG['adapt']['peft'] == 'original' else \
-    LoRACheckpoint(monitor='val_loss',
+    utils.LoRACheckpoint(monitor='val_loss',
         save_top_k=CFG['train']['save_top_k'],
         dirpath = f"{save_path}/checkpoints",
         mode = 'min')
@@ -138,29 +138,28 @@ if __name__ == "__main__":
                          max_epochs=CFG['train']['epoch'],
                          default_root_dir=save_path,
                          log_every_n_steps=1,
-                         val_check_interval=0.25,           # 1 epoch 당 valid loss 4번 체크: 학습여부 빠르게 체크
+                        #  val_check_interval=1,           # 1 epoch 당 valid loss 4번 체크: 학습여부 빠르게 체크
                          logger=wandb_logger,
                          callbacks=callbacks,
                          )
-
     """---fit---"""
-
+    model.LM.config.use_cache = False
     trainer.fit(model=model, datamodule=dataloader)
 
-    """---Inference---"""
-    
-    generated_predict = trainer.predict(model=model, datamodule=dataloader)
+    # """---Inference---"""
+    # model.LM.config.use_cache = True
+    # generated_predict = trainer.predict(model=model, datamodule=dataloader)
 
-    """---save---"""
-    generated_predict = pd.Series(generated_predict)
-    utils.save_csv(generated_predict, save_path, folder_name)
+    # """---save---"""
+    # generated_predict = pd.Series(generated_predict)
+    # utils.save_csv(generated_predict, save_path, folder_name)
 
-    if checkpoint in callbacks:
-        for ckpt_name in tqdm(os.listdir(f"{save_path}/checkpoints"), desc="inferencing_ckpt"):
-            print("Now...  "+ ckpt_name)
+    # if checkpoint in callbacks:
+    #     for ckpt_name in tqdm(os.listdir(f"{save_path}/checkpoints"), desc="inferencing_ckpt"):
+    #         print("Now...  "+ ckpt_name)
             
-            peft_config = PeftConfig.from_pretrained(ckpt_name)
-            model.LM = PeftModel.from_pretrained(model, ckpt_name)
+    #         peft_config = PeftConfig.from_pretrained(ckpt_name)
+    #         model.LM = PeftModel.from_pretrained(model, ckpt_name)
 
-            generated_predict = trainer.redict(model=model, datamodule=dataloader)
-            utils.save_csv(generated_predict, save_path, folder_name, ckpt_name.split('-')[-1][:7])
+    #         generated_predict = trainer.redict(model=model, datamodule=dataloader)
+    #         utils.save_csv(generated_predict, save_path, folder_name, ckpt_name.split('-')[-1][:7])

@@ -1,49 +1,37 @@
 # config 템플릿 (수정 X)
-name: 이름
+name: test
 seed: 42
 train:
-  model_name: 허깅페이스 모델명
-  epoch: 100
-  batch_size: 32
+  model_name: 'beomi/KoAlpaca-Polyglot-12.8B'
+  epoch: 1
+  batch_size: 8
   LR: 
-    name: 스케줄러명 # LambdaLR, StepLR, CyclicLR, ExponentialLR, WarmupConstantLR , WarmupDecayLR
-    lr: 0.000001
+    name: WarmupDecayLR # LambdaLR, StepLR, CyclicLR, ExponentialLR, WarmupConstantLR , WarmupDecayLR
+    lr: 0.0001
     base: 20 # CyclicLR를 쓴다면, LR에 대한 min_lr을 적어주세요(20 == LR/20)
     max: 5 # CyclicLR를 쓴다면, LR에 대한 max_lr을 적어주세요(5 == LR/5)
     step_up: 5 # CyclicLR를 쓴다면, warmup steps를 적어주세요
     step_down: 5 # CyclicLR를 쓴다면, cooldown steps를 적어주세요 (단, up+down은 epoch과 동일해야 함)
     warmupconstantLR_step: 3
-    warmupdecayLR_warmup:  400 # step 기준으로 계산
-    warmupdecayLR_total:  4200 # step 기준으로 계산
+    warmupdecayLR_warmup:  1 # step 기준으로 계산
+    warmupdecayLR_total:  100000 # step 기준으로 계산
     interval: step # epoch
-  lossF:
-    name: 로스 함수명 # CrossEntropyLoss # focal_loss # Adaptive_Threshold_loss
-    focal_loss_scale: 0.5
-    smooth_scale: 0.0 # 일반 CE 쓰고싶을 경우 0.0
-    rdrop: False
-    rdrop_alpha: 1.0
-  adapt:
-    peft: # QLoRA,LoRAFull, LoRAfp16, original
-    r: 
-    alpha:
-    dropout:
-  optim: 옵티마이저 함수명
-  token_max_len: 100
+  token_max_len: 512
   patience: 5
-  test_size: 0.2
+  test_size: 0.7
   save_top_k: 3         # Inference할 top k개의 모델.
-  type_classify: False  # multi-task learning: ENT type classification
-  adverse_valid: False  #
-  no_valid: False       # valid set 안 씀
-  valid_split_beforehand: False # TRUE일 경우 remove_duplicate 사용 불가
   halfprecision: True
   gradient_accumulation: 1    # 배치사이즈=16 이고 이 옵션이 2일때, batch=32와 같은 효과.
 select_DC:
-  - data_cleaning_demo
+  - # data_cleaning_demo
 select_DA:
-  - data_augmentation_demo
+  - # data_augmentation_demo
+adapt:
+  peft: QLoRA #,LoRAFull, LoRAfp16, original
+  r: 8
+  alpha: 32
+  dropout: 0.05
 wandb:
-  id: 아이디
+  id: navistwon97
 option:
-  early_stop: True
-  short_tokenizing: False
+  early_stop: False

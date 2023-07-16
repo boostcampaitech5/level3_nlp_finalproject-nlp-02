@@ -17,7 +17,7 @@ class Model(pl.LightningModule):
         self.LM = LM                            # Language Model
         self.tokenizer = tokenizer              # Tokenizer
         
-        self.loss_func = torch.nn.CrossEntropyLoss(label_smoothing = self.CFG['train']['lossF']['smooth_scale'])
+        self.loss_func = torch.nn.CrossEntropyLoss()
         self.optim = torch.optim.AdamW
         
 
@@ -25,8 +25,7 @@ class Model(pl.LightningModule):
         outputs = self.LM(
             input_ids=input_ids,
             attention_mask=attention_mask,
-            labels=labels,
-            output_hidden_states=True
+            labels=labels
         )
         
         return outputs
@@ -38,7 +37,7 @@ class Model(pl.LightningModule):
             attention_mask=x['attention_mask'],
             labels=x['labels']
         )
-        loss = self.loss_func(outputs['logits'], y)
+        loss = outputs['loss']
         
         self.log("train_loss", loss)
 
@@ -53,40 +52,33 @@ class Model(pl.LightningModule):
             attention_mask=x['attention_mask'],
             labels=x['labels']
         )
-        loss = self.loss_func(outputs['logits'], y)
+        loss = outputs['loss']
         
         self.log("val_loss", loss)  
-
-        # metric = metrics.compute_metrics(
-        #     F.softmax(outputs['logits'], dim=-1), y)
-        # self.log('val_micro_f1_Score', metric['micro f1 score'])
-        # self.log('val_AUPRC', metric['auprc'])
-        # self.log('val_acc', metric['accuracy'])
-
-
+        # breakpoint()
+        
+        # generated_tokens = ''.join([self.tokenizer.convert_ids_to_tokens(sample) for sample in torch.argmax(outputs['logits'], dim=-1)])
+        # reference_tokens = ''.join(y)
+        
+        # self.log("generated_tokens", generated_tokens)
+        # self.log("reference_tokens", reference_tokens)
+        
         return loss
 
     def predict_step(self, batch, batch_idx):
         x, y = batch
-        outputs = self(
-            input_ids=x['input_ids'],
-            attention_mask=x['attention_mask'],
-            labels=x['labels']
-        )
-                
-        gened = self.LM.generate(
-            **self.tokenizer(
-                f"### 질문: {x}\n\n### 답변:", 
-                return_tensors='pt', 
-                return_token_type_ids=False
-            ), 
-            max_new_tokens=256,
-            early_stopping=True,
-            do_sample=True,
-            eos_token_id=2,
-        )
-        
-        return self.tokenizer.decode(gened[0])
+        breakpoint()
+        gened_list = []
+        with torch.no_grad():
+            for i in x:            
+                gened = self.LM.generate(**self.tokenizer(i, return_tensors='pt', return_token_type_ids=False), 
+                                        max_new_tokens=256,
+                                        early_stopping=True,
+                                        do_sample=True,
+                                        eos_token_id=2)
+                gened_list.append(self.tokenizer.decode(gened[0]))
+            
+        return gened_list
 
     def confusion_matrix_inference(self, x):
         outputs = self(

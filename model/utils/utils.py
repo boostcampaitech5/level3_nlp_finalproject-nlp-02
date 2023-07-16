@@ -75,14 +75,9 @@ class LoRACheckpoint(Callback):
 
         if len(self.checkpoints) < self.save_top_k or self._is_improvement(current_value):
             # Save the model
-            filename = self.dirpath + f"/{trainer.current_epoch}-{current_value:.4f}"
+            filename = self.dirpath + f"/epoch: {trainer.current_epoch} - loss: {current_value:.4f}"
             pl_module.LM.save_pretrained(filename)
             self.checkpoints.append((current_value, filename))
-
-            if len(self.checkpoints) > self.save_top_k:
-                worst_value, worst_filename = min(self.checkpoints, key=lambda x: x[0] if self.mode == 'max' else -x[0])
-                os.remove(worst_filename)
-                self.checkpoints.remove((worst_value, worst_filename))
 
     def _is_improvement(self, current_value):
         worst_value = min(self.checkpoints, key=lambda x: x[0] if self.mode == 'max' else -x[0])[0] if self.checkpoints else None
