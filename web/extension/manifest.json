@@ -10,7 +10,9 @@
     "storage",
     "scripting",
     "identity.email",
-    "identity"
+    "identity",
+    "offscreen",
+    "scripting"
   ],
   "background": {
     "service_worker": "background/background.js"

@@ -124,6 +124,30 @@
 
 }
 
+.app_button {
+  color: #ffffff;
+
+  top: 12px;
+  right: 90px;
+  width: 60px;
+  height: 25px;
+  border: none;
+  cursor: pointer;
+  position: absolute;
+}
+
+.export_button {
+  color: #ffffff;
+
+  top: 12px;
+  right: 25px;
+  width: 60px;
+  height: 25px;
+  border: none;
+  cursor: pointer;
+  position: absolute;
+}
+
 #openModal{
   color: #ffffff;
 
