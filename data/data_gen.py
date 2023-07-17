@@ -2,6 +2,7 @@ import os
 import warnings
 import openai
 import pandas as pd
+import time
 
 from tqdm import tqdm
 
@@ -13,28 +14,26 @@ warnings.filterwarnings(action='ignore')
 # n 설정: 몇 개로 나눠줄 것인가
 openai.api_key = ''
 n = 2000
-# df=pd.read_csv('/opt/ml/level3_nlp_finalproject-nlp-02/data/datasets/Velog_summarize.csv',  lineterminator='\n')
-df=pd.read_csv('/opt/ml/level3_nlp_finalproject-nlp-02/data/datasets/dataset/Velog/Velog_summarize_00000.csv',  lineterminator='\n')
-# df = df.head(18).copy()
+df=pd.read_csv('/opt/ml/level3_nlp_finalproject-nlp-02/data/datasets/Velog_summarize.csv',  lineterminator='\n')
 
 def tag(x):
         try:
             text = x[0]
-            title = '\n≈'+x[1]+'≈\n'
+            title = x[1]
 
             model_name = 'text-davinci-003'
 
-            prompt_user = '''Q: ᴥ{}ᴥ 사이에 들어갈 문서에 어울리는 5개의 태그를 작성해 줘.\n 
-            추가정보1: 형식은 #한글태그(english)\n
-            추가정보2: 한글로만 이루어진 문서라도 #한글(english) 형식 지켜서 작성해 줘.\n 
-            추가정보3: ≈{}≈사이에 들어가는건 문서의 제목이니 가중치를 높여 줘.\n
-            ᴥ''' + title+ text + "\nᴥ \nA:"
+            prompt_user = f'''Instruction: Tell me 5 tags that match the following document. Increase the weight of the Title. Don't be too descriptive. Tags must be noun \n
+            Desired format: #English(Korean), #English(Korean), #English(Korean), #English(Korean), #English(Korean) \n
+            Title: {title} \n
+            Text: {text} \n
+            Tags:'''
 
             response = openai.Completion.create(
             model = model_name,
             prompt = prompt_user,
             temperature = 0,
-            max_tokens = 140,
+            max_tokens = 100,
             top_p = 1,
             frequency_penalty = 0.0,
             presence_penalty = 0.0,
@@ -45,21 +44,21 @@ def tag(x):
             if "Limit" in str(e):    
                 time.sleep(60)
                 text = x[0]
-                title = '\n≈'+x[1]+'≈\n'
+                title = x[1]
 
                 model_name = 'text-davinci-003'
 
-                prompt_user = '''Q: ᴥ{}ᴥ 사이에 들어갈 문서에 어울리는 5개의 태그를 작성해 줘.\n 
-                추가정보1: 형식은 #한글태그(english)\n
-                추가정보2: 한글로만 이루어진 문서라도 #한글(english) 형식 지켜서 작성해 줘.\n 
-                추가정보3: ≈{}≈사이에 들어가는건 문서의 제목이니 가중치를 높여 줘.\n
-                ᴥ''' + title+ text + "\nᴥ \nA:"
+                prompt_user = f'''Instruction: Tell me 5 tags that match the following document. Increase the weight of the Title. Don't be too descriptive. Tags must be noun \n
+                Desired format: #English(Korean), #English(Korean), #English(Korean), #English(Korean), #English(Korean) \n
+                Title: {title} \n
+                Text: {text} \n
+                Tags:'''
 
                 response = openai.Completion.create(
                 model = model_name,
                 prompt = prompt_user,
                 temperature = 0,
-                max_tokens = 140,
+                max_tokens = 100,
                 top_p = 1,
                 frequency_penalty = 0.0,
                 presence_penalty = 0.0,
