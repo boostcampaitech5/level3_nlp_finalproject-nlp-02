@@ -85,7 +85,7 @@ class Bookmark_Of_Customer(models.Model):
     save_path_at_ours   = 우리 플랫폼에서 북마크가 저장되는 경로
     '''
     customer_id         = models.CharField(max_length=50, primary_key=True)
-    bookmark_no         = models.AutoField(primary_key=True)
+    bookmark_no         = models.IntegerField(primary_key=True)
     tags                = models.TextField()
     name                = models.CharField(max_length=50)
     create_date         = models.DateTimeField(auto_now_add=True)
