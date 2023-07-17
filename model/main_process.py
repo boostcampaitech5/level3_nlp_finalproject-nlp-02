@@ -71,7 +71,7 @@ if __name__ == "__main__":
         LM = prepare_model_for_kbit_training(LM)
         
         peft_config = LoraConfig(r=CFG['adapt']['r'], 
-            lora_alpha=CFG['adapt']['r'], 
+            lora_alpha=CFG['adapt']['alpha'], 
             target_modules=["query_key_value"], 
             lora_dropout=CFG['adapt']['dropout'], 
             bias="none", 
@@ -138,9 +138,10 @@ if __name__ == "__main__":
                          max_epochs=CFG['train']['epoch'],
                          default_root_dir=save_path,
                          log_every_n_steps=1,
-                        #  val_check_interval=1,           # 1 epoch 당 valid loss 4번 체크: 학습여부 빠르게 체크
+                         val_check_interval=0.25,           # 1 epoch 당 valid loss 4번 체크: 학습여부 빠르게 체크
                          logger=wandb_logger,
                          callbacks=callbacks,
+                         enable_checkpointing=False
                          )
     """---fit---"""
     model.LM.config.use_cache = False

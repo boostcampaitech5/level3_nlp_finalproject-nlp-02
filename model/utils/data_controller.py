@@ -63,12 +63,19 @@ class Dataloader(pl.LightningDataModule):
         Returns:
         inputs: Dict({'input_ids', 'attention_mask', 'labels', ...}), 각 tensor(num_data, max_length)
         """
-        if train:
-            instruction = '다음의 블로그 글에 어울리는 태그 5개를 생성하시오. 태그의 형식은 다음과 같음. [#영어(한글), #영어(한글), #영어(한글), #영어(한글), #영어(한글)]'
-            x['instruction'] = instruction
-            
+        instruction = '다음의 블로그 글에 어울리는 태그 5개를 생성하시오. 태그의 형식은 다음과 같음. [#영어(한글), #영어(한글), #영어(한글), #영어(한글), #영어(한글)]'
+        x['instruction'] = instruction
+        
+        if self.CFG['prompts'] == 'topic_title_summarize':
             prompts_list = [f"### Instruction(명령어):\n{row['instruction']}\n\n### Input(입력):\n주제는 [{row['small_topic']}], 제목은 [{row['title']}], 한 줄 요약은 [{row['summarize']}]이다.\n\n### Response(응답): " for _ , row in x.iterrows()]
             
+        elif self.CFG['prompts'] == 'topic_title_context':
+            prompts_list = [f"### Instruction(명령어):\n{row['instruction']}\n\n### Input(입력):\n주제는 [{row['small_topic']}], 제목은 [{row['title']}], 본문은 [{row['context']}]이다.\n\n### Response(응답): \n" for _ , row in x.iterrows()]
+        
+        else:
+            raise ValueError('unappropriate prompts')
+            
+        if train:
             answers_list = [f"{row['tag1']}, {row['tag2']}, {row['tag3']}, {row['tag4']}, {row['tag5']}" for _ , row in x.iterrows()]
             
             inputs = self.tokenizer(
@@ -86,18 +93,12 @@ class Dataloader(pl.LightningDataModule):
             
             return inputs
 
-        else:
-            instruction = '다음의 블로그 글에 어울리는 태그 5개를 생성하시오. 태그의 형식은 다음과 같음. [#영어(한글), #영어(한글), #영어(한글), #영어(한글), #영어(한글)]'
-            x['instruction'] = instruction
-            
-            prompts_list = [f"### Instruction(명령어):\n{row['instruction']}\n\n### Input(입력):\n주제는 [{row['small_topic']}], 제목은 [{row['title']}], 한 줄 요약은 [{row['summarize']}]이다.\n\n### Response(응답): " for _ , row in x.iterrows()]
-                        
+        else:            
             return prompts_list
 
     def preprocessing(self, x, train=False):
         DC = DataCleaning(self.CFG['select_DC'])
         DA = DataAugmentation(self.CFG['select_DA'])
-        tokenizing_method = self.tokenizing
 
         if train:
             # x = DC.process(x)
@@ -109,10 +110,10 @@ class Dataloader(pl.LightningDataModule):
                                             shuffle=True,
                                             random_state=self.CFG['seed'])
             
-            train_inputs = tokenizing_method(train_x, train=True)
+            train_inputs = self.tokenizing(train_x, train=True)
             train_tags = [', '.join([row['tag1'], row['tag2'], row['tag3'], row['tag4'], row['tag5']]) for _, row in train_x.iterrows()]
             
-            val_inputs = tokenizing_method(val_x, train=True)
+            val_inputs = self.tokenizing(val_x, train=True)
             val_tags = [', '.join([row['tag1'], row['tag2'], row['tag3'], row['tag4'], row['tag5']]) for _, row in val_x.iterrows()]
 
             return (train_inputs, train_tags), (val_inputs, val_tags)
@@ -121,7 +122,7 @@ class Dataloader(pl.LightningDataModule):
             # x = DC.process(x)
 
             # 텍스트 데이터 토큰화
-            predict_inputs = tokenizing_method(x, train=False)
+            predict_inputs = self.tokenizing(x, train=False)
             predict_tags = [', '.join([row['tag1'], row['tag2'], row['tag3'], row['tag4'], row['tag5']]) for _, row in x.iterrows()]
             
             return (predict_inputs, predict_tags)
@@ -130,6 +131,7 @@ class Dataloader(pl.LightningDataModule):
         if stage == 'fit':
             # 학습 데이터 준비
             train, val = self.preprocessing(self.train_valid_df, train=True)
+            breakpoint()
             self.train_dataset = Dataset(train, train=True)
             self.val_dataset = Dataset(val, train=True)
         else:
@@ -230,6 +232,6 @@ def load_data():
         
     df = pd.read_csv('./dataset/dataset.csv')
     
-    train_valid_df, predict_df = train_test_split(df[:100], test_size=CFG['train']['test_size'], random_state=CFG['seed'])
+    train_valid_df, predict_df = train_test_split(df, test_size=CFG['train']['test_size'], random_state=CFG['seed'])
         
     return train_valid_df, predict_df
