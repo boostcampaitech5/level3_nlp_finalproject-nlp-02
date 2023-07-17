@@ -12,11 +12,11 @@ from rest_framework.response import Response
 from rest_framework import status
 from .models import UserInfo, Bookmarks
 from .utils import *
-from .serializers import PostSerializer
+# from .serializers import PostSerializer
 
 # dl_model_path = '../../model/models/'
-sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..', '..', 'model'))
-from models.tagging_model import get_tag_from_model
+# sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..', '..', 'model'))
+# from models.tagging_model import get_tag_from_model
 
 logger = logging.getLogger(__name__)
 
