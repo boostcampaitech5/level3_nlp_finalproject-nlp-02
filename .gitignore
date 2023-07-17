@@ -4,7 +4,6 @@
 ### custom ###
 .empty
 data/datasets/*
-data/Tistory/*
 model/config/use_config/*
 
 
