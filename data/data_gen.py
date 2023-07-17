@@ -12,9 +12,10 @@ warnings.filterwarnings(action='ignore')
 # api_key
 # csv 경로
 # n 설정: 몇 개로 나눠줄 것인가
+root_path = '/opt/ml/level3_nlp_finalproject-nlp-02/data/datasets/'
 openai.api_key = ''
 n = 2000
-df=pd.read_csv('/opt/ml/level3_nlp_finalproject-nlp-02/data/datasets/Velog_summarize.csv',  lineterminator='\n')
+df=pd.read_csv(root_path+'Velog_summarize.csv',  lineterminator='\n')
 
 def tag(x):
         try:
@@ -74,7 +75,7 @@ for i in range(len(df)//n):
   print(len(df_tmp))
   df_tmp['tag'] = df_tmp[['summarize','title']].progress_apply(lambda x: tag(x), axis=1)
   print('making csv...')
-  df_tmp.to_csv('/opt/ml/level3_nlp_finalproject-nlp-02/data/datasets/dataset/Velog/Velog_tag_'+str(i*n).zfill(5)+'.csv', sep=',', na_rep='NaN',index=False) # do not write index
+  df_tmp.to_csv(root_path+'dataset/Velog/Velog_tag_'+str(i*n).zfill(5)+'.csv', sep=',', na_rep='NaN',index=False) # do not write index
   print('DONE!')
 
 print('---------------------'+str((i+1)*n).zfill(5),str((i+1)*n+(len(df)%n)).zfill(5)+'---------------------')
@@ -83,5 +84,17 @@ tqdm.pandas()
 print(len(df_tmp))
 df_tmp['tag'] = df_tmp[['summarize','title']].progress_apply(lambda x: tag(x), axis=1)
 print('making csv...')
-df_tmp.to_csv('/opt/ml/level3_nlp_finalproject-nlp-02/data/datasets/dataset/Velog/Velog_tag_'+str((i+1)*n).zfill(5)+'.csv', sep=',', na_rep='NaN',index=False) # do not write index
+df_tmp.to_csv(root_path+'dataset/Velog/Velog_tag_'+str((i+1)*n).zfill(5)+'.csv', sep=',', na_rep='NaN',index=False) # do not write index
+print('DONE!')
+
+print('concat csv...')
+list_ = os.listdir(root_path+'dataset/Velog/')
+df = pd.DataFrame()
+path = root_path+'dataset/Velog/'
+for n in sorted([n for n in list_ if 'tag' in n]):
+    df_tmp=pd.read_csv(path+n,  lineterminator='\n')
+    df = pd.concat([df,df_tmp])
+print(f"total dataset length: {len(df)}")
+print(f"null dataset length: {len(df[df['tag'].isnull()])}")
+df.to_csv(root_path+'Velog_tag.csv', sep=',', na_rep='NaN',index=False) # do not write index
 print('DONE!')
