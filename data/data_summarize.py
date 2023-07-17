@@ -73,6 +73,6 @@ for n in sorted([n for n in list_ if 'summarize' in n]):
     df_tmp=pd.read_csv(path+n,  lineterminator='\n')
     df = pd.concat([df,df_tmp])
 print(f"total dataset length: {len(df)}")
-print(f"null dataset length: {len(df[df['tag'].isnull()])}")
+print(f"null dataset length: {len(df[df['summarize'].isnull()])}")
 df.to_csv(root_path+'Velog_summarize.csv', sep=',', na_rep='NaN',index=False) # do not write index
 print('DONE!')
