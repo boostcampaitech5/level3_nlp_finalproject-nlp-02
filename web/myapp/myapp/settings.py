@@ -27,7 +27,7 @@ SECRET_KEY = 'django-insecure-a3urwj+oy125lw5zmv((j27+-&8s)fn)cn&acx8%ersm1mzlbl
 DEBUG = False # 디버그 선택 여부
 
 ALLOWED_HOSTS = ['*'] # 접속할 ip 지정
-
+CSRF_TRUSTED_ORIGINS = ['chrome-extension://*']
 
 # Application definition
 
@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'rest_framework',
     # APP 추가
     'API',
     'SERVICE',
@@ -125,3 +126,18 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+DATA_UPLOAD_MAX_MEMORY_SIZE = 104857600  # 100MB
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'root': {
+        'handlers': ['console'],
+        'level': 'INFO',
+    },
+}
