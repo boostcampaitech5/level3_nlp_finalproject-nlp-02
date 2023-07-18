@@ -1,4 +1,4 @@
-const SERVER_URL = 'http://118.67.131.212:30005/API/'
+const SERVER_URL = 'http://118.67.131.212:30005'
 
 // // Bookmarks node traversing search function (folder version)
 // function traverseBookmarks(bookmarkTreeNodes, bookmarkFoldersDropdown) {
@@ -262,13 +262,15 @@ document.addEventListener("DOMContentLoaded", function () {
                 var doc = parser.parseFromString(response, "text/html");
                 const title = doc.title;
                 const content = doc.body.innerText;
+                // const reference = extractDomain(doc.url);
 
                 bookmark.title = title;
                 bookmark.content = content;
+                // bookmark.refernce = reference;
                 return bookmark;
               })
               .catch(error => {
-                // console.error("Error, ", bookmark.url);
+                // console.error("Error, ", bookmark.url, error);
               });
           });
           return Promise.all(promises)
@@ -282,7 +284,7 @@ document.addEventListener("DOMContentLoaded", function () {
           // console.log("promises: ", promises);
           console.log("bookmarkHistory: ", bookmarkHistory);
 
-          simpleFetcher(SERVER_URL + 'post_history/', bookmarkHistory)
+          simpleFetcher(SERVER_URL + '/API/post_history/', bookmarkHistory)
             .then(responseData => {
               if (responseData) {
                 console.log("Sending bookmarkHistory is done!, ", responseData);
@@ -294,6 +296,42 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     });
   });
+
+
+// // 정규표현식 for url -> reference
+// function extractDomain(url) {
+//   var regex = /^(?:https?:\/\/)?(?:[^@\n]+@)?(?:www\.)?([^:\/\n]+)/im;
+//   var match = url.match(regex);
+  
+//   if (match && match[1]) {
+//     var domain = match[1].split('.');
+//     return domain[domain.length - 2];
+//   }
+  
+//   return null;
+// }
+
+
+// app 버튼이 눌렸을 경우
+openAppPage.addEventListener("click", function () {
+  chrome.identity.getProfileUserInfo({'accountStatus':'ANY'}, function(userProfile) { 
+    const userName = userProfile.email.match(/^([^@]*)@/)[1];
+
+    userInfo = {'userId': userName, 'userEmail': userProfile['email']}
+    console.log("user info in popup: ", userInfo)
+
+    simpleFetcher(SERVER_URL + '/SERVICE/user_info/', userInfo)
+      .then(responseData => {
+        if (responseData) {
+          console.log("Open app page is done!, ", responseData);
+          chrome.tabs.create({ url: SERVER_URL + '/SERVICE/test_for_search/'});
+        }
+        else {
+          console.log("fetcher error.");
+        }
+      })
+  });
+});
 });
 
 // 심플한 fetch 함수 구현
@@ -321,37 +359,45 @@ function simpleFetcher(url, data){
 function processBookmarkTree(bookmarkNodes) {
   return new Promise(function(resolve, reject) {
     chrome.identity.getProfileUserInfo({'accountStatus':'ANY'}, function(userInfo) { 
-      var username = userInfo.email.match(/^([^@]*)@/)[1];
+      // var username = userInfo.email.match(/^([^@]*)@/)[1];
       var userBookmarkArray = []
-      
-      function traverseNodes(nodes) {
+      console.log(userInfo)
+      function traverseNodes(nodes, ) {
         nodes.forEach(node =>{
           // 노드에 바로 url이 있을 경우(북마크 파일)
           if (node.url) {
             var bookmarkInfo = {
-              'userId': username,
-              'userEmail': userInfo.email,
+              'customer_id': userInfo.id,
               'url': node.url,
-              'title': "",
-              'bookmarkTitle': node.title,
-              'content': "",
-              'folderName': "",
-              'tag': "",
+              'title': "",              // 글 원본 제목
+              'name': node.title,       // 유저가 원하는 북마크명
+              'content': "",            // 글 본문
+              'summarize': "",          // 글 본문을 요약한 내용
+              'reference': "",          // 글 url에서 플랫폼이 어딘지, ex) naver.com => naver, velog.io => velog
+              'topic': "",              // 글 주제 또는 글 카테고리
+              'tags': "",               // content를 자동 태깅한 결과
+              'created_date': "",       // 북마크 생성 날짜
+              'update_date': "",        // 북마크 최근 업데이트 날짜
+              'save_path_at_chrome': "", // 크롬에서 북마크가 저장되는 경로
+              'save_path_at_ours': "",  // 우리 플랫폼에서 북마크가 저장되는 경로
             };
-            // console.log(bookmarkInfo)
             userBookmarkArray.push(bookmarkInfo)
             // 추후 url의 context를 가져와야 한다..
           }
           // 노드에 children이 있는 경우(하위 폴더)
           else if (node.children) {
             try{
-              var FolderTitle = FolderTitle + '/' + node.title;
+              if (FolderTitle){
+                var FolderTitle = FolderTitle + '/' + node.title;
+              } else {
+                var FolderTitle = node.title;
+              }
             } catch(ReferenceError){
               var FolderTitle = node.title;
             }
             console.log("folder: ", FolderTitle)
             // Process the folder or its children recursively
-            traverseNodes(node.children);
+            traverseNodes(node.children, FolderTitle);
           }
         });
       }
