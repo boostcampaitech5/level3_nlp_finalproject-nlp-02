@@ -71,6 +71,9 @@ class Bookmark(models.Model):
     tags        = models.TextField()
     create_date = models.DateTimeField(auto_now_add=True)
     update_date = models.DateTimeField(auto_now=True)
+    
+    def __str__(self):
+        return str(self.no)
 
 # 유저의 북마크 저장 정보
 class Bookmark_Of_Customer(models.Model):
@@ -84,7 +87,7 @@ class Bookmark_Of_Customer(models.Model):
     save_path_at_chrome = 크롬에서 북마크가 저장되는 경로
     save_path_at_ours   = 우리 플랫폼에서 북마크가 저장되는 경로
     '''
-    customer_id         = models.CharField(max_length=50, primary_key=True)
+    customer_id         = models.CharField(max_length=50)
     bookmark_no         = models.IntegerField(primary_key=True)
     tags                = models.TextField()
     name                = models.CharField(max_length=50)
