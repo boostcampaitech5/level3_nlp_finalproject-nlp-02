@@ -50,7 +50,9 @@ class Dataloader(pl.LightningDataModule):
 
         self.train_dataset = None
         self.val_dataset = None
-        self.predict_dataset = None
+        
+        predict = self.preprocessing(self.predict_df)
+        self.predict_dataset = Dataset(predict)
 
     def tokenizing(self, x, train=False):
         
@@ -66,10 +68,10 @@ class Dataloader(pl.LightningDataModule):
         instruction = '다음의 블로그 글에 어울리는 태그 5개를 생성하시오. 태그의 형식은 다음과 같음. [#영어(한글), #영어(한글), #영어(한글), #영어(한글), #영어(한글)]'
         x['instruction'] = instruction
         
-        if self.CFG['prompts'] == 'topic_title_summarize':
+        if self.CFG['train']['prompts'] == 'topic_title_summarize':
             prompts_list = [f"### Instruction(명령어):\n{row['instruction']}\n\n### Input(입력):\n주제는 [{row['small_topic']}], 제목은 [{row['title']}], 한 줄 요약은 [{row['summarize']}]이다.\n\n### Response(응답): " for _ , row in x.iterrows()]
             
-        elif self.CFG['prompts'] == 'topic_title_context':
+        elif self.CFG['train']['prompts'] == 'topic_title_context':
             prompts_list = [f"### Instruction(명령어):\n{row['instruction']}\n\n### Input(입력):\n주제는 [{row['small_topic']}], 제목은 [{row['title']}], 본문은 [{row['context']}]이다.\n\n### Response(응답): \n" for _ , row in x.iterrows()]
         
         else:
@@ -131,7 +133,6 @@ class Dataloader(pl.LightningDataModule):
         if stage == 'fit':
             # 학습 데이터 준비
             train, val = self.preprocessing(self.train_valid_df, train=True)
-            breakpoint()
             self.train_dataset = Dataset(train, train=True)
             self.val_dataset = Dataset(val, train=True)
         else:

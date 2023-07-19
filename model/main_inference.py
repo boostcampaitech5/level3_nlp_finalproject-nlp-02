@@ -1,12 +1,13 @@
 # FOR LORA ONLY
 
 import torch
+import gc
 import pandas as pd
 import matplotlib.pyplot as plt
 import yaml
 import pytorch_lightning as pl
 
-from transformers import AutoTokenizer, AutoModel, pipeline, AutoModelForCausalLM
+from transformers import AutoTokenizer, AutoModelForCausalLM
 from nltk.translate.bleu_score import sentence_bleu
 from tqdm.auto import tqdm
 from peft import PeftModel, PeftConfig
@@ -29,6 +30,8 @@ if __name__ == "__main__":
     model = PeftModel.from_pretrained(base_model, CFG['inference']['model_path'])
     tokenizer = AutoTokenizer.from_pretrained(LORA_CONFIG.base_model_name_or_path)
     
+    breakpoint()
+    
     model = model.to('cuda')
     model.eval()
     
@@ -39,16 +42,34 @@ if __name__ == "__main__":
     reference_tags = []
     
     for sample, tags in tqdm(dataloader.predict_dataset):
-        inputs = tokenizer(sample, return_tensors="pt")
-        prompt_len = len(inputs['input_ids'])
+        inputs = tokenizer(sample, max_length=CFG['train']['token_max_len'], return_tensors="pt")
+        prompt_len = len(inputs['input_ids'][0])
         
         with torch.no_grad():
-            outputs = model.generate(input_ids=inputs["input_ids"].to("cuda"), attention_mask = inputs['attention_mask'].to("cuda"), max_new_tokens=100)[prompt_len:]
+            outputs = None
             
-            generated_tags.append(tokenizer.batch_decode(outputs.detach().cpu().numpy(), skip_special_tokens=True)[0])
+            outputs = model.generate(input_ids=inputs["input_ids"].to("cuda"), attention_mask = inputs['attention_mask'].to("cuda"), max_new_tokens=100).detach().cpu().numpy()[0][prompt_len:]
+            
+            print(torch.cuda.memory_allocated())
+            print(torch.cuda.memory_reserved())
+            
+            del inputs
+            
+            gc.collect()
+            torch.cuda.empty_cache()
+            
+            generated_tags.append(''.join(tokenizer.batch_decode(outputs, skip_special_tokens=True)))
             reference_tags.append(tags)
+            
+            gc.collect()
+            torch.cuda.empty_cache()
+            
+            del outputs
+            
+            gc.collect()
+            torch.cuda.empty_cache()
             
     df = pd.DataFrame({'generated_tags' : generated_tags,
                        'reference_tags' : reference_tags})
     
-    df.to_csv(CFG['inference']['model_path'] + "_inference.csv", encoding = 'utf-8-sig')
+    df.to_csv(CFG['inference']['model_path'] + "/inference.csv", encoding = 'utf-8-sig')

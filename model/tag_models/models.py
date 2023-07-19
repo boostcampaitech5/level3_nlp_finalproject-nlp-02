@@ -70,7 +70,7 @@ class Model(pl.LightningModule):
         breakpoint()
         gened_list = []
         with torch.no_grad():
-            for i in x:            
+            for i in x:      
                 gened = self.LM.generate(**self.tokenizer(i, return_tensors='pt', return_token_type_ids=False), 
                                         max_new_tokens=256,
                                         early_stopping=True,
