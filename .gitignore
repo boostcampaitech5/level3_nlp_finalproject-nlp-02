@@ -3,6 +3,7 @@
 
 ### custom ###
 .empty
+.*
 data/datasets/*
 model/config/use_config/*
 
