@@ -1,0 +1,27 @@
+.tag {
+    padding: 10px;
+    border: 1px solid black;
+    margin: 5px;
+    display: inline-block;
+    cursor: pointer;
+    transition: font-size 0.3s ease;
+}
+
+.tag:hover {
+    font-size: 120%;
+}
+
+.selected-tag {
+    background-color: #7aacfc;
+}
+
+#selected-tags {
+    margin-top: 20px;
+    font-weight: bold;
+}
+
+.bookmark {
+    margin-top: 20px;
+    border: 1px solid #ddd;
+    padding: 10px;
+}
