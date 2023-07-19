@@ -4,6 +4,7 @@
 ### custom ###
 .empty
 .*
+data/datasets/*
 
 ### Django ###
 *.log
