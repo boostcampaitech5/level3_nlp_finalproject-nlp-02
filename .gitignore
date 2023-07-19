@@ -3,8 +3,9 @@
 
 ### custom ###
 .empty
+.*
 data/datasets/*
-model/config/use_config/*
+/opt/ml/level3_nlp_finalproject-nlp-02/web/ServicePage/Logo.png
 
 ### Django ###
 *.log
