@@ -13,6 +13,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from .models import UserInfo, Bookmarks, Bookmark, Bookmark_Of_Customer
 from .utils import *
+from .tag_inference import TagModel
 # from .serializers import PostSerializer
 
 # dl_model_path = '../../model/models/'
@@ -45,12 +46,20 @@ def inference(request):
         try:
             data = json.loads(request.body.decode('utf-8'))
             title = data['title']
+            content = data['content']
+            topics = None
+            summarized = None
 
             # 여기에서 title과 id를 원하는 방식으로 저장하면 됩니다.
             print("== data")
             print(data)
             print("== title")
             print(title)
+            print("== content")
+            print(content)
+            print("== Start Inferencing...")
+            
+            TagModel = TagModel(title = title, content = content)
 
             return JsonResponse({'success': True})
         except KeyError:
