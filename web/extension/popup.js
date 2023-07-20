@@ -312,26 +312,26 @@ document.addEventListener("DOMContentLoaded", function () {
 // }
 
 
-// app 버튼이 눌렸을 경우
-openAppPage.addEventListener("click", function () {
-  chrome.identity.getProfileUserInfo({'accountStatus':'ANY'}, function(userProfile) { 
-    const userName = userProfile.email.match(/^([^@]*)@/)[1];
+  // app 버튼이 눌렸을 경우
+  openAppPage.addEventListener("click", function () {
+    chrome.identity.getProfileUserInfo({'accountStatus':'ANY'}, function(userProfile) { 
+      const userName = userProfile.email.match(/^([^@]*)@/)[1];
 
-    userInfo = {'userId': userName, 'userEmail': userProfile['email']}
-    console.log("user info in popup: ", userInfo)
+      userInfo = {'userId': userName, 'userEmail': userProfile['email']}
+      console.log("user info in popup: ", userInfo)
 
-    simpleFetcher(SERVER_URL + '/SERVICE/user_info/', userInfo)
-      .then(responseData => {
-        if (responseData) {
-          console.log("Open app page is done!, ", responseData);
-          chrome.tabs.create({ url: SERVER_URL + '/SERVICE/test_for_search/'});
-        }
-        else {
-          console.log("fetcher error.");
-        }
-      })
+      simpleFetcher(SERVER_URL + '/SERVICE/user_info/', userInfo)
+        .then(responseData => {
+          if (responseData) {
+            console.log("Open app page is done!, ", responseData);
+            chrome.tabs.create({ url: SERVER_URL + '/SERVICE/test_for_search/'});
+          }
+          else {
+            console.log("fetcher error.");
+          }
+        })
+    });
   });
-});
 });
 
 // 심플한 fetch 함수 구현
