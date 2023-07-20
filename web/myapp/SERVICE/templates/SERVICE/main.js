@@ -55,7 +55,21 @@ window.onload = function() {
 
     function showSelectedTags() {
         var selectedTagsElement = document.getElementById('selected-tags');
-        selectedTagsElement.innerHTML = 'Selected tags: ' + Array.from(selectedTags).join(', ');
+        selectedTagsElement.innerHTML = ''; // Clear the previous content
+        // selectedTagsElement.innerHTML = 'Selected tags: ' + Array.from(selectedTags).join(', ');
+        // selectedTagsElement.innerHTML = Array.from(selectedTags)[0];
+        if (selectedTags.size === 0 ) {
+            selectedTagsElement.innerHTML = Array.from(selectedTags)
+          } else {
+            // selectedTagsElement.innerHTML = Array.from(selectedTags)
+            var selectedTagsArray = Array.from(selectedTags);
+            for (var i = 0; i < selectedTagsArray.length; i++) {
+                var blockElement = document.createElement('div');
+                blockElement.className = 'selected-tags-block';
+                blockElement.textContent = selectedTagsArray[i];
+                selectedTagsElement.appendChild(blockElement);
+              }
+          }
     }
 
     function showRows(){   
@@ -65,12 +79,14 @@ window.onload = function() {
         let html = '';
         for(const bookmark of data.bookmark_ids){
             html += '<tr>';
-            html += '<td>'+bookmark.title+'</td>';
-            html += '<td>'+'<a href="http://' + bookmark.url + '">' + bookmark.url + '</a>'+'</td>';
+            html += '<td>'+'<a href="http://' + bookmark.url + '">' + bookmark.title + '</a>'+'</td>';
+            html += '<td>'+bookmark.tags+'</td>';
             html += '<td>'+bookmark.tags+'</td>';
             html += '</tr>';
             }
         dynamicTbody.innerHTML = html;
+
+        
     }
     function showSelectedRows() {
         const rows = document.getElementById("bookmarks_whole").querySelectorAll('tr');
