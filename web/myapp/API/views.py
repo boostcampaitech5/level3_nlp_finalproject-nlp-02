@@ -60,6 +60,7 @@ def inference(request):
             print("== Start Inferencing...")
             
             TagModel = TagModel(title = title, content = content)
+            tags_result = TagModel.inference()
 
             return JsonResponse({'success': True})
         except KeyError:
