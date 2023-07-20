@@ -147,21 +147,28 @@ input:valid ~ span::after {
     border-radius: 5px;
     border: 0;
     background-color: rgb(248, 248, 248) ;
+    
 }
 
-.content3 .url_box .url_element{
-    /* position: absolute; */
-    width: 100%;
-    height: 40px;
-    /* position: absolute;
-	top: 20px; */
-    /* padding-top:20%; */
-    border-radius: 5px;
-    border: 0;
-    margin: 5px;
-    background-color: rgb(209, 208, 208) ;
-
-}
+#bookmarks_whole {
+    width: 100%; /* Set the width to 100% to fill the available space */
+    table-layout: fixed; /* Fix the table layout */
+    box-sizing: border-box;
+  }
+  
+#bookmarks_whole th,
+#bookmarks_whole td {
+    padding: 8px; /* Add padding to the table cells for spacing */
+    border: 1px solid #ccc; /* Add a border to the table cells */
+    text-align: left; /* Align the text to the left in the cells */
+  }
+  
+  /* Add some styles for the table header (optional) */
+#bookmarks_whole th {
+    background-color: #ec2b2b; /* Set a background color for the table header */
+    font-weight: bold; /* Make the table header text bold */
+  }
+  
 
 .footer{
     /* position: absolute;

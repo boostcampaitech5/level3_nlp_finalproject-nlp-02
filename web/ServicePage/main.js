@@ -31,6 +31,9 @@ window.onload = function() {
     tags = Array.from(tags).sort();
 
     var tagsElement = document.getElementById('tags');
+    
+    showRows()
+
     tags.forEach(tag => {
         var tagElement = document.createElement('div');
         tagElement.textContent = tag;
@@ -44,7 +47,8 @@ window.onload = function() {
                 this.classList.add('selected-tag');
             }
             showSelectedTags();
-            showBookmarks();
+            // showBookmarks();
+            showSelectedRows();
         };
         tagsElement.appendChild(tagElement);
     });
@@ -54,20 +58,29 @@ window.onload = function() {
         selectedTagsElement.innerHTML = 'Selected tags: ' + Array.from(selectedTags).join(', ');
     }
 
-    function showBookmarks() {
-        var bookmarksElement = document.getElementById('bookmarks');
-        bookmarksElement.innerHTML = '';
-        data.bookmark_ids.forEach(bookmark => {
-            var bookmarkTags = bookmark.tags.split(',').map(tag => tag.trim());
-            for (let i = 0; i < bookmarkTags.length; i++) {
-                if (selectedTags.has(bookmarkTags[i])) {
-                    var bookmarkElement = document.createElement('div');
-                    bookmarkElement.className = 'bookmark';
-                    bookmarkElement.innerHTML = '<h2>' + bookmark.title + '</h2><a href="http://' + bookmark.url + '">' + bookmark.url + '</a>';
-                    bookmarksElement.appendChild(bookmarkElement);
-                    break;
-                }
+    function showRows(){   
+        // selectedTags
+        // var table = document.getElementById('bookmarks_whole')
+        const dynamicTbody = document.getElementById("bookmarks_whole");
+        let html = '';
+        for(const bookmark of data.bookmark_ids){
+            html += '<tr>';
+            html += '<td>'+bookmark.title+'</td>';
+            html += '<td>'+'<a href="http://' + bookmark.url + '">' + bookmark.url + '</a>'+'</td>';
+            html += '<td>'+bookmark.tags+'</td>';
+            html += '</tr>';
             }
-        });
+        dynamicTbody.innerHTML = html;
+    }
+    function showSelectedRows() {
+        const rows = document.getElementById("bookmarks_whole").querySelectorAll('tr');
+        for (const row of rows) {
+            const bookmarkTags = row.cells[2].textContent.split(',').map(tag => tag.trim());
+            if (selectedTags.size === 0 || bookmarkTags.some(tag => selectedTags.has(tag))) {
+              row.style.display = '';
+            } else {
+              row.style.display = 'none';
+            }
+        }
     }
 }
