@@ -3,8 +3,13 @@
 
 ### custom ###
 .empty
+data/datasets*
+data/Tistory*
+model/config/use_config.yaml
+model/results/*
+model/dataset
+test.ipynb
 .*
-data/datasets/*
 
 ### Django ###
 *.log
