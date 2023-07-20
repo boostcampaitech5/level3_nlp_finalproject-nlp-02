@@ -3,20 +3,21 @@ import sys
 import json
 import logging
 
-from django.shortcuts import render
-from django.http import HttpResponse, JsonResponse
+from django.shortcuts import render, redirect
+from django.http import HttpResponse, JsonResponse, Http404
 from django.views.decorators.csrf import csrf_exempt
 from django.core.exceptions import ObjectDoesNotExist
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
-from .models import UserInfo, Bookmarks
+
+from .models import Customer, Bookmark, Bookmark_Of_Customer
 from .utils import *
-from .serializers import PostSerializer
+# from .serializers import PostSerializer
 
 # dl_model_path = '../../model/models/'
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..', '..', 'model'))
-from models.tagging_model import get_tag_from_model
+# from models.tagging_model import get_tag_from_model
 
 logger = logging.getLogger(__name__)
 
@@ -147,3 +148,46 @@ def get_api(request):
     
     return JsonResponse({'sucess': True, 'data': 'its from server'})
     # return HttpResponse("get 호출됨")
+
+def test_create_data(request):
+    customer_columns = ["id", "email", "pwd", "name", "birth"]
+    bookmark_columns = ["url", "title", "content", "summarize", 
+                        "reference", "topic", "tags"]
+    bookmark_of_cusomter_columns = ["customer_id", "bookmark_no", "tags", "name"
+                                    "save_path_at_chrome", "save_path_at_ours"]
+
+    bookmark_sample = [
+        ['http://test1.com', '테스트1', '테스트1', '테스트1', '네이버', '테스트 데이터', '테스트, 테스트, 테스트, 테스트, 테스트'],
+        ['http://test2.com', '테스트2', '테스트2', '테스트2', '네이버', '테스트 데이터', '테스트, 테스트, 테스트, 테스트, 테스트'],
+        ['http://test3.com', '테스트3', '테스트3', '테스트3', '네이버', '테스트 데이터', '테스트, 테스트, 테스트, 테스트, 테스트'],
+        ['http://test4.com', '테스트4', '테스트4', '테스트4', '네이버', '테스트 데이터', '테스트, 테스트, 테스트, 테스트, 테스트'],
+        ['http://test5.com', '테스트5', '테스트5', '테스트5', '네이버', '테스트 데이터', '테스트, 테스트, 테스트, 테스트, 테스트'],
+    ]
+
+    bookmark_of_cusomter_sample = [
+        
+    ]
+
+    Bookmark.objects.create(**datas)
+
+    return HttpResponse("데이터 생성 완료")
+
+@api_view(['POST'])
+def get_my_date(request):
+    '''
+    Extensions에서 id와 email을 POST로 받아와
+    처음 접속이라면 테이블 customer에 유저 정보를 저장하고
+    해당 유저에 대한 bookmark 정보를 response로 보내줌
+    '''
+    if request.method == 'POST':
+        data = json.loads(request.body.decode('utf-8'))
+
+        # 처음 접속했다면 테이블 customer에 저장
+        
+
+        # 해당 유저에 대한 bookmark 정보 가져오기
+        bookmark_of_customer = Bookmark_Of_Customer.objects.filter(customer_id=data[0]['id'])
+
+        return redirect()
+    else:
+        raise Http404("Question does not exist") 
