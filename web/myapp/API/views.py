@@ -2,6 +2,7 @@ import os
 import sys
 import json
 import logging
+import pickle
 
 from django.shortcuts import render, redirect
 from django.http import HttpResponse, JsonResponse, Http404
@@ -151,11 +152,9 @@ def get_api(request):
 
 def test_create_data(request):
     customer_columns = ["id", "email", "pwd", "name", "birth"]
-    bookmark_columns = ["url", "title", "content", "summarize", 
-                        "reference", "topic", "tags"]
-    bookmark_of_cusomter_columns = ["customer_id", "bookmark_no", "tags", "name"
-                                    "save_path_at_chrome", "save_path_at_ours"]
 
+    # 북마크 샘플 데이터 생성
+    bookmark_columns = ["url", "title", "content", "summarize", "reference", "topic", "tags"]
     bookmark_sample = [
         ['http://test1.com', '테스트1', '테스트1', '테스트1', '네이버', '테스트 데이터', '테스트, 테스트, 테스트, 테스트, 테스트'],
         ['http://test2.com', '테스트2', '테스트2', '테스트2', '네이버', '테스트 데이터', '테스트, 테스트, 테스트, 테스트, 테스트'],
@@ -163,31 +162,61 @@ def test_create_data(request):
         ['http://test4.com', '테스트4', '테스트4', '테스트4', '네이버', '테스트 데이터', '테스트, 테스트, 테스트, 테스트, 테스트'],
         ['http://test5.com', '테스트5', '테스트5', '테스트5', '네이버', '테스트 데이터', '테스트, 테스트, 테스트, 테스트, 테스트'],
     ]
-
+    for row in range(len(bookmark_sample)):
+        sample = {
+            bookmark_columns[idx]: bookmark_sample[row][idx] for idx in range(len(bookmark_columns))
+        }
+        Bookmark.objects.create(**sample)
+    
+    # 유저별 북마크 샘플 데이터 생성
+    bookmark_of_cusomter_columns = ["customer_id", "bookmark_no", "tags", "name", "save_path_at_chrome", "save_path_at_ours"]
     bookmark_of_cusomter_sample = [
-        
+        ["114044069688253754526", 1, bookmark_sample[1][6], bookmark_sample[1][1], '', ''],
+        ["114044069688253754526", 3, bookmark_sample[2][6], bookmark_sample[2][1], '', ''],
+        ["114044069688253754526", 5, bookmark_sample[4][6], bookmark_sample[4][1], '', ''],
     ]
-
-    Bookmark.objects.create(**datas)
+    for row in range(len(bookmark_of_cusomter_sample)):
+        sample = {
+            bookmark_of_cusomter_columns[idx]: bookmark_of_cusomter_sample[row][idx] for idx in range(len(bookmark_of_cusomter_columns))
+        }
+        Bookmark_Of_Customer.objects.create(**sample)
 
     return HttpResponse("데이터 생성 완료")
 
-@api_view(['POST'])
+@api_view(['POST', 'GET'])
 def get_my_date(request):
     '''
     Extensions에서 id와 email을 POST로 받아와
     처음 접속이라면 테이블 customer에 유저 정보를 저장하고
     해당 유저에 대한 bookmark 정보를 response로 보내줌
     '''
-    if request.method == 'POST':
-        data = json.loads(request.body.decode('utf-8'))
+    if request.method == 'GET':
+        # data = json.loads(request.body.decode('utf-8'))
 
         # 처음 접속했다면 테이블 customer에 저장
-        
+        # code
 
         # 해당 유저에 대한 bookmark 정보 가져오기
-        bookmark_of_customer = Bookmark_Of_Customer.objects.filter(customer_id=data[0]['id'])
+        # table_bookmark_of_customer = Bookmark_Of_Customer.objects.filter(customer_id=data['id'])
+        table_bookmark_of_customer = Bookmark_Of_Customer.objects.filter(customer_id=request.GET['id']) # test
+        talbe_bookmark = Bookmark.objects.filter(no__in=table_bookmark_of_customer)
+        
+        # 데이터를 리스트 data에 저장
+        datas = []
+        for bookmark_of_customer_row, bookmark_row  in zip(table_bookmark_of_customer, talbe_bookmark):
+            data = {
+                "name": bookmark_of_customer_row.name, "tags": bookmark_of_customer_row.tags,
+                "save_path_at_outs": bookmark_of_customer_row.save_path_at_ours,
+                "url": bookmark_row.url, "summarize": bookmark_row.summarize, "topic": bookmark_row.topic,
+            }
 
-        return redirect()
+            datas.append(data)
+        
+        # dict to json
+        # data_json = json.dumps({datas})
+        # 세션에 bookmarks 데이터 저장
+        request.session['my_data'] = datas
+
+        return redirect('http://nlp02.duckdns.org:30006/SERVICE/')
     else:
         raise Http404("Question does not exist") 
