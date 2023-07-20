@@ -4,6 +4,7 @@ import torch
 import yaml
 import pandas as pd
 import pytorch_lightning as pl
+import re
 
 from sklearn.model_selection import train_test_split
 from torch.utils.data import Dataset, DataLoader
@@ -57,22 +58,28 @@ class Dataloader(pl.LightningDataModule):
     def tokenizing(self, x, train=False):
         
         """ 
-        데이터셋 구축 후 구현 예정
-
         Arguments:
         x: pd.DataFrame
 
         Returns:
         inputs: Dict({'input_ids', 'attention_mask', 'labels', ...}), 각 tensor(num_data, max_length)
         """
+        
         instruction = '다음의 블로그 글에 어울리는 태그 5개를 생성하시오. 태그의 형식은 다음과 같음. [#영어(한글), #영어(한글), #영어(한글), #영어(한글), #영어(한글)]'
         x['instruction'] = instruction
+        
+        x['context'] = x['context'].apply(lambda x: x.replace(u"\u200b", u""))
+        x['context'] = x['context'].apply(lambda sample: re.sub('\s+', ' ', sample))
+        x['context'] = x['context'].apply(lambda sample: re.sub('https://.*?\s', '[LINK]', sample))
         
         if self.CFG['train']['prompts'] == 'topic_title_summarize':
             prompts_list = [f"### Instruction(명령어):\n{row['instruction']}\n\n### Input(입력):\n주제는 [{row['small_topic']}], 제목은 [{row['title']}], 한 줄 요약은 [{row['summarize']}]이다.\n\n### Response(응답): " for _ , row in x.iterrows()]
             
         elif self.CFG['train']['prompts'] == 'topic_title_context':
             prompts_list = [f"### Instruction(명령어):\n{row['instruction']}\n\n### Input(입력):\n주제는 [{row['small_topic']}], 제목은 [{row['title']}], 본문은 [{row['context']}]이다.\n\n### Response(응답): \n" for _ , row in x.iterrows()]
+        
+        elif self.CFG['train']['prompts'] == 'title_context':
+            prompts_list = [f"### Instruction(명령어):\n{row['instruction']}\n\n### Input(입력):\n제목은 [{row['title']}], 본문은 [{row['context']}]이다.\n\n### Response(응답): \n" for _ , row in x.iterrows()]
         
         else:
             raise ValueError('unappropriate prompts')
