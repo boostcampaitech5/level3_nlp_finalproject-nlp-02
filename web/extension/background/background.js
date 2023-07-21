@@ -16,10 +16,10 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     let pageInfo = request.pageInfo;
 
     chrome.identity.getProfileUserInfo({'accountStatus':'ANY'}, function(userProfile) { 
-      const userName = userProfile.email.match(/^([^@]*)@/)[1];
+      // const userName = userProfile.email.match(/^([^@]*)@/)[1];
 
       // Merge pageInfo and userInfo into totalInfo
-      userInfo = {'userId': userName, 'userEmail': userProfile['email']}
+      userInfo = {'customer_id': userProfile['id'], 'userEmail': userProfile['email']}
       const totalInfo = Object.assign(pageInfo, userInfo);
       console.log(totalInfo)
       console.log(typeof totalInfo)
