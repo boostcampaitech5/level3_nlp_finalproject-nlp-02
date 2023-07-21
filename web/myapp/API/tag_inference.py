@@ -34,7 +34,7 @@ class TagModel:
         model = model.to('cuda')
         model.eval()
         
-        inputs = tokenizer(f"Instruction(명령어):\n'다음의 블로그 글에 어울리는 태그 5개를 생성하시오. 태그의 형식은 다음과 같음. [#영어(한글), #영어(한글), #영어(한글), #영어(한글), #영어(한글)]'\n\n### Input(입력):\n주제는 {self.topics}, 제목은 {self.title}, 본문은 {self.content}이다.\n\n### Response(응답): ", return_tensors="pt")
+        inputs = tokenizer(f"Instruction(명령어):\n'다음의 블로그 글에 어울리는 태그 5개를 생성하시오. 태그의 형식은 다음과 같음. [#영어(한글), #영어(한글), #영어(한글), #영어(한글), #영어(한글)]'\n\n### Input(입력):\n주제는 [{self.topics}], 제목은 [{self.title}], 본문은 [{self.content}]이다.\n\n### Response(응답): ", return_tensors="pt")
 
         with torch.no_grad():
             outputs = model.generate(input_ids=inputs["input_ids"].to("cuda"),
