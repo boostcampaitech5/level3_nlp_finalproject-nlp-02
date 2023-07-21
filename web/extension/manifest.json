@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
-  "name": "SpeedWagon",
-  "version": "0.3",
+  "name": "TagMyBookmark",
+  "version": "0.5",
   "description": "Automatically tags your pages",
   "permissions": [
     "bookmarks",
@@ -10,9 +10,7 @@
     "storage",
     "scripting",
     "identity.email",
-    "identity",
-    "offscreen",
-    "scripting"
+    "identity"
   ],
   "background": {
     "service_worker": "background/background.js"
