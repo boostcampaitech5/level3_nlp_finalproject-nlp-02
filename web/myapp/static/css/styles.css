@@ -203,3 +203,60 @@ input:valid ~ span::after {
     height:50px;
     background: rgba(230,228,228,1);
 }
+
+
+
+
+/* Modal Styles */
+.modal {
+    display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 1; /* Sit on top */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgba(0, 0, 0, 0.4); /* Black background with opacity */
+  }
+  
+.modal-content {
+    background-color: #fefefe;
+    margin: 15% auto; /* 15% from the top and centered */
+    padding: 100px;
+    border: 1px solid #888;
+    width: 80%; /* Could be modified as needed */
+  }
+  
+.close {
+    color: #aaaaaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+  }
+  
+.close:hover,
+.close:focus {
+    color: #000;
+    text-decoration: none;
+    cursor: pointer;
+  }
+  
+  /* Button Styles (You can adjust this as needed) */
+button.modal-btn {
+    background-color: #c2c2c2;
+    color: white;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+button.modal-btn:hover {
+    background-color: #797979;
+    }
+
+.show-modal {
+    display: block;
+    }

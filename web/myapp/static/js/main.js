@@ -49,11 +49,25 @@ window.onload = function() {
                 this.classList.add('selected-tag');
             }
             showSelectedTags();
-            // showBookmarks();
             showSelectedRows();
         };
         tagsElement.appendChild(tagElement);
     });
+    document.getElementById('input-tag').addEventListener('change', function() {
+        showInput();
+    });
+    
+    function showInput() {
+        var inputElement = document.getElementById('input-tag');
+        var outputElement = document.getElementById('tag-output');
+        // var newTag = inputTag.value.trim();
+        var inputValue = inputElement.value.trim();
+        outputElement.textContent = "입력된 내용: " + inputValue;
+        if (inputValue !== '') {
+            selectedTags.add(inputValue);
+        }
+        // selectedTags.add(newTag);
+    }
 
     function showSelectedTags() {
         var selectedTagsElement = document.getElementById('selected-tags');
@@ -83,7 +97,7 @@ window.onload = function() {
             html += '<tr>';
             html += '<td>'+'<a href="http://' + bookmark.url + '">' + bookmark.title + '</a>'+'</td>';
             html += '<td>'+bookmark.tags+'</td>';
-            html += '<td>'+bookmark.tags+'</td>';
+            html += '<td>'+ '' + '</td>';
             html += '</tr>';
             }
         dynamicTbody.innerHTML = html;
@@ -93,12 +107,69 @@ window.onload = function() {
     function showSelectedRows() {
         const rows = document.getElementById("bookmarks_whole").querySelectorAll('tr');
         for (const row of rows) {
-            const bookmarkTags = row.cells[2].textContent.split(',').map(tag => tag.trim());
+            const bookmarkTags = row.cells[1].textContent.split(',').map(tag => tag.trim());
             if (selectedTags.size === 0 || bookmarkTags.some(tag => selectedTags.has(tag))) {
               row.style.display = '';
             } else {
               row.style.display = 'none';
             }
         }
+    }
+
+    // Function to show the modal
+    function showModal() {
+        var modal = document.getElementById('myModal');
+        modal.style.display = 'block';
+
+        // 바뀐 부분
+        var bookmarkInfoElement = document.getElementById('bookmark-info');
+        bookmarkInfoElement.innerHTML = ''; // Clear previous content
+
+        // Get the bookmark data for the clicked row
+        var row = this.parentNode.parentNode;
+        var bookmarkTitle = row.cells[0].querySelector('a').textContent;
+        var bookmarkURL = row.cells[0].querySelector('a').href;
+        var bookmarkTags = row.cells[1].textContent;
+
+        // Create p elements to show bookmark information
+        var titleElement = document.createElement('p');
+        titleElement.textContent = 'Title: ' + bookmarkTitle;
+
+        var urlElement = document.createElement('p');
+        urlElement.textContent = 'URL: ' + bookmarkURL;
+
+        var tagsElement = document.createElement('p');
+        tagsElement.textContent = 'Tags: ' + bookmarkTags;
+
+        // Append the p elements to the bookmark-info div
+        bookmarkInfoElement.appendChild(titleElement);
+        bookmarkInfoElement.appendChild(urlElement);
+        bookmarkInfoElement.appendChild(tagsElement);
+
+        
+      
+    }
+  
+
+
+    // Add event listener to the button in each row
+    var rows = document.getElementById('bookmarks_whole').querySelectorAll('tr');
+    rows.forEach(row => {
+        var button = document.createElement('button');
+        button.textContent = '>';
+        button.className = 'modal-btn';
+        button.onclick = showModal;
+        row.cells[2].appendChild(button);
+    });
+
+    // Add event listener to the close button in the modal
+    var closeBtn = document.getElementsByClassName('close')[0];
+    // closeBtn.addEventListener('click', closeModal);
+    closeBtn.onclick = closeModal;
+
+        // Function to close the modal
+    function closeModal() {
+        var modal = document.getElementById('myModal');
+        modal.style.display = 'none';
     }
 }

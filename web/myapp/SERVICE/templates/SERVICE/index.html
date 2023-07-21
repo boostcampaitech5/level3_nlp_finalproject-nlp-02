@@ -40,18 +40,12 @@
           <!-- <div class="flexible-textbox"></div> -->
           <!-- <label for="site-search">Search the tag:</label> -->
           <input 
-            type="search" 
-            class="flexible-textbox" 
-            placeholder="태그를 입력해 주세요"
-            />
+            type="text" class="flexible-textbox" id = 'input-tag'  placeholder="태그를 입력해 주세요" 
+          />
           <img src="https://s3.ap-northeast-2.amazonaws.com/cdn.wecode.co.kr/icon/search.png">
           <!-- <button><span class="material-symbols-outlined">manage_search</span></button></button> -->
           <span class="validity"></span>
           <div id="tags"></div>
-          <div class="tag_box">
-            <!-- <div id="tags"> -->
-                
-          </div>
   
         </div>  
         <div class="content2">
@@ -79,10 +73,21 @@
         </div>  
        
       </div>
-      
+      <!-- Modal -->
+      <div id="myModal" class="modal" style="display:hidden">
+        <!-- <div class="modal-title">Add label name</div> -->
+        <div class="modal-content">
+          <div id="bookmark-info">
+            <!-- 북마크 정보를 여기에 동적으로 추가할 예정 -->
+          </div>
+          <span class="close">&times;</span>
+          <!-- Content of the modal goes here -->
+        </div>
+        
+      </div>
   
       <div class="footer">
-        
+        <div id="tag-output"></div>
       </div>
 
 </body>
