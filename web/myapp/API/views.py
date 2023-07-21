@@ -17,9 +17,7 @@ from .utils import *
 # from .serializers import PostSerializer
 
 # dl_model_path = '../../model/models/'
-
-# sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..', '..', 'model'))
-
+sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..', '..', 'model'))
 # from models.tagging_model import get_tag_from_model
 
 logger = logging.getLogger(__name__)
@@ -186,7 +184,7 @@ def test_create_data(request):
     return HttpResponse("데이터 생성 완료")
 
 @api_view(['POST', 'GET'])
-def get_my_date(request):
+def get_my_data(request):
     '''
     Extensions에서 id와 email을 POST로 받아와
     처음 접속이라면 테이블 customer에 유저 정보를 저장하고
