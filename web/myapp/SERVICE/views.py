@@ -3,7 +3,7 @@ import json
 from django.shortcuts import render
 from django.http import HttpResponse, JsonResponse
 from rest_framework.decorators import api_view
-from API.models import UserInfo, Bookmarks
+from API.models import UserInfo, Bookmarks, Bookmark, Bookmark_Of_Customer
 from django.contrib.sessions.models import Session
 
 
@@ -17,9 +17,9 @@ def user_info(request):
         print("GET in user_info requested!")
         data = json.loads(request.body.decode('utf-8'))
         
-        suser_id = data['userId']
+        suser_id = data['customer_id']
         suser_email = data['userEmail']
-        request.session['userId'] = data['userId']
+        request.session['customer_id'] = data['customer_id']
         request.session['userEmail'] = data['userEmail']
         
         print(suser_id, suser_email)
@@ -42,26 +42,48 @@ def search_tags(request):
         
         # 유저 정보 획득: 새 탭이 열릴때 획득.
         
+        ####
+        # input_data split
+        input_tags = [tag.strip() for tag in input_data.split(',') if tag.strip()]
+        print("input_tags: ", input_tags)
         # 유저 북마크 정보만 검색
-        suser_bookmark = Bookmarks.objects.filter(userId=request.session['userId'])
+        suser = Bookmark_Of_Customer.objects.filter(customer_id=request.session['customer_id'])
         
-        # title 및 태그 검색
-        filtered_title = suser_bookmark.filter(title=input_data)
-        filtered_tag = suser_bookmark.filter(tag=input_data)
-        
-        # 출력
-        title_url_list = [value.url for value in filtered_title]
-        tag_url_list = [value.url for value in filtered_tag]
-        title_title_list = [value.bookmarkTitle for value in filtered_title]
-        title_tag_list = [value.bookmarkTitle for value in filtered_tag]
+        # 이제 여기서 북마크 정보들을 가지고, Bookmark에서 필터링이 필요.
+        suser_bookmark = Bookmark.objects.filter(no__in=suser)
+        suser_bookmark_with_tags = suser_bookmark.filter(tags__icontains=input_tags[0])
 
-        filtered_data = {
-            'data': input_data,
-            'url': title_url_list + tag_url_list,
-            'title': title_title_list + title_tag_list,
-        }
+        print("suser: ", suser)
+        print("suser_bookmark: ", suser_bookmark)
+        print("suser_bookmark_with_tags: ", suser_bookmark_with_tags)
         
-        return render(request, 'test_for_search.html', filtered_data)
+        return_url = [[item.url] for item in suser_bookmark_with_tags]
+        return_tags = [[item.tags] for item in suser_bookmark_with_tags]
+        print("tags: ", return_tags)
+        filtered_data = {item.url:item.tags for item in suser_bookmark_with_tags}
+        # filtered_data['data'] = input_tags
+        # filtered_data['url'] = True
+        
+        print("filtered_data: ", filtered_data)
+        ####
+        # # title 및 태그 검색
+        # filtered_title = suser_bookmark.filter(title=input_data)
+        # filtered_tag = suser_bookmark.filter(tag=input_data)
+        
+        # # 출력
+        # title_url_list = [value.url for value in filtered_title]
+        # tag_url_list = [value.url for value in filtered_tag]
+        # title_title_list = [value.bookmarkTitle for value in filtered_title]
+        # title_tag_list = [value.bookmarkTitle for value in filtered_tag]
+
+        # filtered_data = {
+        #     'data': input_data,
+        #     'url': title_url_list + tag_url_list,
+        #     'title': title_title_list + title_tag_list,
+        # }
+        
+        return render(request, 'test_for_search.html', {'filtered_data': filtered_data})
+        # return JsonResponse({'success': True}, status=200)
     
     # new tab을 띄우라는 크롬 익스텐션의 요청에 따른 함수
     elif request.method == 'GET':

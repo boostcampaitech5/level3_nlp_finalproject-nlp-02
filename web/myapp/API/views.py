@@ -17,8 +17,8 @@ from .tag_inference import TagModel
 # from .serializers import PostSerializer
 
 # dl_model_path = '../../model/models/'
-# sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..', '..', 'model'))
-# from models.tagging_model import get_tag_from_model
+sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..', '..', 'model'))
+from models.tagging_model import get_tag_from_model
 
 logger = logging.getLogger(__name__)
 
@@ -128,11 +128,18 @@ def get_api(request):
     return JsonResponse({'sucess': True, 'data': 'its from server'})
     # return HttpResponse("get 호출됨")    
     
-    
+
 def save_single_bookmark(data):
+    """
+    Note:
+        단일 북마크 정보를 저장합니다. (Bookmark, Bookmark_Of_Customer)
+        'def post_api(request)' 의 Note 동작 시퀀스의 구현입니다.
+         
+    Args:
+        data: dict 형태로 들어오며, Bookmark와 Bookmark_Of_Customer에 저장할 내용들을 고루 가지고 있습니다.
+    """
     # 기존 북마크 table search
     url_result = Bookmark.objects.filter(url=data['url'])
-
     try:
         url_no = url_result[0].no
         
@@ -145,7 +152,7 @@ def save_single_bookmark(data):
             'summarize': "",
             'reference': "",
             'topic': "",
-            'tags': "",
+            'tags': get_tag_from_model(data['content']),
             # 'create_date': ,
             # 'update_date': ,
         }

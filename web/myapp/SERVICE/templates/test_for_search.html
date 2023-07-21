@@ -4,10 +4,10 @@
     <input type="text" name="tag" placeholder="Enter your input">
     <button id="send-button">enter</button>
 </form>
-{% if data %}
-    <p>The input data is: {{ data }}</p>
-    <p>with input, searched bookmark: {{ url }}  {{ title }}</p>
-{% endif %}
+<p>The input data is: {{ data }}</p>
+{% for url, tags in filtered_data.items %}
+    <p>URL: {{ url }}   TAGS: {{ tags }} </p>
+{% endfor %}
 
 <script src="your_script.js"></script>
 
