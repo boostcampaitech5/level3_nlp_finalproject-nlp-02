@@ -19,6 +19,8 @@ window.onload = function() {
         ]
     };
 
+    console.log(userBookmark)
+
     var tags = new Set();
     var selectedTags = new Set();
 
