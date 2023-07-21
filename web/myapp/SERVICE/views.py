@@ -3,4 +3,6 @@ from django.http import HttpResponse
 
 
 def index(request):
-    return HttpResponse("SERVICE 앱의 index 테스트 성공")
+    user_bookmark = request.session['my_data'] # response 형식의 데이터를 return
+
+    return render(request, 'html/index.html', {'user_bookmark': user_bookmark})
