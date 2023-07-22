@@ -58,32 +58,33 @@ window.onload = function() {
     });
     
     function showInput() {
-        
         var inputElement = document.getElementById('input-tag');
         var outputElement = document.getElementById('tag-output');
         var inputValue = inputElement.value.trim();
         outputElement.textContent = "입력된 내용: " + inputValue;
-
+    
         if (inputValue !== '') {
             if (tags.indexOf(inputValue) !== -1) {
                 if (!selectedTags.has(inputValue)){
                     selectedTags.add(inputValue);
-
-                    // var tagElement = document.createElement('div');
-                    // tagElement.className = 'tag selected-tag';
-                    // tagElement.textContent = inputValue;
-                    // // tagElement.classList.add('selected-tag');
-                    // // inputElement.classList.add('selected-tag');
-                    // tagsElement.appendChild(tagElement);
+    
+                    // find the corresponding tag in the UI and add the 'selected-tag' class
+                    var tagElements = Array.from(document.querySelectorAll('#tags .tag'));
+                    var tagElement = tagElements.find(element => element.textContent === inputValue);
+                    if (tagElement) {
+                        tagElement.classList.add('selected-tag');
+                    }
+    
                     showSelectedTags();
                     showSelectedRows();
                 }
-            }else{}
+            }
         }
-
+    
         // Clear the input after adding the tag
         inputElement.value = '';
     }
+    
 
     function showSelectedTags() {
         var selectedTagsElement = document.getElementById('selected-tags');
