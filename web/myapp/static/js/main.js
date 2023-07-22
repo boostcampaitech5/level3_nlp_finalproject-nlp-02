@@ -156,16 +156,20 @@ window.onload = function() {
         urlElement.innerHTML = 'URL: <a href="' + bookmarkURL + '" target="_blank">' + bookmarkURL + '</a>';
 
         var tagsElement = document.createElement('p');
-        tagsElement.textContent = 'Tags: ' + bookmarkTags;
-
-        var tmp = document.createElement('p');
-        tmp.innerHTML = '<span class="tags">x &times;</span>';
+        tagsElement.className = 'tags-block-container';
+        var tagsArray_modal = bookmarkTags.split(',').map(tag => tag.trim());
+        for (const tag_ of tagsArray_modal) {
+            tagsElement.innerHTML += '<div class="tag">' + tag_ + '</div>';
+        }
+        
+        var addTags = document.createElement('p');
+        addTags.innerHTML = '<input type="text" class="flexible-textbox" id = "add-tag"  placeholder="추가할 태그를 입력해 주세요: 형식은 #tag" />';
 
         // Append the p elements to the bookmark-info div
         bookmarkInfoElement.appendChild(titleElement);
         bookmarkInfoElement.appendChild(urlElement);
         bookmarkInfoElement.appendChild(tagsElement);
-        bookmarkInfoElement.appendChild(tmp);
+        bookmarkInfoElement.appendChild(addTags);
     }
   
 

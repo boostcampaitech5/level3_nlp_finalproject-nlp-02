@@ -154,6 +154,7 @@ input:valid ~ span::after {
     align-items: center;
     /* 확인용 */
     background-color: rgba(230,228,228,1);
+    
 }
 .url_box{
     /* position: absolute; */
@@ -165,7 +166,7 @@ input:valid ~ span::after {
     border-radius: 5px;
     border: 0;
     background-color: rgb(248, 248, 248) ;
-    
+    overflow: auto;
 }
 
 #bookmarks_whole {
