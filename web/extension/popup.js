@@ -317,7 +317,7 @@ document.addEventListener("DOMContentLoaded", function () {
     chrome.identity.getProfileUserInfo({'accountStatus':'ANY'}, function(userProfile) { 
       const userName = userProfile.email.match(/^([^@]*)@/)[1];
 
-      userInfo = {'userId': userName, 'userEmail': userProfile['email']}
+      userInfo = {'customer_id': userProfile['id'], 'userEmail': userProfile['email']}
       console.log("user info in popup: ", userInfo)
 
       simpleFetcher(SERVER_URL + '/SERVICE/user_info/', userInfo)
