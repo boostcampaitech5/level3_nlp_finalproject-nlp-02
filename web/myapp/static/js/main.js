@@ -53,20 +53,36 @@ window.onload = function() {
         };
         tagsElement.appendChild(tagElement);
     });
-    document.getElementById('input-tag').addEventListener('change', function() {
+    document.getElementById('input-tag').addEventListener('change', () => {
         showInput();
     });
     
     function showInput() {
+        
         var inputElement = document.getElementById('input-tag');
         var outputElement = document.getElementById('tag-output');
-        // var newTag = inputTag.value.trim();
         var inputValue = inputElement.value.trim();
-        outputElement.textContent = "입력된 내용: " + inputValue;
+        outputElement.textContent = "입력된 내용은: " + inputValue;
+
         if (inputValue !== '') {
-            selectedTags.add(inputValue);
+            if (tags.indexOf(inputValue) !== -1) {
+                if (!selectedTags.has(inputValue)){
+                    selectedTags.add(inputValue);
+
+                    // var tagElement = document.createElement('div');
+                    // tagElement.className = 'tag selected-tag';
+                    // tagElement.textContent = inputValue;
+                    // // tagElement.classList.add('selected-tag');
+                    // // inputElement.classList.add('selected-tag');
+                    // tagsElement.appendChild(tagElement);
+                    showSelectedTags();
+                    showSelectedRows();
+                }
+            }else{}
         }
-        // selectedTags.add(newTag);
+
+        // Clear the input after adding the tag
+        inputElement.value = '';
     }
 
     function showSelectedTags() {
@@ -97,12 +113,11 @@ window.onload = function() {
             html += '<tr>';
             html += '<td>'+'<a href="http://' + bookmark.url + '">' + bookmark.title + '</a>'+'</td>';
             html += '<td>'+bookmark.tags+'</td>';
+            html += '<td>' + '<div class="tags-block-container"></div>' + '</td>';
             html += '<td>'+ '' + '</td>';
             html += '</tr>';
             }
-        dynamicTbody.innerHTML = html;
-
-        
+        dynamicTbody.innerHTML = html;  
     }
     function showSelectedRows() {
         const rows = document.getElementById("bookmarks_whole").querySelectorAll('tr');
