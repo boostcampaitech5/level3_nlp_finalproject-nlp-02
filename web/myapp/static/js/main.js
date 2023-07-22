@@ -153,7 +153,7 @@ window.onload = function() {
         tagsElement.textContent = 'Tags: ' + bookmarkTags;
 
         var tmp = document.createElement('p');
-        tmp.innerHTML = <span class="close">Close &times;</span>;
+        tmp.innerHTML = '<span class="close">Close &times;</span>';
 
         // Append the p elements to the bookmark-info div
         bookmarkInfoElement.appendChild(titleElement);
