@@ -3,7 +3,7 @@ window.onload = function() {
         "bookmark_ids": [
             {
                 "title": "title1",
-                "url": "url1.com",
+                "url": "https://www.youtube.com/watch?v=E-CHfmMOmAw",
                 "tags": "#foo, #bar"
             },
             {
@@ -108,8 +108,10 @@ window.onload = function() {
         for(const bookmark of data.bookmark_ids){
             const tagsArray = bookmark.tags.split(',').map(tag => tag.trim());
             html += '<tr>';
-            html += '<td>'+'<a href="http://' + bookmark.url + '">' + bookmark.title + '</a>'+'</td>';
-            html += '<td>';
+            // html += '<td>'+'<a href="http://' + bookmark.url + '">' + bookmark.title + '</a>'+'</td>';
+            // html += '<tr onClick="window.open(\'' + bookmark.url + '\')">';
+            html += '<td onClick="window.open(\'' + bookmark.url + '\')">'+bookmark.title+'</td>';
+            html += '<td onClick="window.open(\'' + bookmark.url + '\')">';
             for (const tag of tagsArray) {
                 html += '<div class="tag">' + tag + '</div>';
             }
