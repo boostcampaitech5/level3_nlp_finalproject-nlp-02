@@ -134,7 +134,7 @@ window.onload = function() {
     }
 
     // Function to show the modal
-    function showModal() {
+    function showModal(bookmark) {
         var modal = document.getElementById('myModal');
         modal.style.display = 'block';
 
@@ -143,10 +143,9 @@ window.onload = function() {
         bookmarkInfoElement.innerHTML = ''; // Clear previous content
 
         // Get the bookmark data for the clicked row
-        var row = this.parentNode.parentNode;
-        var bookmarkTitle = row.cells[0].querySelector('a').textContent;
-        var bookmarkURL = row.cells[0].querySelector('a').href;
-        var bookmarkTags = row.cells[1].textContent;
+        var bookmarkTitle = bookmark.title;
+        var bookmarkURL = bookmark.url;
+        var bookmarkTags = bookmark.tags;
 
         // Create p elements to show bookmark information
         var titleElement = document.createElement('p');
@@ -176,7 +175,11 @@ window.onload = function() {
         var button = document.createElement('button');
         button.textContent = '>';
         button.className = 'modal-btn';
-        button.onclick = showModal;
+        // button.onclick = showModal;
+        button.onclick = function() {
+            var bookmark = data.bookmark_ids[row.rowIndex - 1]; // Get the corresponding bookmark object
+            showModal(bookmark); // Pass the 'bookmark' object as an argument
+        };
         row.cells[2].appendChild(button);
     });
     // Add event listener to the close button in the modal
