@@ -62,7 +62,7 @@ window.onload = function() {
         var inputElement = document.getElementById('input-tag');
         var outputElement = document.getElementById('tag-output');
         var inputValue = inputElement.value.trim();
-        outputElement.textContent = "입력된 내용은: " + inputValue;
+        outputElement.textContent = "입력된 내용: " + inputValue;
 
         if (inputValue !== '') {
             if (tags.indexOf(inputValue) !== -1) {
@@ -88,8 +88,6 @@ window.onload = function() {
     function showSelectedTags() {
         var selectedTagsElement = document.getElementById('selected-tags');
         selectedTagsElement.innerHTML = ''; // Clear the previous content
-        // selectedTagsElement.innerHTML = 'Selected tags: ' + Array.from(selectedTags).join(', ');
-        // selectedTagsElement.innerHTML = Array.from(selectedTags)[0];
         if (selectedTags.size === 0 ) {
             selectedTagsElement.innerHTML = Array.from(selectedTags)
           } else {
@@ -105,8 +103,6 @@ window.onload = function() {
     }
 
     function showRows(){   
-        // selectedTags
-        // var table = document.getElementById('bookmarks_whole')
         const dynamicTbody = document.getElementById("bookmarks_whole");
         let html = '';
         for(const bookmark of data.bookmark_ids){
@@ -114,7 +110,7 @@ window.onload = function() {
             html += '<td>'+'<a href="http://' + bookmark.url + '">' + bookmark.title + '</a>'+'</td>';
             html += '<td>'+bookmark.tags+'</td>';
             html += '<td>' + '<div class="tags-block-container"></div>' + '</td>';
-            html += '<td>'+ '' + '</td>';
+            // html += '<td>'+ '' + '</td>';
             html += '</tr>';
             }
         dynamicTbody.innerHTML = html;  
@@ -151,18 +147,18 @@ window.onload = function() {
         titleElement.textContent = 'Title: ' + bookmarkTitle;
 
         var urlElement = document.createElement('p');
-        urlElement.textContent = 'URL: ' + bookmarkURL;
+        urlElement.innerHTML = 'URL: <a href="' + bookmarkURL + '" target="_blank">' + bookmarkURL + '</a>';
 
         var tagsElement = document.createElement('p');
         tagsElement.textContent = 'Tags: ' + bookmarkTags;
+
+        var tmp = document.createElement('p');
+        tmp.innerHTML = <span class="close">Close &times;</span>;
 
         // Append the p elements to the bookmark-info div
         bookmarkInfoElement.appendChild(titleElement);
         bookmarkInfoElement.appendChild(urlElement);
         bookmarkInfoElement.appendChild(tagsElement);
-
-        
-      
     }
   
 
@@ -176,15 +172,21 @@ window.onload = function() {
         button.onclick = showModal;
         row.cells[2].appendChild(button);
     });
-
     // Add event listener to the close button in the modal
     var closeBtn = document.getElementsByClassName('close')[0];
     // closeBtn.addEventListener('click', closeModal);
     closeBtn.onclick = closeModal;
-
+    // Add an event listener to the overlay (modal) to close it when clicked outside the modal content
+    var modal = document.getElementById('myModal');
+    modal.addEventListener('click', function(event) {
+    if (event.target === modal) {
+        closeModal();
+    }
+    });
         // Function to close the modal
     function closeModal() {
         var modal = document.getElementById('myModal');
         modal.style.display = 'none';
     }
+
 }
