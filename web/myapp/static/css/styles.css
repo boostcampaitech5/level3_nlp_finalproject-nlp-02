@@ -210,7 +210,8 @@ input:valid ~ span::after {
 /* Modal Styles */
 .modal {
     display: none; /* Hidden by default */
-    position: fixed; /* Stay in place */
+    /* position: fixed; Stay in place */
+    position: fixed;
     z-index: 1; /* Sit on top */
     left: 0;
     top: 0;
@@ -225,12 +226,15 @@ input:valid ~ span::after {
     margin: 15% auto; /* 15% from the top and centered */
     padding: 100px;
     border: 1px solid #888;
-    width: 80%; /* Could be modified as needed */
+    width: 30%; /* Could be modified as needed */
+    position: relative;
   }
   
 .close {
+    position: absolute;
+    top: 8%;
+    right: 8%;
     color: #aaaaaa;
-    float: right;
     font-size: 28px;
     font-weight: bold;
     cursor: pointer;
