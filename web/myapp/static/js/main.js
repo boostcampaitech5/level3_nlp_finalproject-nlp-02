@@ -101,16 +101,20 @@ window.onload = function() {
               }
           }
     }
-
+    
     function showRows(){   
         const dynamicTbody = document.getElementById("bookmarks_whole");
         let html = '';
         for(const bookmark of data.bookmark_ids){
+            const tagsArray = bookmark.tags.split(',').map(tag => tag.trim());
             html += '<tr>';
             html += '<td>'+'<a href="http://' + bookmark.url + '">' + bookmark.title + '</a>'+'</td>';
-            html += '<td>'+bookmark.tags+'</td>';
+            html += '<td>';
+            for (const tag of tagsArray) {
+                html += '<div class="tag">' + tag + '</div>';
+            }
+            html += '</td>';
             html += '<td>' + '<div class="tags-block-container"></div>' + '</td>';
-            // html += '<td>'+ '' + '</td>';
             html += '</tr>';
             }
         dynamicTbody.innerHTML = html;  
@@ -118,7 +122,7 @@ window.onload = function() {
     function showSelectedRows() {
         const rows = document.getElementById("bookmarks_whole").querySelectorAll('tr');
         for (const row of rows) {
-            const bookmarkTags = row.cells[1].textContent.split(',').map(tag => tag.trim());
+            const bookmarkTags = Array.from(row.cells[1].querySelectorAll('.tag')).map(tagElement => tagElement.textContent.trim());
             if (selectedTags.size === 0 || bookmarkTags.some(tag => selectedTags.has(tag))) {
               row.style.display = '';
             } else {
@@ -153,12 +157,13 @@ window.onload = function() {
         tagsElement.textContent = 'Tags: ' + bookmarkTags;
 
         var tmp = document.createElement('p');
-        tmp.innerHTML = '<span class="close">Close &times;</span>';
+        tmp.innerHTML = '<span class="tags">x &times;</span>';
 
         // Append the p elements to the bookmark-info div
         bookmarkInfoElement.appendChild(titleElement);
         bookmarkInfoElement.appendChild(urlElement);
         bookmarkInfoElement.appendChild(tagsElement);
+        bookmarkInfoElement.appendChild(tmp);
     }
   
 
