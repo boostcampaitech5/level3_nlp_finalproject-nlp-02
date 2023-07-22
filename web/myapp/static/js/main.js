@@ -1,30 +1,11 @@
 window.onload = function() {
-    var data = {
-        "bookmark_ids": [
-            {
-                "title": "title1",
-                "url": "https://www.youtube.com/watch?v=E-CHfmMOmAw",
-                "tags": "#foo, #bar"
-            },
-            {
-                "title": "title2",
-                "url": "url2.com",
-                "tags": "#foobar, #foo"
-            },
-            {
-                "title": "title3",
-                "url": "url3.com",
-                "tags": "#foo, #foobar"
-            }
-        ]
-    };
 
     console.log(userBookmark)
 
     var tags = new Set();
     var selectedTags = new Set();
 
-    data.bookmark_ids.forEach(bookmark => {
+    userBookmark.forEach(bookmark => {
         bookmark.tags.split(',').forEach(tag => {
             tags.add(tag.trim());
         });
@@ -106,7 +87,7 @@ window.onload = function() {
     function showRows(){   
         const dynamicTbody = document.getElementById("bookmarks_whole");
         let html = '';
-        for(const bookmark of data.bookmark_ids){
+        for(const bookmark of userBookmark){
             const tagsArray = bookmark.tags.split(',').map(tag => tag.trim());
             html += '<tr>';
             // html += '<td>'+'<a href="http://' + bookmark.url + '">' + bookmark.title + '</a>'+'</td>';
@@ -182,7 +163,7 @@ window.onload = function() {
         button.className = 'modal-btn';
         // button.onclick = showModal;
         button.onclick = function() {
-            var bookmark = data.bookmark_ids[row.rowIndex - 1]; // Get the corresponding bookmark object
+            var bookmark = userBookmark[row.rowIndex - 1]; // Get the corresponding bookmark object
             showModal(bookmark); // Pass the 'bookmark' object as an argument
         };
         row.cells[2].appendChild(button);
