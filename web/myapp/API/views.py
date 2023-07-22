@@ -4,6 +4,7 @@ import json
 import logging
 import pickle
 
+from django.urls import reverse
 from django.shortcuts import render, redirect
 from django.http import HttpResponse, JsonResponse, Http404
 from django.views.decorators.csrf import csrf_exempt
@@ -190,7 +191,22 @@ def get_my_data(request):
     처음 접속이라면 테이블 customer에 유저 정보를 저장하고
     해당 유저에 대한 bookmark 정보를 response로 보내줌
     '''
+    if request.method == 'POST':
+        """
+            request: {'id': id, 'email': emai}
+        """
+        try:
+            data = json.loads(request.body.decode('utf-8'))
+            print("In get_my_data, Received: ", data)
+            return JsonResponse({'message': 'User info received successfully'})
+        except:
+            return JsonResponse({'error': 'Invalid JSON data'}, status=400)
+
+    
     if request.method == 'GET':
+        """
+            request: {'id': id, 'email': emai}
+        """
         # data = json.loads(request.body.decode('utf-8'))
 
         # 처음 접속했다면 테이블 customer에 저장
@@ -217,6 +233,7 @@ def get_my_data(request):
         # 세션에 bookmarks 데이터 저장
         request.session['my_data'] = datas
 
-        return redirect('http://nlp02.duckdns.org:30006/SERVICE/')
+        redirect_url = reverse('SERVICE:index')
+        return redirect(redirect_url)
     else:
         raise Http404("Question does not exist") 
