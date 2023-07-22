@@ -317,19 +317,28 @@ document.addEventListener("DOMContentLoaded", function () {
     chrome.identity.getProfileUserInfo({'accountStatus':'ANY'}, function(userProfile) { 
       const userName = userProfile.email.match(/^([^@]*)@/)[1];
 
-      userInfo = {'customer_id': userProfile['id'], 'userEmail': userProfile['email']}
+      userInfo = {'id': userProfile['id'], 'email': userProfile['email']}
       console.log("user info in popup: ", userInfo)
 
-      simpleFetcher(SERVER_URL + '/SERVICE/user_info/', userInfo)
-        .then(responseData => {
-          if (responseData) {
-            console.log("Open app page is done!, ", responseData);
-            chrome.tabs.create({ url: SERVER_URL + '/SERVICE/test_for_search/'});
-          }
-          else {
-            console.log("fetcher error.");
-          }
-        })
+      const queryString = new URLSearchParams(userInfo).toString();
+      const newTabUrl = `${SERVER_URL}/API/get_my_data/?${queryString}`;
+      chrome.tabs.create({ url: newTabUrl});
+      // chrome.tabs.create({ url: `${SERVER_URL}/API/get_my_data/?id=${userInfo.id}&email=${userInfo.email}`});
+
+      // simpleFetcher(SERVER_URL + '/API/get_my_data/', userInfo)
+      //   .then(responseData => {
+      //     if (responseData) {
+      //       console.log("Open app page is done!, ", responseData);
+
+      //       const queryString = new URLSearchParams(userInfo).toString();
+      //       console.log("URL params: ", queryString)
+      //       const newTabUrl = `${SERVER_URL}/API/get_my_data/?${queryString}`;
+      //       chrome.tabs.create({ url: newTabUrl});
+      //     }
+      //     else {
+      //       console.log("fetcher error.");
+      //     }
+      //   })
     });
   });
 });
