@@ -92,7 +92,7 @@ window.onload = function() {
             html += '<tr>';
             // html += '<td>'+'<a href="http://' + bookmark.url + '">' + bookmark.title + '</a>'+'</td>';
             // html += '<tr onClick="window.open(\'' + bookmark.url + '\')">';
-            html += '<td onClick="window.open(\'' + bookmark.url + '\')">'+bookmark.title+'</td>';
+            html += '<td onClick="window.open(\'' + bookmark.url + '\')">'+bookmark.name+'</td>';
             html += '<td onClick="window.open(\'' + bookmark.url + '\')">';
             for (const tag of tagsArray) {
                 html += '<div class="tag">' + tag + '</div>';
@@ -125,7 +125,7 @@ window.onload = function() {
         bookmarkInfoElement.innerHTML = ''; // Clear previous content
 
         // Get the bookmark data for the clicked row
-        var bookmarkTitle = bookmark.title;
+        var bookmarkTitle = bookmark.name;
         var bookmarkURL = bookmark.url;
         var bookmarkTags = bookmark.tags;
 

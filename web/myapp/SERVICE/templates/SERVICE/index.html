@@ -11,8 +11,7 @@
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Orbit&display=swap" rel="stylesheet">
-
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@300&family=Orbit&display=swap" rel="stylesheet">
     <title>Service Page</title>
 
     <script>
@@ -39,9 +38,11 @@
         <div class="content1">
           <!-- <div class="flexible-textbox"></div> -->
           <!-- <label for="site-search">Search the tag:</label> -->
-          <input 
-            type="text" class="flexible-textbox" id = 'input-tag'  placeholder="검색할 태그를 입력해 주세요: 형식은 #tag" 
-          />
+          <div class='search_tag'>
+            <input 
+              type="text" style="font-family: 'Noto Sans KR', sans-serif;" class="flexible-textbox" id = 'input-tag'  placeholder="  검색할 태그를 입력해 주세요: 형식은 #tag" 
+            />
+          </div>
           <!-- <img src="https://s3.ap-northeast-2.amazonaws.com/cdn.wecode.co.kr/icon/search.png"> -->
           <!-- <button><span class="material-symbols-outlined">manage_search</span></button></button> -->
           <div id="tags"></div>
@@ -59,10 +60,10 @@
             <table>
               <thead>
                   <tr>
-                      <th>Title</th>
-                      <th>Tags</th>
+                      <th>제목</th>
+                      <th>태그</th>
                       <!-- <th>Tags_block</th> -->
-                      <th>x</th>
+                      <th>수정</th>
                   </tr>
               </thead>
               <tbody id="bookmarks_whole"> </tbody>
@@ -86,9 +87,9 @@
         
       </div>
   
-      <div class="footer">
+      {% comment %} <div class="footer">
         <div id="tag-output"></div>
-      </div>
+      </div> {% endcomment %}
 
 </body>
 </html>
