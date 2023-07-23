@@ -42,7 +42,6 @@ window.onload = function() {
         var inputElement = document.getElementById('input-tag');
         var outputElement = document.getElementById('tag-output');
         var inputValue = inputElement.value.trim();
-        outputElement.textContent = "입력된 내용: " + inputValue;
     
         if (inputValue !== '') {
             if (tags.indexOf(inputValue) !== -1) {
