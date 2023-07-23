@@ -80,12 +80,16 @@ input:valid ~ span::after {
 
 }
 .tag {
-    padding: 10px;
+    padding: 3px;
     border: 1px solid black;
-    margin: 5px;
+    margin-top: 3px;     /* Top margin */
+    margin-right: 10px;   /* Right margin */
+    margin-bottom: 3px;  /* Bottom margin */
+    margin-left: 10px;    /* Left margin */
     display: inline-block;
     cursor: pointer;
     transition: font-size 0.3s ease;
+    border-radius: 5px;
 }
 
 .tag:hover {
@@ -195,7 +199,13 @@ input:valid ~ span::after {
   #bookmarks_whole td:nth-child(3) {
     width: 5%;
   }
-  
+
+  #bookmarks_whole td:nth-child(3) {
+    width: 5%;
+  }
+#bookmarks_whole tr:hover {
+    background-color: rgba(255, 214, 240, 0.708) ;
+}
 
 .footer{
     /* position: absolute;
