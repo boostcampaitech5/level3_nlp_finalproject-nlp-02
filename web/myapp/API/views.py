@@ -232,8 +232,12 @@ def get_my_data(request):
         # data_json = json.dumps({datas})
         # 세션에 bookmarks 데이터 저장
         request.session['my_data'] = datas
-
+        
+        host_url = request.get_host()
         redirect_url = reverse('SERVICE:index')
-        return redirect(redirect_url)
+        full_redirect_url = f"http://{host_url}{redirect_url}"
+        
+        print("full_redirect_url: ", full_redirect_url)
+        return redirect(full_redirect_url)
     else:
         raise Http404("Question does not exist") 
