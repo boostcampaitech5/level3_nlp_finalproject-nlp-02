@@ -13,12 +13,14 @@ from rest_framework.response import Response
 from rest_framework import status
 from .models import UserInfo, Bookmarks, Bookmark, Bookmark_Of_Customer
 from .utils import *
-from .tag_inference import TagModel
+# from ....model.tag_inference import TagModel
 # from .serializers import PostSerializer
 
 # dl_model_path = '../../model/models/'
-sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..', '..', 'model'))
-from models.tagging_model import get_tag_from_model
+print(os.path.dirname(__file__))
+sys.path.append(os.path.join(os.path.dirname(__file__), "../../../"))
+from model.tag_inference import TagModel
+from model.test_tagging_model import get_tag_from_model
 
 logger = logging.getLogger(__name__)
 
@@ -59,8 +61,8 @@ def inference(request):
             print(content)
             print("== Start Inferencing...")
             
-            TagModel = TagModel(title = title, content = content)
-            tags_result = TagModel.inference()
+            # TagModel = TagModel(title = title, content = content)
+            # tags_result = TagModel.inference()
 
             return JsonResponse({'success': True})
         except KeyError:
@@ -152,10 +154,15 @@ def save_single_bookmark(data):
             'summarize': "",
             'reference': "",
             'topic': "",
-            'tags': get_tag_from_model(data['content']),
+            'tags': "", # get_tag_from_model(data['content']),
             # 'create_date': ,
             # 'update_date': ,
         }
+        
+        # 모델로부터 tag 추론하기
+        TagModel = TagModel(title = data['title'], content = data['content'])
+        tags_result = TagModel.inference()
+        new_bookmark_info['tags'] = tags_result
         
         Bookmark.objects.create(**new_bookmark_info)
         url_no = Bookmark.objects.filter(url=data['url'])[0].no
