@@ -119,6 +119,35 @@ input:valid ~ span::after {
     color: #7aacfc;
 }
 
+.tag-display {
+  padding: 5px;
+  border: 1px solid black;
+  margin-top: 5px;     /* Top margin */
+  margin-right: 10px;   /* Right margin */
+  margin-bottom: 5px;  /* Bottom margin */
+  margin-left: 10px;    /* Left margin */
+  display: inline-block;
+  /* cursor: pointer; */
+  transition: font-size 0.3s ease;
+  border-radius: 5px;
+}
+.tag-modal {
+  padding: 5px;
+  border: 1px solid black;
+  margin-top: 5px;     /* Top margin */
+  margin-right: 10px;   /* Right margin */
+  margin-bottom: 5px;  /* Bottom margin */
+  margin-left: 10px;    /* Left margin */
+  display: inline-block;
+  cursor: pointer;
+  transition: font-size 0.3s ease;
+  border-radius: 5px;
+}
+.tag-modal:hover {
+  /* font-size: 120%; */
+  color: #7aacfc;
+}
+
 .selected-tag {
     background-color: #7aacfc;
 }

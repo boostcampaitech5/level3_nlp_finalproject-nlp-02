@@ -99,7 +99,7 @@ var selectedTags = new Set();window.onload = function() {
             html += '<td onClick="window.open(\'' + bookmark.url + '\')">'+bookmark.name+'</td>';
             html += '<td onClick="window.open(\'' + bookmark.url + '\')">';
             for (const tag of tagsArray) {
-                html += '<div class="tag">' + tag + '</div>';
+                html += '<div class="tag-display">' + tag + '</div>';
             }
             html += '</td>';
             html += '<td>' + '<div class="tags-block-container"></div>' + '</td>';
@@ -111,7 +111,7 @@ var selectedTags = new Set();window.onload = function() {
     function showSelectedRows() {
         const rows = document.getElementById("bookmarks_whole").querySelectorAll('tr');
         for (const row of rows) {
-            const bookmarkTags = Array.from(row.cells[1].querySelectorAll('.tag')).map(tagElement => tagElement.textContent.trim());
+            const bookmarkTags = Array.from(row.cells[1].querySelectorAll('.tag-display')).map(tagElement => tagElement.textContent.trim());
             if (selectedTags.size === 0 || bookmarkTags.some(tag => selectedTags.has(tag))) {
               row.style.display = '';
             } else {
@@ -149,7 +149,7 @@ var selectedTags = new Set();window.onload = function() {
 
         var tagsArray_modal = bookmarkTags.split(',').map(tag => tag.trim());
         for (const tag_ of tagsArray_modal) {
-            tagsElement.innerHTML += '<div class="tag">' + tag_ + '</div>';
+            tagsElement.innerHTML += '<div class="tag-modal">' + tag_ + '</div>';
         }
         
         var addTags = document.createElement('p');
