@@ -86,7 +86,7 @@ body{
   padding: 5px 5px 5px 5px;
   border-radius: 10px;
   border: 0;
-  background-color:rgb(42, 176, 24);
+  background-color:rgb(255, 255, 255);
 }
 input:invalid ~ span::after {
     content: "✖";
@@ -142,7 +142,9 @@ input:valid ~ span::after {
   cursor: pointer;
   transition: font-size 0.3s ease;
   border-radius: 5px;
+  content: "✖";
 }
+.tag-delete:after {display: inline-block; content: "  \00d7"; }
 .tag-delete:hover {
   /* font-size: 120%; */
   color: #f95e53;
@@ -293,7 +295,7 @@ input:valid ~ span::after {
     margin: 15% auto; /* 15% from the top and centered */
     padding: 100px;
     border: 1px solid #888;
-    width: 30%; /* Could be modified as needed */
+    width: 50%; /* Could be modified as needed */
     position: relative;
   }
   

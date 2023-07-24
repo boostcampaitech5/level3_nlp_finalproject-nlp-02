@@ -84,7 +84,9 @@ window.onload = function() {
         selectedTagsElement.innerHTML = ''; // Clear the previous content
         if (selectedTags.size === 0 ) {
             selectedTagsElement.innerHTML = Array.from(selectedTags)
-          } else {
+          } 
+          
+        else {
             // selectedTagsElement.innerHTML = Array.from(selectedTags)
             var selectedTagsArray = Array.from(selectedTags);
             for (var i = 0; i < selectedTagsArray.length; i++) {
