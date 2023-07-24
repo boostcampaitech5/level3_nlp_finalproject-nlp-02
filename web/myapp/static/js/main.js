@@ -1,39 +1,42 @@
-window.onload = function() {
+var userBookmark = [];
+var tags = new Set();
+var selectedTags = new Set();window.onload = function() {
 
     console.log(userBookmark)
 
     var tags = new Set();
     var selectedTags = new Set();
-
-    userBookmark.forEach(bookmark => {
-        bookmark.tags.split(',').forEach(tag => {
-            tags.add(tag.trim());
-        });
-    });
-
-    tags = Array.from(tags).sort();
-
-    var tagsElement = document.getElementById('tags');
-    
     showRows()
+    collectAllTags()
+    function collectAllTags(){
+        userBookmark.forEach(bookmark => {
+            bookmark.tags.split(',').forEach(tag => {
+                tags.add(tag.trim());
+            });
+        });
 
-    tags.forEach(tag => {
-        var tagElement = document.createElement('div');
-        tagElement.textContent = tag;
-        tagElement.className = 'tag';
-        tagElement.onclick = function() {
-            if (selectedTags.has(tag)) {
-                selectedTags.delete(tag);
-                this.classList.remove('selected-tag');
-            } else {
-                selectedTags.add(tag);
-                this.classList.add('selected-tag');
-            }
-            showSelectedTags();
-            showSelectedRows();
-        };
-        tagsElement.appendChild(tagElement);
-    });
+        var tags_ = Array.from(tags).sort();
+
+        var tagsElement = document.getElementById('tags');
+        tags_.forEach(tag => {
+            var tagElement = document.createElement('div');
+            tagElement.textContent = tag;
+            tagElement.className = 'tag';
+            tagElement.onclick = function() {
+                if (selectedTags.has(tag)) {
+                    selectedTags.delete(tag);
+                    this.classList.remove('selected-tag');
+                } else {
+                    selectedTags.add(tag);
+                    this.classList.add('selected-tag');
+                }
+                showSelectedTags();
+                showSelectedRows();
+            };
+            tagsElement.appendChild(tagElement);
+        });
+    }
+
     document.getElementById('input-tag').addEventListener('change', () => {
         showInput();
     });
@@ -42,9 +45,11 @@ window.onload = function() {
         var inputElement = document.getElementById('input-tag');
         var outputElement = document.getElementById('tag-output');
         var inputValue = inputElement.value.trim();
+        var tags_ = Array.from(tags);
+
     
         if (inputValue !== '') {
-            if (tags.indexOf(inputValue) !== -1) {
+            if (tags_.indexOf(inputValue) !== -1) {
                 if (!selectedTags.has(inputValue)){
                     selectedTags.add(inputValue);
     
@@ -101,6 +106,7 @@ window.onload = function() {
             html += '</tr>';
             }
         dynamicTbody.innerHTML = html;  
+        showModalBtn()
     }
     function showSelectedRows() {
         const rows = document.getElementById("bookmarks_whole").querySelectorAll('tr');
@@ -116,6 +122,8 @@ window.onload = function() {
 
     // Function to show the modal
     function showModal(bookmark) {
+        bookmarkIndex = userBookmark.indexOf(bookmark);
+
         var modal = document.getElementById('myModal');
         modal.style.display = 'block';
 
@@ -137,6 +145,8 @@ window.onload = function() {
 
         var tagsElement = document.createElement('p');
         tagsElement.className = 'tags-block-container';
+        tagsElement.setAttribute('data-index', bookmarkIndex); 
+
         var tagsArray_modal = bookmarkTags.split(',').map(tag => tag.trim());
         for (const tag_ of tagsArray_modal) {
             tagsElement.innerHTML += '<div class="tag">' + tag_ + '</div>';
@@ -150,23 +160,57 @@ window.onload = function() {
         bookmarkInfoElement.appendChild(urlElement);
         bookmarkInfoElement.appendChild(tagsElement);
         bookmarkInfoElement.appendChild(addTags);
+        
+            // modify user tag by adding
+        // document.getElementById('add-tag').addEventListener('change', () => {
+        //     handleAddTag();
+        // });
+        addTags.addEventListener('change', event => handleAddTag(event, tagsElement));
+        // Function to handle adding a tag
+        
+        
+    }
+    
+    function handleAddTag(event, tagsElement) {
+        var addTagElement = document.getElementById('add-tag');
+        var inputValue = addTagElement.value.trim();
+
+        // Check if the input value is valid (starts with '#')
+        if (inputValue && inputValue.startsWith('#')) {
+            // Get the bookmark index from the data-index attribute
+            var bookmarkIndex = parseInt(tagsElement.getAttribute('data-index'));
+
+
+            // Update the bookmark's tags in the data.bookmark_ids array
+            userBookmark[bookmarkIndex].tags += ', ' + inputValue;
+
+            // Clear the input after adding the tag
+            addTagElement.value = '';
+
+            // Update the modal with the updated bookmark
+            showModal(userBookmark[bookmarkIndex]);
+            collectAllTags()
+            showRows()
+            showSelectedTags()
+
+        }
     }
   
 
-
-    // Add event listener to the button in each row
-    var rows = document.getElementById('bookmarks_whole').querySelectorAll('tr');
-    rows.forEach(row => {
-        var button = document.createElement('button');
-        button.textContent = '>';
-        button.className = 'modal-btn';
-        // button.onclick = showModal;
-        button.onclick = function() {
-            var bookmark = userBookmark[row.rowIndex - 1]; // Get the corresponding bookmark object
-            showModal(bookmark); // Pass the 'bookmark' object as an argument
-        };
-        row.cells[2].appendChild(button);
-    });
+    function showModalBtn(){
+        // Add event listener to the button in each row
+        var rows = document.getElementById('bookmarks_whole').querySelectorAll('tr');
+        rows.forEach(row => {
+            var button = document.createElement('button');
+            button.textContent = '>';
+            button.className = 'modal-btn';
+            // button.onclick = showModal;
+            button.onclick = function() {
+                var bookmark = userBookmark[row.rowIndex - 1]; // Get the corresponding bookmark object
+                showModal(bookmark, userBookmark); // Pass the 'bookmark' object as an argument
+            };
+            row.cells[2].appendChild(button);
+        });
     // Add event listener to the close button in the modal
     var closeBtn = document.getElementsByClassName('close')[0];
     // closeBtn.addEventListener('click', closeModal);
@@ -182,6 +226,7 @@ window.onload = function() {
     function closeModal() {
         var modal = document.getElementById('myModal');
         modal.style.display = 'none';
+    }
     }
 
 }

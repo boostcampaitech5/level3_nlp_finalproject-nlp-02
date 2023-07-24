@@ -78,7 +78,16 @@ body{
     border: 0;
     background-color:rgba(255, 255, 255,1);
 }
-
+#add-tag{
+  width:95%;
+  height: 50px;
+  position: relative;
+  /* left:25px; */
+  padding: 5px 5px 5px 5px;
+  border-radius: 10px;
+  border: 0;
+  background-color:rgb(42, 176, 24);
+}
 input:invalid ~ span::after {
     content: "✖";
     padding-left: 35px;
