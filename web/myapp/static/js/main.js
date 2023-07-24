@@ -149,7 +149,7 @@ var selectedTags = new Set();window.onload = function() {
 
         var tagsArray_modal = bookmarkTags.split(',').map(tag => tag.trim());
         for (const tag_ of tagsArray_modal) {
-            tagsElement.innerHTML += '<div class="tag-modal">' + tag_ + '</div>';
+            tagsElement.innerHTML += '<div class="tag-delete">' + tag_ + '</div>';
         }
         
         var addTags = document.createElement('p');
@@ -166,7 +166,27 @@ var selectedTags = new Set();window.onload = function() {
         //     handleAddTag();
         // });
         addTags.addEventListener('change', event => handleAddTag(event, tagsElement));
-        // Function to handle adding a tag
+        
+        var tagDeleteElements = bookmarkInfoElement.querySelectorAll('.tag-delete');
+
+        // Add click event listener to each tag-delete element
+        tagDeleteElements.forEach(tagDeleteElement => {
+            tagDeleteElement.addEventListener('click', function() {
+                // Ask for confirmation before deleting the tag
+                var clickedTag = this.textContent;
+                var confirmDelete = window.confirm('Do you want to delete the tag: ' + clickedTag + '?');
+        
+                // If the user confirms the deletion (clicks "OK")
+                if (confirmDelete) {
+                    // Perform the tag deletion
+                    handleDeleteTag(clickedTag, tagsElement);
+                } else {
+                    // If the user cancels the deletion (clicks "Cancel"), do nothing
+                    // You may add additional logic here if needed
+                }
+            });
+        });
+        
         
         
     }
@@ -194,6 +214,25 @@ var selectedTags = new Set();window.onload = function() {
             showSelectedTags()
 
         }
+    }
+
+    function handleDeleteTag(tagToDelete, tagsElement) {
+        // Get the bookmark index from the data-index attribute
+        tagToDelete = tagToDelete
+        var bookmarkIndex = parseInt(tagsElement.getAttribute('data-index'));
+    
+        // Update the bookmark's tags in the data.bookmark_ids array by removing the clicked tag
+        var bookmarkTags = userBookmark[bookmarkIndex].tags.split(',').map(tag => tag.trim());
+        var updatedTags = bookmarkTags.filter(tag => tag !== tagToDelete);
+
+
+        userBookmark[bookmarkIndex].tags = updatedTags.join(', ');
+    
+        // Update the modal with the updated bookmark
+        showModal(userBookmark[bookmarkIndex]);
+        collectAllTags();
+        showSelectedTags();
+        showRows();
     }
   
 

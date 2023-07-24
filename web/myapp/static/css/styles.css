@@ -131,7 +131,7 @@ input:valid ~ span::after {
   transition: font-size 0.3s ease;
   border-radius: 5px;
 }
-.tag-modal {
+.tag-delete {
   padding: 5px;
   border: 1px solid black;
   margin-top: 5px;     /* Top margin */
@@ -143,9 +143,9 @@ input:valid ~ span::after {
   transition: font-size 0.3s ease;
   border-radius: 5px;
 }
-.tag-modal:hover {
+.tag-delete:hover {
   /* font-size: 120%; */
-  color: #7aacfc;
+  color: #f95e53;
 }
 
 .selected-tag {
