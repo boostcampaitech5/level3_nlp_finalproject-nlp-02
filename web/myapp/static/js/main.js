@@ -1,49 +1,57 @@
 var userBookmark = [];
 var tags = new Set();
-var selectedTags = new Set();window.onload = function() {
+var selectedTags = new Set();
+window.onload = function() {
 
     console.log(userBookmark)
 
-    var tags = new Set();
-    var selectedTags = new Set();
+    // var tags = new Set();
+    // var selectedTags = new Set();
     showRows()
     collectAllTags()
     function collectAllTags(){
+        tags.clear();
         userBookmark.forEach(bookmark => {
             bookmark.tags.split(',').forEach(tag => {
                 tags.add(tag.trim());
             });
         });
 
+        var tagsElement = document.getElementById('tags');
+        tagsElement.innerHTML = ''; // Clear the previous content
         var tags_ = Array.from(tags).sort();
 
-        var tagsElement = document.getElementById('tags');
         tags_.forEach(tag => {
             var tagElement = document.createElement('div');
             tagElement.textContent = tag;
             tagElement.className = 'tag';
-            tagElement.onclick = function() {
-                if (selectedTags.has(tag)) {
-                    selectedTags.delete(tag);
-                    this.classList.remove('selected-tag');
-                } else {
-                    selectedTags.add(tag);
-                    this.classList.add('selected-tag');
-                }
-                showSelectedTags();
-                showSelectedRows();
+            tagElement.onclick = function(event) {
+                var tag = tagElement.textContent;
+                selectTags(tag, event.target);
             };
             tagsElement.appendChild(tagElement);
         });
     }
 
+    function selectTags(tag,tagElement){   //클릭으로 태그를 선택하는 함수
+
+        if (selectedTags.has(tag)) {
+            selectedTags.delete(tag);
+            tagElement.classList.remove('selected-tag');
+        } else {
+            selectedTags.add(tag);
+            tagElement.classList.add('selected-tag');
+        }
+        showSelectedTags();
+        showSelectedRows();
+    }
+
     document.getElementById('input-tag').addEventListener('change', () => {
-        showInput();
+        selectTagsbyInput();
     });
     
-    function showInput() {
+    function selectTagsbyInput() {
         var inputElement = document.getElementById('input-tag');
-        var outputElement = document.getElementById('tag-output');
         var inputValue = inputElement.value.trim();
         var tags_ = Array.from(tags);
 
@@ -200,7 +208,6 @@ var selectedTags = new Set();window.onload = function() {
             // Get the bookmark index from the data-index attribute
             var bookmarkIndex = parseInt(tagsElement.getAttribute('data-index'));
 
-
             // Update the bookmark's tags in the data.bookmark_ids array
             userBookmark[bookmarkIndex].tags += ', ' + inputValue;
 
@@ -250,22 +257,22 @@ var selectedTags = new Set();window.onload = function() {
             };
             row.cells[2].appendChild(button);
         });
-    // Add event listener to the close button in the modal
-    var closeBtn = document.getElementsByClassName('close')[0];
-    // closeBtn.addEventListener('click', closeModal);
-    closeBtn.onclick = closeModal;
-    // Add an event listener to the overlay (modal) to close it when clicked outside the modal content
-    var modal = document.getElementById('myModal');
-    modal.addEventListener('click', function(event) {
-    if (event.target === modal) {
-        closeModal();
-    }
-    });
-        // Function to close the modal
-    function closeModal() {
+        // Add event listener to the close button in the modal
+        var closeBtn = document.getElementsByClassName('close')[0];
+        // closeBtn.addEventListener('click', closeModal);
+        closeBtn.onclick = closeModal;
+        // Add an event listener to the overlay (modal) to close it when clicked outside the modal content
         var modal = document.getElementById('myModal');
-        modal.style.display = 'none';
-    }
+        modal.addEventListener('click', function(event) {
+        if (event.target === modal) {
+            closeModal();
+        }
+        });
+            // Function to close the modal
+        function closeModal() {
+            var modal = document.getElementById('myModal');
+            modal.style.display = 'none';
+        }
     }
 
 }
