@@ -15,13 +15,16 @@ from .models import UserInfo, Bookmarks, Bookmark, Bookmark_Of_Customer
 from .utils import *
 # from .serializers import PostSerializer
 
-# dl_model_path = '../../model/models/'
+# 모델 시스템 path 추가
 print(os.path.dirname(__file__))
 sys.path.append(os.path.join(os.path.dirname(__file__), "../../../"))
-from model.tag_inference import TagModel
+from model.tag_inference import TagModel, tag_model_instance
 from model.test_tagging_model import get_tag_from_model
 
+# 항상 먼저 켜져있어야 하는 변수
 logger = logging.getLogger(__name__)
+tag_model = tag_model_instance
+logger.info("\nTagging model successfully initialized!\n")
 
 def index(request):
     return HttpResponse("API 앱의 index 테스트 성공")
@@ -159,8 +162,11 @@ def save_single_bookmark(data):
         }
         
         # 모델로부터 tag 추론하기
-        tagModel = TagModel(title = data['title'], content = data['content'])
-        tags_result = tagModel.inference()
+        # tagModel = TagModel(title = data['title'], content = data['content'])
+        tag_model.title = data['title']
+        tag_model.content = data['content']
+        
+        tags_result = tag_model.inference()
         new_bookmark_info['tags'] = tags_result
         print("Tag result of bookmark page: ", tags_result)
         

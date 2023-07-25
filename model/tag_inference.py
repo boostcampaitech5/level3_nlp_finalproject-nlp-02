@@ -8,7 +8,7 @@ class TagModel:
     
     def __init__(self, title, content, topics = None, summarized = None, peft_model_id = "snob/TagMyBookmark-KoAlpaca-QLoRA-v1.0", testing = False, quantized = True):
         self.title = title
-        self.content = self._content_cleaning(content)
+        self.content = content
         self.topics = topics
         self.summarized = summarized
         self.peft_model_id = peft_model_id
@@ -19,6 +19,8 @@ class TagModel:
         
 
     def inference(self):
+        self.content = self._content_cleaning(self.content)
+        
         self.model.eval()
         pipe = pipeline(
             'text-generation', 
@@ -91,5 +93,5 @@ class TagModel:
             raise NotImplemented('Support Only Quantized Model in VER 1.0')
             
 
-    
-    
+# 태그 모델 클래스 미리 호출시켜두기(매번 init하지 않기 위함)
+tag_model_instance = TagModel(title=None, content=None)
