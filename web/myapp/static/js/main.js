@@ -12,25 +12,34 @@ window.onload = function() {
     function collectAllTags(){
         tags.clear();
         userBookmark.forEach(bookmark => {
-            bookmark.tags.split(',').forEach(tag => {
+            if (bookmark.tags===null){}
+            else{
+                bookmark.tags.split(',').forEach(tag => {
                 tags.add(tag.trim());
             });
+        }
         });
 
         var tagsElement = document.getElementById('tags');
         tagsElement.innerHTML = ''; // Clear the previous content
         var tags_ = Array.from(tags).sort();
-
-        tags_.forEach(tag => {
-            var tagElement = document.createElement('div');
-            tagElement.textContent = tag;
-            tagElement.className = 'tag';
-            tagElement.onclick = function(event) {
-                var tag = tagElement.textContent;
-                selectTags(tag, event.target);
-            };
-            tagsElement.appendChild(tagElement);
-        });
+        if (tags_.length != 0) {
+            console.log('yes');
+            console.log(tags_);
+            tags_.forEach(tag => {
+                var tagElement = document.createElement('div');
+                tagElement.textContent = tag;
+                tagElement.className = 'tag';
+                tagElement.onclick = function(event) {
+                    var tag = tagElement.textContent;
+                    selectTags(tag, event.target);
+                };
+                tagsElement.appendChild(tagElement);
+            });
+        }else{
+            // tagsElement.appendChild();
+            console.log('no');
+        }
     }
 
     function selectTags(tag,tagElement){   //클릭으로 태그를 선택하는 함수
@@ -102,15 +111,22 @@ window.onload = function() {
         const dynamicTbody = document.getElementById("bookmarks_whole");
         let html = '';
         for(const bookmark of userBookmark){
-            const tagsArray = bookmark.tags.split(',').map(tag => tag.trim());
+            
             html += '<tr>';
             // html += '<td>'+'<a href="http://' + bookmark.url + '">' + bookmark.title + '</a>'+'</td>';
             // html += '<tr onClick="window.open(\'' + bookmark.url + '\')">';
             html += '<td onClick="window.open(\'' + bookmark.url + '\')">'+bookmark.name+'</td>';
             html += '<td onClick="window.open(\'' + bookmark.url + '\')">';
-            for (const tag of tagsArray) {
-                html += '<div class="tag-display">' + tag + '</div>';
+            if (bookmark.tags === null){
+                
             }
+            else{
+                const tagsArray = bookmark.tags.split(',').map(tag => tag.trim());
+                for (const tag of tagsArray) {
+                    
+                    html += '<div class="tag-display">' + tag + '</div>';
+                }
+                }
             html += '</td>';
             html += '<td>' + '<div class="tags-block-container"></div>' + '</td>';
             html += '</tr>';
@@ -157,9 +173,15 @@ window.onload = function() {
         tagsElement.className = 'tags-block-container';
         tagsElement.setAttribute('data-index', bookmarkIndex); 
 
-        var tagsArray_modal = bookmarkTags.split(',').map(tag => tag.trim());
-        for (const tag_ of tagsArray_modal) {
-            tagsElement.innerHTML += '<div class="tag-delete">' + tag_ + '</div>';
+        tagsElement.innerHTML = '';
+        if(bookmarkTags === null){
+
+        }
+        else{
+            var tagsArray_modal = bookmarkTags.split(',').map(tag => tag.trim());
+            for (const tag_ of tagsArray_modal) {
+                tagsElement.innerHTML += '<div class="tag-delete">' + tag_ + '</div>';
+            }
         }
         
         var addTags = document.createElement('p');
@@ -211,7 +233,12 @@ window.onload = function() {
             var bookmarkIndex = parseInt(tagsElement.getAttribute('data-index'));
 
             // Update the bookmark's tags in the data.bookmark_ids array
-            userBookmark[bookmarkIndex].tags += ', ' + inputValue;
+            if (userBookmark[bookmarkIndex].tags===null){
+                userBookmark[bookmarkIndex].tags = inputValue;
+            }
+            else{userBookmark[bookmarkIndex].tags += ', ' + inputValue;}
+
+            // userBookmark[bookmarkIndex].tags += ', ' + inputValue;
 
             // Clear the input after adding the tag
             addTagElement.value = '';
@@ -233,9 +260,14 @@ window.onload = function() {
         // Update the bookmark's tags in the data.bookmark_ids array by removing the clicked tag
         var bookmarkTags = userBookmark[bookmarkIndex].tags.split(',').map(tag => tag.trim());
         var updatedTags = bookmarkTags.filter(tag => tag !== tagToDelete);
-
-
-        userBookmark[bookmarkIndex].tags = updatedTags.join(', ');
+        console.log('update',updatedTags);
+        if (updatedTags.length != 0){
+            console.log(updatedTags.length);
+            userBookmark[bookmarkIndex].tags = updatedTags.join(', ');}
+        else{userBookmark[bookmarkIndex].tags = null;
+        console.log('userBookmark',userBookmark[bookmarkIndex].tags);
+    }
+        
     
         // Update the modal with the updated bookmark
         showModal(userBookmark[bookmarkIndex]);
