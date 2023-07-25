@@ -146,6 +146,7 @@ def save_single_bookmark(data):
     url_result = Bookmark.objects.filter(url=data['url'])
     try:
         url_no = url_result[0].no
+        tags_result = url_result[0].tags
         
     except (AttributeError, IndexError) as e:
         # 없으면 북마크 table에 추가
@@ -189,7 +190,7 @@ def save_single_bookmark(data):
     new_bookmark_of_customer_info = {
         'customer_id': data['customer_id'],
         'bookmark_no': url_no,
-        'tags': "",
+        'tags': tags_result,
         'name': "",
         # 'create_date': "",
         # 'update_date': "",
