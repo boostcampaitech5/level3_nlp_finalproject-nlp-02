@@ -29,7 +29,7 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
 
       sourceInfo = {
         title: document.querySelector("div.head-wrapper h1").innerText,
-        context: Array.from(document.querySelectorAll("div")).filter((div) =>
+        content: Array.from(document.querySelectorAll("div")).filter((div) =>
           div.classList.contains("atom-one")
         )[0].innerText,
         clue: clue,
@@ -56,7 +56,7 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
 
       sourceInfo = {
         title: iframeDocument.querySelector("div.se-module").innerText,
-        context: iframeDocument.querySelector("div.se-main-container")
+        content: iframeDocument.querySelector("div.se-main-container")
           .innerText,
         clue: clue,
       };
@@ -69,7 +69,7 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
 
       sourceInfo = {
         title: document.querySelector('meta[name="title"]').content,
-        context: document.querySelector("div.contents_style").innerText,
+        content: document.querySelector("div.contents_style").innerText,
         clue: document
           .querySelector("div.another_category")
           .querySelector("h4")
@@ -81,7 +81,7 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
 
       sourceInfo = {
         title: document.title,
-        context: document.body.innerText,
+        content: document.body.innerText,
       };
     }
 
