@@ -199,3 +199,31 @@ def save_single_bookmark(data):
     
     Bookmark_Of_Customer.objects.create(**new_bookmark_of_customer_info)
     return True
+
+
+@api_view(['POST'])
+def tag_update(request):
+    '''
+    웹 페이지에서 새롭게 갱신되는 태그 데이터를 업데이트합니다.
+    
+    request 형태:
+        'customer id', 'bookmark no', 'tags(변경된 태그)'    
+    '''
+    if request.method == 'POST':
+        data = json.loads(request.body.decode('utf-8'))     # string type으로 전달된다.
+        customer_id = data['customer_id']
+        bookmark_no = data['bookmark_no']
+        new_tags = ", ".join(data['new_tags'])
+        
+        print("Request in tag_update: ", data, type(data))
+        
+        # 업데이트
+        target_row = Bookmark_Of_Customer.objects.filter(customer_id=customer_id).filter(bookmark_no=bookmark_no)
+        target_row.update(tags=new_tags)
+        
+        return JsonResponse({'success': True})
+    
+    else:
+        logger.error("[ERROR] Illegal request is requested.")
+        return JsonResponse({'success': False}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
+        

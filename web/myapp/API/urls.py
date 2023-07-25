@@ -11,5 +11,6 @@ urlpatterns = [
     path('inference/', views.inference, name='inference'),
     path('post/', views.post_api, name='post'),
     path('get/', views.get_api, name='get'),
-    path('post_history/', views.post_history, name='post_history')
+    path('post_history/', views.post_history, name='post_history'),
+    path('tag_update', views.tag_update, name='tag_update'),
 ]

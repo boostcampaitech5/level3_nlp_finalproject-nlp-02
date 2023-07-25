@@ -61,26 +61,8 @@ def search_tags(request):
         return_tags = [[item.tags] for item in suser_bookmark_with_tags]
         print("tags: ", return_tags)
         filtered_data = {item.url:item.tags for item in suser_bookmark_with_tags}
-        # filtered_data['data'] = input_tags
-        # filtered_data['url'] = True
-        
-        print("filtered_data: ", filtered_data)
-        ####
-        # # title 및 태그 검색
-        # filtered_title = suser_bookmark.filter(title=input_data)
-        # filtered_tag = suser_bookmark.filter(tag=input_data)
-        
-        # # 출력
-        # title_url_list = [value.url for value in filtered_title]
-        # tag_url_list = [value.url for value in filtered_tag]
-        # title_title_list = [value.bookmarkTitle for value in filtered_title]
-        # title_tag_list = [value.bookmarkTitle for value in filtered_tag]
 
-        # filtered_data = {
-        #     'data': input_data,
-        #     'url': title_url_list + tag_url_list,
-        #     'title': title_title_list + title_tag_list,
-        # }
+        print("filtered_data: ", filtered_data)
         
         return render(request, 'test_for_search.html', {'filtered_data': filtered_data})
         # return JsonResponse({'success': True}, status=200)
