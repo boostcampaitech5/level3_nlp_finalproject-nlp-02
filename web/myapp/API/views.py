@@ -13,7 +13,6 @@ from rest_framework.response import Response
 from rest_framework import status
 from .models import UserInfo, Bookmarks, Bookmark, Bookmark_Of_Customer
 from .utils import *
-# from ....model.tag_inference import TagModel
 # from .serializers import PostSerializer
 
 # dl_model_path = '../../model/models/'
@@ -160,9 +159,10 @@ def save_single_bookmark(data):
         }
         
         # 모델로부터 tag 추론하기
-        TagModel = TagModel(title = data['title'], content = data['content'])
-        tags_result = TagModel.inference()
+        tagModel = TagModel(title = data['title'], content = data['content'])
+        tags_result = tagModel.inference()
         new_bookmark_info['tags'] = tags_result
+        print("Tag result of bookmark page: ", tags_result)
         
         Bookmark.objects.create(**new_bookmark_info)
         url_no = Bookmark.objects.filter(url=data['url'])[0].no

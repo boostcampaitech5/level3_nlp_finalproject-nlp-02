@@ -42,7 +42,7 @@ class TagModel:
         return ans[0]['generated_text']
     
     
-    def _content_cleaning(content):
+    def _content_cleaning(self, content):
         content = content.replace(u"\u200b", u"")
         content = re.sub('\s+', ' ', content)
         content = re.sub('https://.*?\s', '[LINK]', content)
@@ -50,7 +50,7 @@ class TagModel:
         return content
     
     
-    def _truncate_text(text, tokenizer, max_length):
+    def _truncate_text(self, text, tokenizer, max_length):
         tokens = tokenizer.encode(text, truncation=True, max_length=max_length)
         return tokenizer.decode(tokens)
     
