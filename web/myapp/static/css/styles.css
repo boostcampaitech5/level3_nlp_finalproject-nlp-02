@@ -335,9 +335,13 @@ input:valid ~ span::after {
     width: 5%;
     text-align: center;
   }
+  #bookmarks_whole td:nth-child(4) {
+    width: 2%;
+    text-align: center;
+  }
   #bookmarks_whole tr:hover {
-      /* background-color: rgba(255, 214, 240, 0.708) ; */
-      border:1px solid #ff6100;z-index:200;
+      background-color: rgba(250, 242, 198, 0.409) ;
+      /* border:1px solid #ff6100;z-index:200; */
       
   }
 

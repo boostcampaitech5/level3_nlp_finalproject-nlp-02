@@ -1,6 +1,7 @@
 var userBookmark = [];
 var tags = new Set();
 var selectedTags = new Set();
+var $ = jQuery;
 window.onload = function() {
 
     console.log(userBookmark)
@@ -129,10 +130,22 @@ window.onload = function() {
                 }
             html += '</td>';
             html += '<td>' + '<div class="tags-block-container"></div>' + '</td>';
+            html += '<td><input type="checkbox" class="check_btn" ></td>';
             html += '</tr>';
             }
         dynamicTbody.innerHTML = html;  
-        showModalBtn()
+        showModalBtn();
+        // showCheckBtn();
+        var checkboxes = document.getElementsByClassName('check_btn');
+        for (var i = 0; i < checkboxes.length; i++) {
+            checkboxes[i].addEventListener('click', function() {
+                deleteRow(this);
+                showModal(userBookmark[i]);
+                collectAllTags();
+                showSelectedTags();
+                showRows();
+            });
+        }
     }
     function showSelectedRows() {
         const rows = document.getElementById("bookmarks_whole").querySelectorAll('tr');
@@ -319,6 +332,28 @@ window.onload = function() {
             modal.style.display = 'none';
         }
     }
+    function showCheckBtn(){
+        var rows = document.getElementById('bookmarks_whole').querySelectorAll('tr');
+        rows.forEach(row => {
+            var button = document.createElement('input');
+            // button.textContent = '>';
+            button.setAttribute('type', 'checkbox'); // 체크박스로 설정
+            button.className = 'check_btn';
+            // button.onclick = showModal;
+            // button.onclick = function() {
+            //     // var bookmark = userBookmark[row.rowIndex - 1]; // Get the corresponding bookmark object
+            //     // showModal(bookmark, userBookmark); // Pass the 'bookmark' object as an argument
+            // };
+            row.cells[3].appendChild(button);
+        });
+
+    }
+    function deleteRow(checkbox) {
+        if (checkbox.checked) {
+            var row = checkbox.parentNode.parentNode;
+            row.parentNode.removeChild(row);
+        }
+    }
 
     // 삭제 및 추가 된 태그 정보를 서버로 전송하는 함수
     function updateTag(updatedTags){
@@ -346,4 +381,24 @@ window.onload = function() {
             console.error('Error:', error);
             })
     }
+
+    function deleteRow(checkbox) {
+        if (checkbox.checked) {
+            console.log("checked!")
+            var row = checkbox.parentNode.parentNode;
+            row.parentNode.removeChild(row);
+        }
+    }
+
+    
 }
+
+// $('.check_all').click(function(){ 
+//     console.log('check');
+//     if($("input:checkbox[id='check_btn']").prop("checked")){
+//         $("input[type=checkbox]").prop("checked",true);
+//     } else{
+//         $("input[type=checkbox]").prop("checked",true);
+//     }
+     
+// });
