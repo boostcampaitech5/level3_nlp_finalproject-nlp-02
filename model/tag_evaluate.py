@@ -116,9 +116,11 @@ if __name__ == "__main__":
     data['jaccard_score'] = jaccard_score
     data['rouge_score'] = rouge_score
     data['lev_score'] = lev_score
+    data['sanity_check'] = sanity_check
     
     print('average_jaccard_score: ', sum(jaccard_score) / len(jaccard_score))
     print('average_rouge_score: ', sum(rouge_score) / len(rouge_score))
     print('average_lev_score: ', sum(lev_score) / len(lev_score))
+    print('average_sanity_checked: ', sum(sanity_check) / len(sanity_check))
     
     data.to_csv('dataset_evaluated.csv', sep=',', na_rep='NaN',index=False)
