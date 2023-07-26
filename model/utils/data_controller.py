@@ -85,8 +85,16 @@ class Dataloader(pl.LightningDataModule):
             raise ValueError('unappropriate prompts')
             
         if train:
-            answers_list = [f"{row['tag1']}, {row['tag2']}, {row['tag3']}, {row['tag4']}, {row['tag5']}" for _ , row in x.iterrows()]
-            
+            if self.CFG['train']['korean_first']:
+                answers_list = [
+                    f"#{row['tag1'][1:].split('(')[1][:-1]}({row['tag1'][1:].split('(')[0]}), #{row['tag2'][1:].split('(')[1][:-1]}({row['tag2'][1:].split('(')[0]}), #{row['tag3'][1:].split('(')[1][:-1]}({row['tag3'][1:].split('(')[0]}), #{row['tag4'][1:].split('(')[1][:-1]}({row['tag4'][1:].split('(')[0]}), #{row['tag5'][1:].split('(')[1][:-1]}({row['tag5'][1:].split('(')[0]})"
+                    for _, row in x.iterrows()
+                ]
+
+
+            else:
+                answers_list = [f"{row['tag1']}, {row['tag2']}, {row['tag3']}, {row['tag4']}, {row['tag5']}" for _ , row in x.iterrows()]
+                
             inputs = self.tokenizer(
                 prompts_list,
                 answers_list,
