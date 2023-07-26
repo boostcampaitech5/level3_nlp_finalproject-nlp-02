@@ -243,11 +243,17 @@ window.onload = function() {
             // Clear the input after adding the tag
             addTagElement.value = '';
 
-            // Update the modal with the updated bookmark
-            showModal(userBookmark[bookmarkIndex]);
-            collectAllTags()
-            showRows()
-            showSelectedTags()
+            // TODO: tag delete / add 클릭에 따라 db update 요청 보내기
+            updatedTags = userBookmark[bookmarkIndex].tags.split(',').map(tag => tag.trim());
+            updateTag(updatedTags)
+                .then(() => {
+                    // Update the modal with the updated bookmark
+
+                    showModal(userBookmark[bookmarkIndex]);
+                    collectAllTags();
+                    showSelectedTags();
+                    showRows();
+                })
 
         }
     }
@@ -267,13 +273,18 @@ window.onload = function() {
         else{userBookmark[bookmarkIndex].tags = null;
         console.log('userBookmark',userBookmark[bookmarkIndex].tags);
     }
+
+        // TODO: tag delete / add 클릭에 따라 db update 요청 보내기
+        updateTag(updatedTags)
+            .then(() => {
+                // Update the modal with the updated bookmark
+
+                showModal(userBookmark[bookmarkIndex]);
+                collectAllTags();
+                showSelectedTags();
+                showRows();
+            })
         
-    
-        // Update the modal with the updated bookmark
-        showModal(userBookmark[bookmarkIndex]);
-        collectAllTags();
-        showSelectedTags();
-        showRows();
     }
   
 
@@ -309,4 +320,30 @@ window.onload = function() {
         }
     }
 
+    // 삭제 및 추가 된 태그 정보를 서버로 전송하는 함수
+    function updateTag(updatedTags){
+        totalDataForUpdate = {
+            'customer_id': customer_id,             // index.html 로 부터 획득
+            'bookmark_no': userBookmark[bookmarkIndex].bookmark_no,
+            'new_tags': updatedTags
+        };
+        
+        return fetch(SERVER_URL, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(totalDataForUpdate)
+            })
+            .then((response) => {
+                if (response.ok) {
+                return response.json();
+                } else {
+                throw new Error('Network response is not ok')
+                }
+            }) 
+            .catch(error =>{
+            console.error('Error:', error);
+            })
+    }
 }

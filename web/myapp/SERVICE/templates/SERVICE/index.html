@@ -16,6 +16,8 @@
 
     <script>
       var userBookmark = JSON.parse('{{ user_bookmark_json | escapejs }}');
+      var customer_id = '{{ customer_id | escapejs}}';
+      var SERVER_URL = "{% url 'API:tag_update' %}";
     </script>
 
     <style>

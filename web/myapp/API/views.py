@@ -214,13 +214,15 @@ def get_my_data(request):
 
         # 해당 유저에 대한 bookmark 정보 가져오기
         # table_bookmark_of_customer = Bookmark_Of_Customer.objects.filter(customer_id=data['id'])
+        print("request id: ", request.GET['id'], type(request.GET['id']))
         table_bookmark_of_customer = Bookmark_Of_Customer.objects.filter(customer_id=request.GET['id']) # test
-        talbe_bookmark = Bookmark.objects.filter(no__in=table_bookmark_of_customer)
+        table_bookmark = Bookmark.objects.filter(no__in=table_bookmark_of_customer)
         
         # 데이터를 리스트 data에 저장
         datas = []
-        for bookmark_of_customer_row, bookmark_row  in zip(table_bookmark_of_customer, talbe_bookmark):
+        for bookmark_of_customer_row, bookmark_row  in zip(table_bookmark_of_customer, table_bookmark):
             data = {
+                "bookmark_no": bookmark_row.no,
                 "name": bookmark_of_customer_row.name, "tags": bookmark_of_customer_row.tags,
                 "save_path_at_outs": bookmark_of_customer_row.save_path_at_ours,
                 "url": bookmark_row.url, "summarize": bookmark_row.summarize, "topic": bookmark_row.topic,
@@ -232,6 +234,7 @@ def get_my_data(request):
         # data_json = json.dumps({datas})
         # 세션에 bookmarks 데이터 저장
         request.session['my_data'] = datas
+        request.session['customer_id'] = request.GET['id']
         
         host_url = request.get_host()
         redirect_url = reverse('SERVICE:index')
