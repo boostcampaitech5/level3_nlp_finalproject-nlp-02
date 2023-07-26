@@ -2,7 +2,28 @@ var userBookmark = [];
 var tags = new Set();
 var selectedTags = new Set();
 var $ = jQuery;
-window.onload = function() {
+
+$(document).ready(function() {
+    // This part ensures the first character is always '#'
+    var placeholderText = "검색할 태그를 입력해 주세요: 형식은 #tag";
+    $("#input-tag").on("input", function() {
+        var val = $(this).val();
+        if (val && val[0] !== "#") {
+            $(this).val("#" + val);
+        } else if (!val) {
+            $(this).val("#");
+        }
+    }).on("focus", function() {
+        var val = $(this).val();
+        if (val === "") {
+            $(this).val("#");
+        }
+    }).on("blur", function() {
+        var val = $(this).val();
+        if (val === "#") {
+            $(this).val("");
+        }
+    }).attr("placeholder", placeholderText);
 
     console.log(userBookmark)
 
@@ -42,6 +63,22 @@ window.onload = function() {
             console.log('no');
         }
     }
+
+    $(function() {
+        var tagArray = Array.from(tags);
+        
+        $("#input-tag").autocomplete({
+          source: function(request, response) {
+            var results = $.ui.autocomplete.filter(tagArray, request.term);
+            response(results.slice(0, 10));
+          },
+          minLength: 2, // Show suggestions only after one character is typed
+          select: function(event, ui) {
+            // code to execute when a suggestion is selected
+          }
+        });
+      });
+      
 
     function selectTags(tag,tagElement){   //클릭으로 태그를 선택하는 함수
 
@@ -130,22 +167,10 @@ window.onload = function() {
                 }
             html += '</td>';
             html += '<td>' + '<div class="tags-block-container"></div>' + '</td>';
-            html += '<td><input type="checkbox" class="check_btn" ></td>';
             html += '</tr>';
             }
         dynamicTbody.innerHTML = html;  
-        showModalBtn();
-        // showCheckBtn();
-        var checkboxes = document.getElementsByClassName('check_btn');
-        for (var i = 0; i < checkboxes.length; i++) {
-            checkboxes[i].addEventListener('click', function() {
-                deleteRow(this);
-                showModal(userBookmark[i]);
-                collectAllTags();
-                showSelectedTags();
-                showRows();
-            });
-        }
+        showModalBtn()
     }
     function showSelectedRows() {
         const rows = document.getElementById("bookmarks_whole").querySelectorAll('tr');
@@ -332,28 +357,6 @@ window.onload = function() {
             modal.style.display = 'none';
         }
     }
-    function showCheckBtn(){
-        var rows = document.getElementById('bookmarks_whole').querySelectorAll('tr');
-        rows.forEach(row => {
-            var button = document.createElement('input');
-            // button.textContent = '>';
-            button.setAttribute('type', 'checkbox'); // 체크박스로 설정
-            button.className = 'check_btn';
-            // button.onclick = showModal;
-            // button.onclick = function() {
-            //     // var bookmark = userBookmark[row.rowIndex - 1]; // Get the corresponding bookmark object
-            //     // showModal(bookmark, userBookmark); // Pass the 'bookmark' object as an argument
-            // };
-            row.cells[3].appendChild(button);
-        });
-
-    }
-    function deleteRow(checkbox) {
-        if (checkbox.checked) {
-            var row = checkbox.parentNode.parentNode;
-            row.parentNode.removeChild(row);
-        }
-    }
 
     // 삭제 및 추가 된 태그 정보를 서버로 전송하는 함수
     function updateTag(updatedTags){
@@ -381,24 +384,4 @@ window.onload = function() {
             console.error('Error:', error);
             })
     }
-
-    function deleteRow(checkbox) {
-        if (checkbox.checked) {
-            console.log("checked!")
-            var row = checkbox.parentNode.parentNode;
-            row.parentNode.removeChild(row);
-        }
-    }
-
-    
-}
-
-// $('.check_all').click(function(){ 
-//     console.log('check');
-//     if($("input:checkbox[id='check_btn']").prop("checked")){
-//         $("input[type=checkbox]").prop("checked",true);
-//     } else{
-//         $("input[type=checkbox]").prop("checked",true);
-//     }
-     
-// });
+});

@@ -123,6 +123,7 @@ body{
     justify-content : center;
     align-items: center;
     margin-bottom: 15px;
+    font-size: 16px
 }
 
 #input-tag{
@@ -135,11 +136,31 @@ body{
     margin-left: 10px;
     margin-right: 10px;
     margin-bottom: 7px;
+    padding-left: 20px;
     border-radius: 10px;
     background-color:rgba(248,249,250,1);
     border: 1px solid black;
     font-weight: bold;
 }
+
+#ui-id-1 {
+  font-weight: bold;
+  font-size: 16px;
+  border-radius: 10px;
+}
+.ui-menu-item-wrapper {
+  border-radius: 10px;
+  text-indent: 10px;  /* Indent text here */
+}
+.ui-menu-item {
+  border-radius: 10px;
+} 
+.ui-menu-item .ui-menu-item-wrapper.ui-state-active {
+  background: #6693bc !important;
+  font-weight: bold !important;
+  color: #ffffff !important;
+}
+
 #add-tag{
   width:95%;
   height: 50px;
