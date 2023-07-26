@@ -1,0 +1,13 @@
+<!-- test_for_search.html -->
+<form method="post" action="{% url 'search_tags' %}">
+    {% csrf_token %}
+    <input type="text" name="tag" placeholder="Enter your input">
+    <button id="send-button">enter</button>
+</form>
+<p>The input data is: {{ data }}</p>
+{% for url, tags in filtered_data.items %}
+    <p>URL: {{ url }}   TAGS: {{ tags }} </p>
+{% endfor %}
+
+<script src="your_script.js"></script>
+
