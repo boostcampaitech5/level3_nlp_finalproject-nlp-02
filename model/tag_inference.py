@@ -59,7 +59,8 @@ class TagModel:
     
     def _generate_prompt(self):
         if 'KoAlpaca' in self.peft_model_id:
-            prompt = f"Instruction(명령어):\n'다음의 블로그 글에 어울리는 태그 5개를 생성하시오. 태그의 형식은 다음과 같음. [#영어(한글), #영어(한글), #영어(한글), #영어(한글), #영어(한글)]'\n\n### Input(입력):\n주제는 [{self.topics}], 제목은 [{self.title}], 본문은 [{self.content}]이다.\n\n### Response(응답): "
+            
+            prompt = f"### Instruction(명령어):\n다음의 블로그 글에 어울리는 태그 5개를 생성하시오. 태그의 형식은 다음과 같음. [#영어(한글), #영어(한글), #영어(한글), #영어(한글), #영어(한글)]\n\n### Input(입력):\n제목은 [{self.title}], 본문은 [{self.content}]이다.\n\n### Response(응답): \n"
             
             return prompt
         
