@@ -5,13 +5,14 @@
 body{
   margin: 0;
   padding: 2% 0% 1% 0%;
+  background-color:rgba(248,249,250,1);
 }
 .container{
     width:100%;
     height:100%;
     /* margin:0 auto; */
     position: relative;
-    background-color:rgba(255,255,255,1);
+    background-color:rgba(248,249,250,1);
     display: flex;
     flex-direction: column;
     /* justify-content : center; */
@@ -21,19 +22,76 @@ body{
 .header{
     height: 145px;
     position: relative;
-    background: rgba(255,255,255,1);
+    background: rgba(248,249,250,1);
     display: flex;
     align-items: center;
+    margin-bottom: 30px;
 }
 
 .header img{
-    height: 145px;
+    height: 130px;
     width: auto;
     /* transform: translate(250%); */
     position: absolute;
     top: 37%;
     left: 50%;
     transform: translate(-50%, -50%);
+}
+.Favorites{
+  display: block;
+  width:80%;
+  height:30px;
+  /* align-items: right; */
+  /* background-color:rgb(48, 132, 216); */
+}
+.f_tmp{
+  width:7px;
+  height:30px;
+  background-color:transparent;
+    float: left;
+}
+.f1{
+  width:80px;
+  height:30px;
+  background-color:#E3EAF4;
+  border-top-left-radius : 7px;
+  border-top-right-radius : 7px;
+    /* border: 1px solid black; */
+    float: left;
+}
+.f2{
+  width:80px;
+  height:30px;
+  background-color:#D2D8D8;
+  border-top-left-radius : 7px;
+  border-top-right-radius : 7px;
+    /* border: 1px solid black; */
+    float: left;
+}
+.f3{
+  width:80px;
+  height:30px;
+  background-color:#F0E4D6;
+  border-top-left-radius : 7px;
+  border-top-right-radius : 7px;
+    /* border: 1px solid black; */
+    float: left;
+}
+.Refresh{
+  width:30px;
+  height:30px;
+  float: right;
+  font-weight: bold;
+  line-height: 30px;
+  text-align: center;
+  color: #a3a3a3;
+  /* background-color:#312f2d; */
+}
+.Refresh:hover {
+  /* font-size: 120%; */
+  color: #050505;
+  background-color: #efefef;
+  border-radius: 50%;
 }
 
 .content1 {
@@ -47,14 +105,16 @@ body{
     align-items: center;
     /* 확인용 */
     /* height: 300px; */
-    background-color: rgb(203, 203, 203);
+    background-color: rgb(255, 255, 255);
     border-radius: 7px;
+    border: 1px solid black;
 }
 
 #tags{
     display: block;
     overflow-y:scroll;
     height: 70%;
+    height: 300px;
     display: block;
 }
 
@@ -62,6 +122,7 @@ body{
     display: flex;
     justify-content : center;
     align-items: center;
+    margin-bottom: 15px;
 }
 
 #input-tag{
@@ -75,8 +136,9 @@ body{
     margin-right: 10px;
     margin-bottom: 7px;
     border-radius: 10px;
-    border: 0;
-    background-color:rgba(255, 255, 255,1);
+    background-color:rgba(248,249,250,1);
+    border: 1px solid black;
+    font-weight: bold;
 }
 #add-tag{
   width:95%;
@@ -112,11 +174,13 @@ input:valid ~ span::after {
     cursor: pointer;
     transition: font-size 0.3s ease;
     border-radius: 5px;
+    background-color:rgba(248,249,250,1);
+    font-weight: bold;
 }
 
 .tag:hover {
     /* font-size: 120%; */
-    color: #7aacfc;
+    color: #006ED4;
 }
 
 .tag-display {
@@ -129,6 +193,7 @@ input:valid ~ span::after {
   display: inline-block;
   /* cursor: pointer; */
   transition: font-size 0.3s ease;
+  font-weight: bold;
   border-radius: 5px;
 }
 .tag-delete {
@@ -151,7 +216,7 @@ input:valid ~ span::after {
 }
 
 .selected-tag {
-    background-color: #7aacfc;
+    background-color: #ffd800;;
 }
 
 .bookmark {
@@ -168,7 +233,7 @@ input:valid ~ span::after {
     position: relative;
     justify-content : center;
     /* 확인용 */
-    background-color: rgba(255,255,255,1);
+    background-color: rgba(248,249,250,1);
 }
 
 .tag_box_current{
@@ -179,12 +244,12 @@ input:valid ~ span::after {
     position: relative;
     padding-top: 5px;
     padding-left: 5px;
-    margin-top: 10px;
-    margin-bottom: 10px;
+    margin-top: 50px;
+    margin-bottom: 50px;
     /* padding-top:20%; */
     border-radius: 5px;
-    border: 0;
-    background-color: rgb(203, 203, 203)
+    background-color:rgb(255, 255, 255);
+    border: 1px solid black;
 
 }
 .selected-tags {
@@ -201,16 +266,17 @@ input:valid ~ span::after {
     justify-content : center;
     font-weight: bold;
     height: 30px;
-    background-color: lightblue;
+    background-color: #222529;;
     padding: 5px;
     /* margin-bottom: 1px; */
-    border: 3px solid #4f13e798;
+    /* border: 3px solid #4f13e798; */
     border-radius: 5px;
+    color: #ffffff;
   }
 
 .content3 {
     width:80%;
-    height:20%;
+    height:100%;
     position: relative;
     display: flex;
     justify-content : center;
@@ -221,23 +287,30 @@ input:valid ~ span::after {
 .url_box{
     /* position: absolute; */
     width: 100%;
-    height: 500px;
+    height: 100%;
     position: relative;
 	  /* top: 40px; */
     /* padding-top:20%; */
     border-radius: 5px;
     border: 0;
-    background-color: rgb(203, 203, 203);
-    overflow-y:scroll;
+    background-color:rgba(248,249,250,1);
+    border: 1px solid black;
+    /* overflow-y:scroll; */
 }
 
 #bookmarks_whole {
     width: 100%; /* Set the width to 100% to fill the available space */
     table-layout: fixed; /* Fix the table layout */
     box-sizing: border-box;
+    border-collapse: separate;
+    background-color: rgba(255,255,255,1);
   }
   
-#bookmarks_whole th,
+#bookmarks_whole th{
+  padding: 8px;
+  height: 20px;
+  background-color: #006ED4;
+}
 #bookmarks_whole td {
     padding: 8px; /* Add padding to the table cells for spacing */
     border: 1px solid #ccc; /* Add a border to the table cells */
@@ -254,16 +327,19 @@ input:valid ~ span::after {
   }
   
   /* Apply styles to the third column (index 3) */
-  #bookmarks_whole td:nth-child(3) {
+  /* #bookmarks_whole td:nth-child(3) {
     width: 5%;
-  }
+  } */
 
   #bookmarks_whole td:nth-child(3) {
     width: 5%;
+    text-align: center;
   }
-#bookmarks_whole tr:hover {
-    background-color: rgba(255, 214, 240, 0.708) ;
-}
+  #bookmarks_whole tr:hover {
+      /* background-color: rgba(255, 214, 240, 0.708) ; */
+      border:1px solid #ff6100;z-index:200;
+      
+  }
 
 .footer{
     /* position: absolute;
@@ -318,7 +394,7 @@ input:valid ~ span::after {
   
   /* Button Styles (You can adjust this as needed) */
 button.modal-btn {
-    background-color: #c2c2c2;
+    background-color: #ff9797;  /*#c2c2c2;*/
     color: white;
     padding: 8px 16px;
     border: none;
@@ -333,3 +409,24 @@ button.modal-btn:hover {
 .show-modal {
     display: block;
     }
+
+
+
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background-color: transparent;
+  border: 2px solid transparent;
+}
+::-webkit-scrollbar-thumb {
+  border-radius: 5px;
+  background-color: gray;
+}
+::-webkit-scrollbar-button {
+  width: 0;
+  height: 0;
+}
+/* .container::-webkit-scrollbar-track {
+  width:14px;
+} */
