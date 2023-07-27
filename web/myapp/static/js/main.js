@@ -153,7 +153,7 @@ $(document).ready(function() {
             html += '<tr>';
             // html += '<td>'+'<a href="http://' + bookmark.url + '">' + bookmark.title + '</a>'+'</td>';
             // html += '<tr onClick="window.open(\'' + bookmark.url + '\')">';
-            html += '<td onClick="window.open(\'' + bookmark.url + '\')" title="'+bookmark.url+'">'+bookmark.title+'</td>';
+            html += '<td onClick="window.open(\'' + bookmark.url + '\')" title="'+bookmark.url+'" style="font-weight: bold;">'+bookmark.name+'</td>';
             html += '<td onClick="window.open(\'' + bookmark.url + '\')" title="'+bookmark.url+'">';
             if (bookmark.tags === null){
                 
@@ -209,16 +209,18 @@ $(document).ready(function() {
         bookmarkInfoElement.innerHTML = ''; // Clear previous content
 
         // Get the bookmark data for the clicked row
-        var bookmarkTitle = bookmark.title;
+        var bookmarkTitle = bookmark.name;
         var bookmarkURL = bookmark.url;
         var bookmarkTags = bookmark.tags;
 
         // Create p elements to show bookmark information
-        var titleElement = document.createElement('p');
-        titleElement.textContent = 'Title: ' + bookmarkTitle;
+        var titleElement = document.createElement('h1');
+        titleElement.innerHTML = '<a href="http://' + bookmarkURL + '" title="'+bookmarkURL+'">' + bookmarkTitle + '</a>';
+        titleElement.style.fontWeight = 'bold'; 
 
-        var urlElement = document.createElement('p');
-        urlElement.innerHTML = 'URL: <a href="' + bookmarkURL + '" target="_blank">' + bookmarkURL + '</a>';
+        // var urlElement = document.createElement('p');
+        // urlElement.innerHTML = 'URL: <a href="' + bookmarkURL + '" target="_blank">' + bookmarkURL + '</a>';
+        // '<a href="http://' + bookmarkURL + '" title="'+bookmarkURL+'">' + bookmarkTitle + '</a>'
 
         var tagsElement = document.createElement('p');
         tagsElement.className = 'tags-block-container-modal';
@@ -240,7 +242,7 @@ $(document).ready(function() {
 
         // Append the p elements to the bookmark-info div
         bookmarkInfoElement.appendChild(titleElement);
-        bookmarkInfoElement.appendChild(urlElement);
+        // bookmarkInfoElement.appendChild(urlElement);
         bookmarkInfoElement.appendChild(tagsElement);
         bookmarkInfoElement.appendChild(addTags);
         

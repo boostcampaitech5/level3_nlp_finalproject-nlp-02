@@ -17,25 +17,46 @@ body{
     flex-direction: column;
     /* justify-content : center; */
     align-items: center;
+    justify-content: center; 
     font-family: 'IBM Plex Sans KR', sans-serif;
+}
+.h_container{
+  width:100%;
+  display: flex;
+  margin: 0;
+  justify-content: center; 
+  align-items: center;
 }
 .header{
     height: 145px;
+    width:80%;
+    margin: 0;
     position: relative;
     background: rgba(248,249,250,1);
     display: flex;
-    align-items: center;
     margin-bottom: 30px;
+    position: relative;
+    justify-content : center;
+    align-items: center;
 }
 
-.header img{
-    height: 130px;
+.img{
+    height: 100px;
     width: auto;
+    display: flex;
+    margin-right: 30px;
     /* transform: translate(250%); */
-    position: absolute;
+    /* position: absolute;
     top: 37%;
     left: 50%;
-    transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%); */
+}
+.web_title{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 90px;
+    font-weight: bold;
 }
 .Favorites{
   display: block;
@@ -216,6 +237,7 @@ input:valid ~ span::after {
   transition: font-size 0.3s ease;
   font-weight: bold;
   border-radius: 5px;
+  background-color:rgba(248,249,250,1);
 }
 .tag-delete {
   padding: 5px;
@@ -230,6 +252,7 @@ input:valid ~ span::after {
   font-weight: bold;
   border-radius: 5px;
   content: "✖";
+  background-color:rgba(248,249,250,1);
 }
 .tag-delete:after {display: inline-block; content: "  \00d7"; }
 .tag-delete:hover {
@@ -304,7 +327,7 @@ input:valid ~ span::after {
     justify-content : center;
     align-items: center;
     /* 확인용 */
-    background-color: rgba(255,255,255,1);
+    background-color: transparent;
 }
 .url_box{
     /* position: absolute; */
@@ -315,9 +338,10 @@ input:valid ~ span::after {
     /* padding-top:20%; */
     border-radius: 5px;
     border: 0;
-    background-color:rgba(248,249,250,1);
+    background-color:transparent;
     border: 1px solid black;
     /* overflow-y:scroll; */
+    margin-bottom: 50px;
 }
 
 #bookmarks_whole {
@@ -397,8 +421,8 @@ input:valid ~ span::after {
     background-color: #fefefe;
     margin: 15% auto; /* 15% from the top and centered */
     padding: 100px;
-    border: 1px solid #888;
-    width: 50%; /* Could be modified as needed */
+    /* border: 1px solid #888; */
+    width: 60%; /* Could be modified as needed */
     position: relative;
     border-radius: 7px;
   }
@@ -407,6 +431,7 @@ input:valid ~ span::after {
   display: block;
     width:100%;
     height:23%;
+    margin-top: 50px;
     /* margin-right: 30px;
     margin-left: 30px; */
     position: relative;
@@ -417,13 +442,14 @@ input:valid ~ span::after {
     background-color: rgb(255, 255, 255);
     border-radius: 7px;
     border: 1px solid black;
+    text-align: left; /* Align the text to the left in the cells */
 
 }
   
 .close {
     position: absolute;
     top: 8%;
-    right: 8%;
+    right: 6%;
     color: #aaaaaa;
     font-size: 28px;
     font-weight: bold;
@@ -475,3 +501,14 @@ button.modal-btn:hover {
 /* .container::-webkit-scrollbar-track {
   width:14px;
 } */
+
+a:link{
+  color: #888;
+  text-decoration: none;
+}
+a:hover {
+  color : rgb(70, 63, 212);
+}
+a:visited {
+  color : #888;
+}
