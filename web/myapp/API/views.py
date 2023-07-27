@@ -328,3 +328,36 @@ def get_my_data(request):
         return redirect(full_redirect_url)
     else:
         raise Http404("Question does not exist") 
+
+
+@api_view(['POST'])
+def remove_bookmark(request):
+    '''
+    버튼이 눌린 데이터를 삭제한 후에 테이블 정보를 다시 불러오기
+    '''
+    if request.method == 'POST':
+        data = json.loads(request.body.decode('utf-8'))
+        customer_id = data['customer_id']
+        url = data['url']
+
+        try:
+            find_row = Bookmark_Of_Customer.objects.filter(customer_id=customer_id, url=url)[0]
+            find_row.delete()
+        except:
+            pass
+        
+        datas = request.session['my_data']
+        for idx, data in enumerate(datas):
+            if data['url'] == url:
+                del data # 삭제가 안 되면 datas.pop(idx)
+                break
+
+        request.session['my_data'] = datas
+        request.session['customer_id'] = customer_id
+        
+        host_url = request.get_host()
+        redirect_url = reverse('SERVICE:index')
+        full_redirect_url = f"http://{host_url}{redirect_url}"
+        
+        print("full_redirect_url: ", full_redirect_url)
+        return redirect(full_redirect_url)
