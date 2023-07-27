@@ -3,22 +3,22 @@ var tags = new Set();
 var selectedTags = new Set();
 var $ = jQuery;
 
-$(document).ready(function() {
+$(document).ready(function () {
     // This part ensures the first character is always '#'
     var placeholderText = "검색할 태그를 입력해 주세요: 형식은 #tag";
-    $("#input-tag").on("input", function() {
+    $("#input-tag").on("input", function () {
         var val = $(this).val();
         if (val && val[0] !== "#") {
             $(this).val("#" + val);
         } else if (!val) {
             $(this).val("#");
         }
-    }).on("focus", function() {
+    }).on("focus", function () {
         var val = $(this).val();
         if (val === "") {
             $(this).val("#");
         }
-    }).on("blur", function() {
+    }).on("blur", function () {
         var val = $(this).val();
         if (val === "#") {
             $(this).val("");
@@ -31,15 +31,15 @@ $(document).ready(function() {
     // var selectedTags = new Set();
     showRows()
     collectAllTags()
-    function collectAllTags(){
+    function collectAllTags() {
         tags.clear();
         userBookmark.forEach(bookmark => {
-            if (bookmark.tags===null){}
-            else{
+            if (bookmark.tags === null) { }
+            else {
                 bookmark.tags.split(',').forEach(tag => {
-                tags.add(tag.trim());
-            });
-        }
+                    tags.add(tag.trim());
+                });
+            }
         });
 
         var tagsElement = document.getElementById('tags');
@@ -52,35 +52,35 @@ $(document).ready(function() {
                 var tagElement = document.createElement('div');
                 tagElement.textContent = tag;
                 tagElement.className = 'tag';
-                tagElement.onclick = function(event) {
+                tagElement.onclick = function (event) {
                     var tag = tagElement.textContent;
                     selectTags(tag, event.target);
                 };
                 tagsElement.appendChild(tagElement);
             });
-        }else{
+        } else {
             // tagsElement.appendChild();
             console.log('no');
         }
     }
 
-    $(function() {
+    $(function () {
         var tagArray = Array.from(tags);
-        
-        $("#input-tag").autocomplete({
-          source: function(request, response) {
-            var results = $.ui.autocomplete.filter(tagArray, request.term);
-            response(results.slice(0, 10));
-          },
-          minLength: 2, // Show suggestions only after one character is typed
-          select: function(event, ui) {
-            // code to execute when a suggestion is selected
-          }
-        });
-      });
-      
 
-    function selectTags(tag,tagElement){   //클릭으로 태그를 선택하는 함수
+        $("#input-tag").autocomplete({
+            source: function (request, response) {
+                var results = $.ui.autocomplete.filter(tagArray, request.term);
+                response(results.slice(0, 10));
+            },
+            minLength: 2, // Show suggestions only after one character is typed
+            select: function (event, ui) {
+                // code to execute when a suggestion is selected
+            }
+        });
+    });
+
+
+    function selectTags(tag, tagElement) {   //클릭으로 태그를 선택하는 함수
 
         if (selectedTags.has(tag)) {
             selectedTags.delete(tag);
@@ -96,43 +96,43 @@ $(document).ready(function() {
     document.getElementById('input-tag').addEventListener('change', () => {
         selectTagsbyInput();
     });
-    
+
     function selectTagsbyInput() {
         var inputElement = document.getElementById('input-tag');
         var inputValue = inputElement.value.trim();
         var tags_ = Array.from(tags);
 
-    
+
         if (inputValue !== '') {
             if (tags_.indexOf(inputValue) !== -1) {
-                if (!selectedTags.has(inputValue)){
+                if (!selectedTags.has(inputValue)) {
                     selectedTags.add(inputValue);
-    
+
                     // find the corresponding tag in the UI and add the 'selected-tag' class
                     var tagElements = Array.from(document.querySelectorAll('#tags .tag'));
                     var tagElement = tagElements.find(element => element.textContent === inputValue);
                     if (tagElement) {
                         tagElement.classList.add('selected-tag');
                     }
-    
+
                     showSelectedTags();
                     showSelectedRows();
                 }
             }
         }
-    
+
         // Clear the input after adding the tag
         inputElement.value = '';
     }
-    
+
 
     function showSelectedTags() {
         var selectedTagsElement = document.getElementById('selected-tags');
         selectedTagsElement.innerHTML = ''; // Clear the previous content
-        if (selectedTags.size === 0 ) {
+        if (selectedTags.size === 0) {
             selectedTagsElement.innerHTML = Array.from(selectedTags)
-          } 
-          
+        }
+
         else {
             // selectedTagsElement.innerHTML = Array.from(selectedTags)
             var selectedTagsArray = Array.from(selectedTags);
@@ -141,47 +141,49 @@ $(document).ready(function() {
                 blockElement.className = 'selected-tags-block';
                 blockElement.textContent = selectedTagsArray[i];
                 selectedTagsElement.appendChild(blockElement);
-              }
-          }
+            }
+        }
     }
-    
-    function showRows(){   
+
+    function showRows() {
         const dynamicTbody = document.getElementById("bookmarks_whole");
         let html = '';
-        for(const bookmark of userBookmark){
-            
+        for (const bookmark of userBookmark) {
+
             html += '<tr>';
             // html += '<td>'+'<a href="http://' + bookmark.url + '">' + bookmark.title + '</a>'+'</td>';
             // html += '<tr onClick="window.open(\'' + bookmark.url + '\')">';
-            html += '<td ondblclick="window.open(\'' + bookmark.url + '\')" title="'+bookmark.url+'" style="font-weight: bold;">'+bookmark.name+'</td>';
-            html += '<td ondblclick="window.open(\'' + bookmark.url + '\')" title="'+bookmark.url+'">';
-            if (bookmark.tags === null){
-                
+            html += '<td ondblclick="window.open(\'' + bookmark.url + '\')" title="' + bookmark.url + '" style="font-weight: bold;">' + bookmark.name + '</td>';
+            html += '<td ondblclick="window.open(\'' + bookmark.url + '\')" title="' + bookmark.url + '">';
+            if (bookmark.tags === null) {
+
             }
-            else{
+            else {
                 const tagsArray = bookmark.tags.split(',').map(tag => tag.trim());
                 for (const tag of tagsArray) {
-                    
+
                     html += '<div class="tag-display">' + tag + '</div>';
                 }
-                }
+            }
             html += '</td>';
             html += '<td>' + '<div class="tags-block-container"></div>' + '</td>';
-            html += '<td><input type="checkbox" class="check_btn" ></td>';
+            html += '<td></td>';
             html += '</tr>';
-            }
-        dynamicTbody.innerHTML = html;  
+        }
+        dynamicTbody.innerHTML = html;
         showModalBtn()
+        removeBtn()
     }
 
-    $('.check_all').click(function(){ 
-    console.log('check');
-    if($("input:checkbox[id='check_btn']").prop("checked")){
-        $("input[type=checkbox]").prop("checked",true);
-    } else{
-        $("input[type=checkbox]").prop("checked",true);
-    }
-     
+
+    $('.check_all').click(function () {
+        console.log('check');
+        if ($("input:checkbox[id='check_btn']").prop("checked")) {
+            $("input[type=checkbox]").prop("checked", true);
+        } else {
+            $("input[type=checkbox]").prop("checked", true);
+        }
+
     });
 
 
@@ -190,9 +192,9 @@ $(document).ready(function() {
         for (const row of rows) {
             const bookmarkTags = Array.from(row.cells[1].querySelectorAll('.tag-display')).map(tagElement => tagElement.textContent.trim());
             if (selectedTags.size === 0 || bookmarkTags.some(tag => selectedTags.has(tag))) {
-              row.style.display = '';
+                row.style.display = '';
             } else {
-              row.style.display = 'none';
+                row.style.display = 'none';
             }
         }
     }
@@ -215,8 +217,8 @@ $(document).ready(function() {
 
         // Create p elements to show bookmark information
         var titleElement = document.createElement('h1');
-        titleElement.innerHTML = '<a href="http://' + bookmarkURL + '" title="'+bookmarkURL+'">' + bookmarkTitle + '</a>';
-        titleElement.style.fontWeight = 'bold'; 
+        titleElement.innerHTML = '<a href="http://' + bookmarkURL + '" title="' + bookmarkURL + '">' + bookmarkTitle + '</a>';
+        titleElement.style.fontWeight = 'bold';
 
         // var urlElement = document.createElement('p');
         // urlElement.innerHTML = 'URL: <a href="' + bookmarkURL + '" target="_blank">' + bookmarkURL + '</a>';
@@ -224,19 +226,19 @@ $(document).ready(function() {
 
         var tagsElement = document.createElement('p');
         tagsElement.className = 'tags-block-container-modal';
-        tagsElement.setAttribute('data-index', bookmarkIndex); 
+        tagsElement.setAttribute('data-index', bookmarkIndex);
 
         tagsElement.innerHTML = '';
-        if(bookmarkTags === null){
+        if (bookmarkTags === null) {
 
         }
-        else{
+        else {
             var tagsArray_modal = bookmarkTags.split(',').map(tag => tag.trim());
             for (const tag_ of tagsArray_modal) {
                 tagsElement.innerHTML += '<div class="tag-delete">' + tag_ + '</div>';
             }
         }
-        
+
         var addTags = document.createElement('p');
         addTags.innerHTML = '<input type="text" class="flexible-textbox" id = "add-tag"  placeholder="추가할 태그를 입력해 주세요: 형식은 #tag" />';
 
@@ -245,22 +247,22 @@ $(document).ready(function() {
         // bookmarkInfoElement.appendChild(urlElement);
         bookmarkInfoElement.appendChild(tagsElement);
         bookmarkInfoElement.appendChild(addTags);
-        
-            // modify user tag by adding
+
+        // modify user tag by adding
         // document.getElementById('add-tag').addEventListener('change', () => {
         //     handleAddTag();
         // });
         addTags.addEventListener('change', event => handleAddTag(event, tagsElement));
-        
+
         var tagDeleteElements = bookmarkInfoElement.querySelectorAll('.tag-delete');
 
         // Add click event listener to each tag-delete element
         tagDeleteElements.forEach(tagDeleteElement => {
-            tagDeleteElement.addEventListener('click', function() {
+            tagDeleteElement.addEventListener('click', function () {
                 // Ask for confirmation before deleting the tag
                 var clickedTag = this.textContent;
                 var confirmDelete = window.confirm('Do you want to delete the tag: ' + clickedTag + '?');
-        
+
                 // If the user confirms the deletion (clicks "OK")
                 if (confirmDelete) {
                     // Perform the tag deletion
@@ -271,11 +273,11 @@ $(document).ready(function() {
                 }
             });
         });
-        
-        
-        
+
+
+
     }
-    
+
     function handleAddTag(event, tagsElement) {
         var addTagElement = document.getElementById('add-tag');
         var inputValue = addTagElement.value.trim();
@@ -286,10 +288,10 @@ $(document).ready(function() {
             var bookmarkIndex = parseInt(tagsElement.getAttribute('data-index'));
 
             // Update the bookmark's tags in the data.bookmark_ids array
-            if (userBookmark[bookmarkIndex].tags===null){
+            if (userBookmark[bookmarkIndex].tags === null) {
                 userBookmark[bookmarkIndex].tags = inputValue;
             }
-            else{userBookmark[bookmarkIndex].tags += ', ' + inputValue;}
+            else { userBookmark[bookmarkIndex].tags += ', ' + inputValue; }
 
             // userBookmark[bookmarkIndex].tags += ', ' + inputValue;
 
@@ -315,17 +317,19 @@ $(document).ready(function() {
         // Get the bookmark index from the data-index attribute
         tagToDelete = tagToDelete
         var bookmarkIndex = parseInt(tagsElement.getAttribute('data-index'));
-    
+
         // Update the bookmark's tags in the data.bookmark_ids array by removing the clicked tag
         var bookmarkTags = userBookmark[bookmarkIndex].tags.split(',').map(tag => tag.trim());
         var updatedTags = bookmarkTags.filter(tag => tag !== tagToDelete);
-        console.log('update',updatedTags);
-        if (updatedTags.length != 0){
+        console.log('update', updatedTags);
+        if (updatedTags.length != 0) {
             console.log(updatedTags.length);
-            userBookmark[bookmarkIndex].tags = updatedTags.join(', ');}
-        else{userBookmark[bookmarkIndex].tags = null;
-        console.log('userBookmark',userBookmark[bookmarkIndex].tags);
-    }
+            userBookmark[bookmarkIndex].tags = updatedTags.join(', ');
+        }
+        else {
+            userBookmark[bookmarkIndex].tags = null;
+            console.log('userBookmark', userBookmark[bookmarkIndex].tags);
+        }
 
         // TODO: tag delete / add 클릭에 따라 db update 요청 보내기
         updateTag(updatedTags)
@@ -337,11 +341,11 @@ $(document).ready(function() {
                 showSelectedTags();
                 showRows();
             })
-        
-    }
-  
 
-    function showModalBtn(){
+    }
+
+
+    function showModalBtn() {
         // Add event listener to the button in each row
         var rows = document.getElementById('bookmarks_whole').querySelectorAll('tr');
         rows.forEach(row => {
@@ -349,7 +353,7 @@ $(document).ready(function() {
             button.textContent = '>';
             button.className = 'modal-btn';
             // button.onclick = showModal;
-            button.onclick = function() {
+            button.onclick = function () {
                 var bookmark = userBookmark[row.rowIndex - 1]; // Get the corresponding bookmark object
                 showModal(bookmark, userBookmark); // Pass the 'bookmark' object as an argument
             };
@@ -361,42 +365,80 @@ $(document).ready(function() {
         closeBtn.onclick = closeModal;
         // Add an event listener to the overlay (modal) to close it when clicked outside the modal content
         var modal = document.getElementById('myModal');
-        modal.addEventListener('click', function(event) {
-        if (event.target === modal) {
-            closeModal();
-        }
+        modal.addEventListener('click', function (event) {
+            if (event.target === modal) {
+                closeModal();
+            }
         });
-            // Function to close the modal
+        // Function to close the modal
         function closeModal() {
             var modal = document.getElementById('myModal');
             modal.style.display = 'none';
         }
     }
 
+
+    // 삭제 버튼 클릭 이벤트 추가
+    function removeBtn() {
+        // Add event listener to the button in each row
+        var rows = document.getElementById('bookmarks_whole').querySelectorAll('tr');
+        rows.forEach(row => {
+            var button = document.createElement('button');
+            button.textContent = '삭제';
+            button.onclick = function () {
+                var bookmark = userBookmark[row.rowIndex - 1]; // Get the corresponding bookmark object
+
+                if (confirm('정말 삭제하시나요?') == true) {
+                    console.log(customer_id);
+                    console.log(bookmark);
+
+                    request = {
+                        'customer_id': customer_id,
+                        'bookmark_no': bookmark.bookmark_no,
+                    };
+
+                    return fetch('/API/remove_bookmark/', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(request)
+                    })
+                        .then((response) => { console.log('response 받음') })
+                        .catch(error => {
+                            console.error('Error:', error);
+                        })
+                };
+            };
+            row.cells[3].appendChild(button);
+        });
+    }
+
+
     // 삭제 및 추가 된 태그 정보를 서버로 전송하는 함수
-    function updateTag(updatedTags){
+    function updateTag(updatedTags) {
         totalDataForUpdate = {
             'customer_id': customer_id,             // index.html 로 부터 획득
             'bookmark_no': userBookmark[bookmarkIndex].bookmark_no,
             'new_tags': updatedTags
         };
-        
+
         return fetch(SERVER_URL, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify(totalDataForUpdate)
-            })
+        })
             .then((response) => {
                 if (response.ok) {
-                return response.json();
+                    return response.json();
                 } else {
-                throw new Error('Network response is not ok')
+                    throw new Error('Network response is not ok')
                 }
-            }) 
-            .catch(error =>{
-            console.error('Error:', error);
+            })
+            .catch(error => {
+                console.error('Error:', error);
             })
     }
 });
