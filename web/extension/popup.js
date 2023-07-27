@@ -348,28 +348,29 @@ document.addEventListener("DOMContentLoaded", function () {
     chrome.identity.getProfileUserInfo({'accountStatus':'ANY'}, function(userProfile) { 
       const userName = userProfile.email.match(/^([^@]*)@/)[1];
 
-      userInfo = {'id': userProfile['id'], 'email': userProfile['email']}
+      userInfo = {'customer_id': userProfile['id'], 'email': userProfile['email']}
       console.log("user info in popup: ", userInfo)
 
-      const queryString = new URLSearchParams(userInfo).toString();
-      const newTabUrl = `${SERVER_URL}/API/get_my_data/?${queryString}`;
-      chrome.tabs.create({ url: newTabUrl});
+      // const queryString = new URLSearchParams(userInfo).toString();
+      // const newTabUrl = `${SERVER_URL}/API/get_my_data/?${queryString}`;
+      const newTabUrl = `${SERVER_URL}/API/get_my_data/`;
+      // chrome.tabs.create({ url: newTabUrl });
       // chrome.tabs.create({ url: `${SERVER_URL}/API/get_my_data/?id=${userInfo.id}&email=${userInfo.email}`});
 
-      // simpleFetcher(SERVER_URL + '/API/get_my_data/', userInfo)
-      //   .then(responseData => {
-      //     if (responseData) {
-      //       console.log("Open app page is done!, ", responseData);
+      simpleFetcher(newTabUrl, userInfo)
+        .then(responseData => {
+          if (responseData) {
+            console.log("Open app page is done!, ", responseData);
 
-      //       const queryString = new URLSearchParams(userInfo).toString();
-      //       console.log("URL params: ", queryString)
-      //       const newTabUrl = `${SERVER_URL}/API/get_my_data/?${queryString}`;
-      //       chrome.tabs.create({ url: newTabUrl});
-      //     }
-      //     else {
-      //       console.log("fetcher error.");
-      //     }
-      //   })
+            // const queryString = new URLSearchParams(userInfo).toString();
+            // console.log("URL params: ", queryString)
+            const redirectTabUrl = responseData['redirect_url'];
+            chrome.tabs.create({ url: redirectTabUrl });
+          }
+          else {
+            console.log("fetcher error.");
+          }
+        })
     });
   });
 });
