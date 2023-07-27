@@ -95,4 +95,4 @@ class TagModel:
             
 
 # 태그 모델 클래스 미리 호출시켜두기(매번 init하지 않기 위함)
-tag_model_instance = TagModel(title=None, content=None)
+# tag_model_instance = TagModel(title=None, content=None)

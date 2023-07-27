@@ -8,7 +8,7 @@ import gensim
 from tqdm import tqdm
 from konlpy.tag import Okt
 from gensim.models import Word2Vec, KeyedVectors
-from rouge_score import rouge_scorer
+from rouge import Rouge
 from tag_inference import TagModel
 from tqdm.auto import tqdm
 
@@ -21,13 +21,13 @@ def calculate_jaccard_score(pred: str, gt: str):
 
 
 def calculate_rouge_score(pred: str, gt: str):
-    scorer = rouge_scorer.RougeScorer(['rouge1', 'rougeL'], use_stemmer=True)
+    rouge = Rouge()
     
     pred = ' '.join(list(pred))
     gt = ' '.join(list(gt))
     
-    scores = scorer.score(pred, gt)
-    score = (scores['rouge1'].fmeasure + scores['rougeL'].fmeasure) / 2
+    scores = rouge.get_scores(pred, gt, avg=True)
+    score = (scores['rouge-1']['f'] + scores['rouge-l']['f']) / 2
     
     return score
 
@@ -72,8 +72,8 @@ def evaluate(predictions, ground_truths):
     
     JRL_SCORE = []
     
-    for idx, method in enumerate([calculate_jaccard_score, calculate_rouge_score, calculate_lev_score]):
-        
+    for idx, method in enumerate([calculate_jaccard_score, calculate_rouge_score, calculate_lev_score, w2v_calculate_score]):
+
         scores_matrix = [[method(pred, gt) for gt in ground_truths] for pred in predictions]
 
         final_scores = []
@@ -103,13 +103,16 @@ def evaluate(predictions, ground_truths):
 
 
 if __name__ == "__main__":
-    tag_model = TagModel(title = None, content = None)
     
-    data = pd.read_csv('./dataset/evaluate/dataset.csv')
+    model_id = 'snob/TagMyBookmark-KoAlpaca-QLoRA-v1.0_ALLDATA-Finetune300'
+    tag_model = TagModel(title = None, content = None, peft_model_id = model_id)
+
+    data = pd.read_csv('./dataset/dataset_2nd_finetune_v1.0.csv')
+    data = data.sample(n=100, random_state=42)
     
-    gts = data['GT_tag']
+    gts = [[row['tag1'], row['tag2'], row['tag3'], row['tag4'], row['tag5']] for _, row in data.iterrows()]
     titles = data['title']
-    contents = data['content']
+    contents = data['context']
     
     preds = []
     
@@ -117,6 +120,7 @@ if __name__ == "__main__":
     jaccard_score = []
     rouge_score = []
     lev_score = []
+    w2v_score = []
     
     for gt, title, content in tqdm(zip(gts, titles, contents)):
         tag_model.title = title
@@ -132,14 +136,15 @@ if __name__ == "__main__":
         if re.fullmatch(r'\s*#[^\(]+\([^\)]+\),\s*#[^\(]+\([^\)]+\),\s*#[^\(]+\([^\)]+\),\s*#[^\(]+\([^\)]+\),\s*#[^\(]+\([^\)]+\)\s*[,]*', pred):
             sanity_check.append(1)
             
-            gt = gt.split(', ')
-            pred = pred.split(', ')
+            pred = re.findall(r'\((.*?)\)', pred)
+            gt = re.findall(r'\((.*?)\)', ', '.join(gt))
             
             scores = evaluate(pred, gt)
             
             jaccard_score.append(scores[0])
             rouge_score.append(scores[1])
             lev_score.append(scores[2])
+            w2v_score.append(scores[3])
             
         else:
             sanity_check.append(0)
@@ -147,16 +152,19 @@ if __name__ == "__main__":
             jaccard_score.append(0)
             rouge_score.append(0)
             lev_score.append(0)
+            w2v_score.append(0)
             
-            
+    data['pred'] = preds
     data['jaccard_score'] = jaccard_score
     data['rouge_score'] = rouge_score
     data['lev_score'] = lev_score
+    data['w2v_score'] = w2v_score
     data['sanity_check'] = sanity_check
     
     print('average_jaccard_score: ', sum(jaccard_score) / len(jaccard_score))
     print('average_rouge_score: ', sum(rouge_score) / len(rouge_score))
     print('average_lev_score: ', sum(lev_score) / len(lev_score))
+    print('average_w2v_score:' , sum(w2v_score) / len(w2v_score))
     print('average_sanity_checked: ', sum(sanity_check) / len(sanity_check))
     
-    data.to_csv('dataset_evaluated.csv', sep=',', na_rep='NaN',index=False)
+    data.to_csv('ver1.0_ALLDATA_2ndFineTune.csv', sep=',', na_rep='NaN',index=False)
