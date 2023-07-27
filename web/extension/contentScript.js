@@ -89,16 +89,38 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
 
     const pageInfo = Object.assign(urlInfo, sourceInfo);
     console.log("hd", pageInfo);
-    // Send response to the popup script - 이게 애초부터 계속 undefined이다...
-    sendResponse({ pageInfo: pageInfo });
 
-    // Send the data to the background script
-    chrome.runtime.sendMessage(
-      { message: "collect_page_info", pageInfo: pageInfo },
-      function (response) {
-        console.log(response);
-      }
-    );
+    ////// 북마크 태그 정보 송수신 파트 //////
+    // Send response to the popup script -> 시퀀스 변경. 백그라운드에서 response 획득 시 보내는 것으로.
+    // sendResponse({ pageInfo: pageInfo });
+
+    // 함수 선언 - 백그라운드로 메세지 보내고 대기
+    function sendMessageToBackground(message){
+      return new Promise( function(resolve, reject) {
+        chrome.runtime.sendMessage(message, function(response) {
+          if (response){
+            resolve(response);
+          } else {
+            reject();
+          }
+        })
+      })
+    }
+
+    // 송신 함수 수행 - 백그라운드로부터 메세지를 받았다면
+    sendMessageToBackground({
+      message: "collect_page_info",
+      pageInfo: pageInfo,
+    })
+      .then((responseData) =>{
+        console.log("Response from background script:", responseData);
+        sendResponse( { tags_result: responseData['tags_result'], pageInfo: pageInfo })
+      })
+      .catch((error) =>{
+        console.error("ERROR in contentScript.js, ", error);
+      })
+
+  return true;  
   }
 
   // collect only page's content

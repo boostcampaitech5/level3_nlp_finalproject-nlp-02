@@ -196,8 +196,14 @@ document.addEventListener("DOMContentLoaded", function () {
       });
   });
 
-  // When button is pushed...
+  ////// 북마크 추가 버튼 관련 시퀀스 함수 //////
+  // 변수 선언
+  const tagsInput = document.getElementById("tagsInput");
+
+  // 북마크 추가 버튼('collect page info') 를 눌렀을 때의 Event Handler
   collectInfoButton.addEventListener("click", function () {
+    tagsInput.value = "적절한 태그를 추론하는 중...";
+
     // Get current tab
     chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
       var activeTab = tabs[0];
@@ -216,21 +222,36 @@ document.addEventListener("DOMContentLoaded", function () {
         }
       );
 
-      // Send a message to the current tab to collect page info
-      chrome.tabs.sendMessage(
-        activeTab.id,
-        { message: "collect_page_info" },
-        function (response) {
-          if (response && response.pageInfo) {
-            console.log(response);
-            // let pageInfo = response.pageInfo;
-            // alert(pageInfo);
-          }
-          else {
-            console.log("Something went wrong.");
-          }
-        }
-      );
+      // 탭 정보를 획득하기 위해 메세지 전송
+      function sendMessageToContent(){
+        return new Promise((resolve, reject) => {
+          chrome.tabs.sendMessage(
+            activeTab.id,
+            { message: "collect_page_info" },
+            function (response) {
+              if (response) { // && response.pageInfo) {
+                resolve(response);
+              }
+              else {
+                reject();
+                console.log("Something went wrong.");
+              }
+            }
+          );
+        })
+      }
+      
+      // 함수 실행 및 콘솔 로그 확인 부분
+      sendMessageToContent()
+        .then(response => {
+          console.log(response)
+          tags_result = response.tags_result
+
+          tagsInput.value = tags_result;  // 태그 추론 결과가 익스텐션에 나타나게 된다.
+        })
+        .catch(error => {
+          console.error(error)
+        })
     });
   });
 
