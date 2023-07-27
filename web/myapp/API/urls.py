@@ -13,4 +13,5 @@ urlpatterns = [
     path('get/', views.get_api, name='get'),
     path('post_history/', views.post_history, name='post_history'),
     path('tag_update', views.tag_update, name='tag_update'),
+    path('check_bookmark', views.check_bookmark, name='check_bookmark'),
 ]
