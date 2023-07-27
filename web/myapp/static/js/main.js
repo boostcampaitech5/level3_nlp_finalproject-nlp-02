@@ -151,6 +151,30 @@ $(document).ready(function() {
         });
 
     }
+    deleteFavorites();
+    function deleteFavorites(){
+        // const fChooseButton = document.getElementById('my-custom-id');
+        document.addEventListener('contextmenu', function(event) {
+            // Check if the clicked element has the class 'f2'
+            if (event.target.classList.contains('f2')) {
+                // Get the ID of the clicked f2 element
+                event.preventDefault();
+                var clickedF2Id = event.target.id;
+                console.log('우클릭 f2 ID:', clickedF2Id);
+                const parentElement = document.querySelector('.Favorites');
+                const f2ElementToRemove = document.getElementById(clickedF2Id);
+                if (f2ElementToRemove) {
+                    var confirmAddFavorite = window.confirm('즐겨찾기를 지우시겠습니까?');
+                    if (confirmAddFavorite) {
+                        parentElement.removeChild(f2ElementToRemove);
+                    }
+                    else{
+
+                    }
+                }
+            }
+        });
+    }
 
 
 
