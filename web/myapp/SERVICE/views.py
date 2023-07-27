@@ -1,22 +1,48 @@
 import json
-from django.shortcuts import render
+import logging
+
+from django.urls import reverse
 from django.http import HttpResponse, JsonResponse
-from rest_framework.decorators import api_view
-from API.models import UserInfo, Bookmarks, Bookmark, Bookmark_Of_Customer
+from django.shortcuts import render, redirect
 from django.contrib.sessions.models import Session
 from django.core.serializers.json import DjangoJSONEncoder
+from rest_framework.decorators import api_view
+from rest_framework import status
+from API.models import UserInfo, Bookmarks, Bookmark, Bookmark_Of_Customer
 
+logger = logging.getLogger(__name__)
+
+@api_view(['GET'])
 def index(request):
-    user_bookmark = request.session['my_data']  # response 형식의 데이터를 return
-    user_bookmark_json = json.dumps(user_bookmark, cls=DjangoJSONEncoder)
-    customer_id = request.session['customer_id']
-
-    context = {
-        'user_bookmark_json': user_bookmark_json,
-        'customer_id': customer_id,
-    }
+    if request.method == 'GET':
     
-    return render(request, 'SERVICE/index.html', context)
+        host_url = request.get_host()
+        redirect_url = reverse('API:get_my_data')
+        full_redirect_url = f"http://{host_url}{redirect_url}"
+        
+        try: 
+            if request.session['update']:
+                request.session['update'] = False
+                
+                user_bookmark = request.session['my_data']  # response 형식의 데이터를 return
+                user_bookmark_json = json.dumps(user_bookmark, cls=DjangoJSONEncoder)
+                customer_id = request.session['customer_id']
+                context = {
+                    'user_bookmark_json': user_bookmark_json,
+                    'customer_id': customer_id,
+                }
+                
+                return render(request, 'SERVICE/index.html', context) 
+            
+            else:
+                return redirect(full_redirect_url)
+            
+        except KeyError:
+            return redirect(full_redirect_url)
+    
+    else:
+        logger.error("[ERROR] Illegal request is requested.")
+        return JsonResponse({'success': False}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
 
 @api_view(['POST'])
