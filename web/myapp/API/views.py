@@ -87,10 +87,10 @@ def post_api(request):
         data = json.loads(request.body.decode('utf-8'))
         # logger.info("\ndata: %s, %s", data, type(data))
         
-        flag = save_single_bookmark(data)
+        flag, tags_result = save_single_bookmark(data)
         
         if flag:
-            return JsonResponse({'success': True})
+            return JsonResponse({'success': True, 'tags_result': tags_result})
         else:
             return Response({'success': False}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         
@@ -113,7 +113,12 @@ def post_history(request):
         flag = []
         # logger.info("post_history requested!")
         
-        flag = [save_single_bookmark(single_data) for single_data in data if single_data]
+        for single_data in data:
+            if single_data:
+                flag, tags_result = save_single_bookmark(single_data)
+                flag.append(flag)
+        
+        # flag = [save_single_bookmark(single_data) for single_data in data if single_data]
 
         if all(flag):
             return JsonResponse({'success': True})
@@ -179,14 +184,14 @@ def save_single_bookmark(data):
     # 기타 오류
     except Exception as e:
         logger.exception("[Exception] Unexpected error occurred while saving the bookmark.")
-        return False
+        return False, ""
 
     # 중복 저장 예외 시퀀스 추가
     dup_bookmark = Bookmark_Of_Customer.objects.filter(customer_id=data['customer_id']).filter(bookmark_no=url_no)
     
     if dup_bookmark:
-        logger.exception("[Exception] User already saved same url.")
-        return True
+        logger.info("User already saved same url: ", tags_result)
+        return True, tags_result
     
     # Bookmark_of_user에 id 추가
     new_bookmark_of_customer_info = {
@@ -201,7 +206,7 @@ def save_single_bookmark(data):
     }
     
     Bookmark_Of_Customer.objects.create(**new_bookmark_of_customer_info)
-    return True
+    return True, tags_result
 
 
 @api_view(['POST'])
