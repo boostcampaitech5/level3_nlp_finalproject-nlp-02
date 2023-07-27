@@ -65,10 +65,12 @@ body{
     font-weight: bold;
     font-size: 20px;
     border-color: transparent;
+    padding-top: 2px;
 }
 #f_add:hover {
   /* font-size: 120%; */
   color: #006ED4;
+  cursor : pointer;
 }
 .f2{
   width:80px;
@@ -78,15 +80,49 @@ body{
   border-top-right-radius : 7px;
     /* border: 1px solid black; */
     float: left;
+    text-align: center;
+    color:  #a3a3a3;
+    font-weight: bold;
+    font-size: 13px;
+    padding-top: 5px;
 }
-.f3{
-  width:80px;
-  height:30px;
-  background-color:#F0E4D6;
-  border-top-left-radius : 7px;
-  border-top-right-radius : 7px;
-    /* border: 1px solid black; */
-    float: left;
+.f2:hover{
+  transition:0.01s;
+  color: #006ED4;
+  cursor : pointer;
+}
+.f2 .tooltiptext {
+  visibility: hidden;
+  width: 120px;
+  background-color: black;
+  color: #fff;
+  text-align: center;
+  border-radius: 6px;
+  padding: 5px 0;
+  position: absolute;
+  z-index: 1;
+}
+.f2:hover .tooltiptext {
+  visibility: visible;
+}
+.f2 .tooltiptext::after {
+  content: " ";
+  position: absolute;
+  border-style: solid;
+  border-width: 5px;
+}
+.f2 .tooltip-top {
+  width: 120px;
+  bottom: 150%;
+  left: 50%;
+  margin-left: -60px;
+}
+
+.f2 .tooltip-top::after {
+  top: 100%;
+  left: 50%;
+  margin-left: -5px;
+  border-color: black transparent transparent transparent;
 }
 .Refresh{
   width:30px;

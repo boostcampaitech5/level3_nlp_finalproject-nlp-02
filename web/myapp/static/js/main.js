@@ -89,15 +89,19 @@ $(document).ready(function() {
         fAddButton.addEventListener('click', function() {
 
             var selectedTagsFavorite = new Set();
-            selectedTagsFavorite = Array.from(selectedTags);
+            var selectedTagsFavorite = Array.from(selectedTags);
+            var selectedTagsFavoriteText = Array.from(selectedTagsFavorite).map(tag => tag.replace('#', '')).join(' | ');
+            console.log(selectedTagsFavorite);
             if (selectedTagsFavorite.length===0){}else{
-                var confirmAddFavorite = window.confirm('즐겨찾기를 추가하시겠습니까?:\n' + selectedTagsFavorite);
+                var confirmAddFavorite = window.confirm('즐겨찾기를 추가하시겠습니까?:\n' +selectedTagsFavoriteText );
                 if (confirmAddFavorite) {
                     console.log('yes-');
                     var newContent = document.createElement('div');
                     newContent.classList.add('f2'); // Add the class attribute
                     newContent.setAttribute('id','f2_' + f2Counter);
-                    newContent.setAttribute('title', selectedTagsFavorite);
+                    newContent.setAttribute('data-tags', selectedTagsFavorite);
+                    newContent.setAttribute('title', selectedTagsFavoriteText);
+                    newContent.innerHTML  ='&#x2605;'+'<span class="tooltiptext tooltip-top">'+'ggg'+'</span>';
                     f2Element.appendChild(newContent);
                     console.log('만들어진 f2 ID:', f2Counter);
                     f2Counter++; 
@@ -120,8 +124,12 @@ $(document).ready(function() {
                 // Get the ID of the clicked f2 element
                 var clickedF2Id = event.target.id;
                 console.log('Clicked f2 ID:', clickedF2Id);
-                const fArray = document.getElementById(clickedF2Id).title.split(',').map(tag => tag.trim());
+                const tagsData = document.getElementById(clickedF2Id).getAttribute('data-tags');
+
+
+                const fArray = tagsData.split(',').map(tag => tag.trim());
                 console.log('Clicked f2 ID:', fArray);
+                
                 fArray.forEach(tag => {
                     const elementsWithSameTag = document.querySelectorAll(`.tag`);
                     elementsWithSameTag.forEach(element => {
