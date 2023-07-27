@@ -3,11 +3,17 @@ import torch
 import gc
 import re
 import Levenshtein as lev
+import gensim
 
+from tqdm import tqdm
+from konlpy.tag import Okt
+from gensim.models import Word2Vec, KeyedVectors
 from rouge_score import rouge_scorer
 from tag_inference import TagModel
 from tqdm.auto import tqdm
 
+okt=Okt()
+model = gensim.models.Word2Vec.load("ko_blog.bin")
 
 def calculate_jaccard_score(pred: str, gt: str):
     
@@ -29,6 +35,36 @@ def calculate_rouge_score(pred: str, gt: str):
 def calculate_lev_score(pred: str, gt: str):
     score = lev.ratio(pred, gt)
     return score
+
+def w2v_calculate_score(pred: str, gt: str):
+
+    pred = re.sub(r'^#','',pred)
+    gt = re.sub(r'^#','',gt)
+    pred_morphs = okt.morphs(pred)
+    gt_morphs = okt.morphs(gt)
+    score_L=[]
+    
+    for i in gt_morphs:
+        if  len(gt_morphs)>1 and len(i)<=1:
+            continue
+        for j in pred_morphs:
+            if len(pred_morphs)>1 and len(j)<=1:
+                continue
+            try:
+                score = model.wv.similarity(i,j)
+                if score < 0:
+                    score = 0
+                elif score > 1:
+                    score = 1
+                score_L.append(score)
+            except:
+                score_L.append(0)
+                
+    if len(score_L)==0:
+        score_L.append(0)
+    similarity_score = max(score_L)
+
+    return similarity_score
 
 
 def evaluate(predictions, ground_truths):
