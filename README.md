@@ -4,21 +4,28 @@
 
  # 🏷️ TagMyBookmark!
 
-- 팀명: 강남특공대
+- 팀명: NLP 02조 강남특공대
 - 인원: 5명
 - 주최: 부스트캠프 ai tech 5기 | 최종 프로젝트
 - 프로젝트 기간: 2023년 6월 30일 ~ 2023년 8월 2일
 - 주제: 북마크 자동 분류
-- 개발 스택: `python` , `Django`, `Chrome Extensions`
+- 개발 스택: `REST API` , `Django` , `Chrome Extensions` , `SQLite` , `Hugging Face` , `JavaScript`
 
-# 목차
-[1. 팀원](#1-팀원-소개)    
-[2. Tag My Bookmark](#2-tagmybookmark)    
-&emsp; [2-1. Demo](#📺-demo)
-&emsp; [2-2. 서비스 소개](#🔎-서비스-소개)
-&emsp; [2-1. 개발 이유](#💡-개발-이유)
-&emsp; [2-1. 서비스 대상](#👨‍👩‍👧‍👦-서비스-대상)    
-[3. How to use](#3-how-to-use)
+# 0. 목차
+[1. 팀원](#1-팀원)    
+[2. Tag My Bookmark!](#2-tagmybookmark!)    
+&emsp; [2-1. 📺 Demo](#📺-demo)    
+&emsp; [2-2. 🔎 서비스 소개](#🔎-서비스-소개)    
+&emsp; [2-3. 💡 개발 이유](#💡-개발-이유)    
+&emsp; [2-4. 👨‍👩‍👧‍👦 서비스 대상](#👨‍👩‍👧‍👦-서비스-대상)       
+[3. How to use](#3-how-to-use)    
+[4. 참고 자료 🗂️](#4-참고-자료-🗂️)    
+[5. Project Pipeline](#5-project-pipeline)    
+&emsp; [5-1. 🛠️ Service Architecture](#🛠️-service-architecture)    
+&emsp; [5-2. 📑 Dataset](#📑-dataset)    
+&emsp; [5-3. 💻 Front-End](#💻-front-end)    
+&emsp; [5-4. 📦 Back-End](#📦-back-end)    
+&emsp; [5-5. 🤗 Model](#🤗-model)    
 
 # 1. 팀원
 
@@ -57,7 +64,7 @@
     </tr>
 </table>
 
-#  2. TagMyBookmark
+#  2. TagMyBookmark!
 ## 📺 Demo
 &emsp; ![900x400](asset/demo.gif "TagMyBookmark Demo")
 ## 🔎 서비스 소개
@@ -72,7 +79,7 @@
         </td>
     </tr>
 </table>
-크롬 익스텐션으로 간단하게 북마크 관리를 도와주는 도구입니다.
+별도의 가입 없이 크롬 익스텐션으로 간단하게 북마크 관리를 도와주는 도구입니다.
 
 ## 💡 개발 이유
    
@@ -136,31 +143,32 @@
 - 
 
 # 3. How to use
-### 
+- [시연 영상]()
+- [설명 자료]()
 
-# 4. 참고 자료
+# 4. 참고 자료 🗂️
 
 - [발표 자료 PPT]()
 - [발표 영상]()
 
 
 # 5. Project Pipeline
-### Service Architecture    
+### 🛠️ Service Architecture    
     
 &emsp; ![600x400](asset/Project_Pipeline.png "Service Architecture")
 
-### Dataset
+### 📑 Dataset
 - Dataset 구축
     - 수집 방법: Selenium, BeautifulSoup
     - 출처: 블로그 포스트(Tistory, Naver, Velog)
 - [OpenAI API를 이용한 정답 라벨 생성]()
-### Front-End
+### 💻 Front-End
 - [Web/Extention]()
 - [Web/ServicePage]()
-### Back-End
+### 📦 Back-End
 - [Django]()
 - [RestAPI]()
-### Model
+### 🤗 Model
 - [Tag generation Model]()
 
 
