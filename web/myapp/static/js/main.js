@@ -28,6 +28,18 @@ $(document).ready(function() {
 
     console.log(userBookmark)
 
+    userBookmark.forEach((bookmark,index) => {
+            if (bookmark.tags===null){}
+            else{
+                const tagsArray = bookmark.tags.split(',').map(tag => {
+                    let startIdx = tag.indexOf('(');
+                    let endIdx = tag.indexOf(')');
+                    return '#' + tag.substring(startIdx + 1, endIdx).trim();
+                });
+                userBookmark[index].tags = tagsArray.join(', ');
+                }
+    });
+
     // var tags = new Set();
     // var selectedTags = new Set();
     showRows()
@@ -42,6 +54,34 @@ $(document).ready(function() {
             });
         }
         });
+
+              // 함수 실행 및 콘솔 로그 확인 부분
+//       sendMessageToContent()
+//         .then(response => {
+//           console.log(response)
+//           tags_result = response.tags_result
+          
+//           let tagsArray = tags_result.split(',');
+
+//           tagsArray = tagsArray.map(tag => {
+//               let startIdx = tag.indexOf('(');
+//               let endIdx = tag.indexOf(')');
+//               return tag.substring(startIdx+1, endIdx);
+//           });
+
+//           tags_result = tagsArray.join(' | ');
+//           tagsInput.value = tags_result;  // 태그 추론 결과가 익스텐션에 나타나게 된다.
+//         })
+//         .catch(error => {
+//           console.error(error)
+//         })
+//     });
+//   });
+//   bookmark.tags.split(',').forEach(tag => {
+//                 let startIdx = tag.indexOf('(');
+//                 let endIdx = tag.indexOf(')');
+//                 tags.add(tag.substring(startIdx+1, endIdx).trim());
+  //여기 지우기
 
         var tagsElement = document.getElementById('tags');
         tagsElement.innerHTML = ''; // Clear the previous content
