@@ -61,10 +61,10 @@
 <table>
     <tr height="160px">
         <td align="center" width="300px">
-            <img src="/opt/ml/level3_nlp_finalproject-nlp-02/web/myapp/static/image/Logo.png"/>
+            <img src="asset/Logo_ours.png"/>
         </td>
         <td align="left" width="550px">
-        <h2><span style="color: #006ed4;background-color:#ffd800"><b>Tag My Bookmark</b></span>는 북마크 페이지</b></span>에 대한 <span style="color: #006ed4;background-color:#ffd800"><b>태그를 생성</b></span>, 효과적인 <span style="color: #006ed4;background-color:#ffd800"><b>북마크 페이지 관리</b></span>를 돕는 서비스입니다.</h1>
+        <h3><span style="color: #006ed4;background-color:#ffd800"><b>Tag My Bookmark</b></span>는 북마크 페이지</b></span>에 대한 <span style="color: #006ed4;background-color:#ffd800"><b>태그를 생성</b></span>, 효과적인 <span style="color: #006ed4;background-color:#ffd800"><b>북마크 페이지 관리</b></span>를 돕는 서비스입니다.</h3>
         </td>
     </tr>
 </table>
@@ -97,8 +97,8 @@
     </tr>
 </table>
 
-### &emsp; &emsp; 파일 구조로 정리하는 게 최선일까? 자동으로 정리해 주면 좋을 텐데!
-### &emsp; &emsp; `북마크 관리, 필요하지 않으세요?`
+&emsp;파일 구조로 정리하는 게 최선일까요? 자동으로 정리해 주면 좋을 텐데!    
+&emsp;`북마크 관리, 필요하지 않으세요?`
 
 ## 🤗 서비스 대상
 <details>
@@ -111,7 +111,7 @@
         주로 <span style="color: #006ed4;background-color:#ffd800"><b>블로그 포스트</b></span>를 북마크에 저장한다는 것을 알 수 있었습니다.
         <br>
         또한 예상했던 바와 같이 <span style="color: #006ed4;background-color:#ffd800"><b>북마크를 찾기 위해 헤멘 경험</b></span>이 있거나 
-        <span style="color: #006ed4;background-color:#ffd800"><b>북마크를 저장하기 위해 폴더를 지정하는데에 어려움을 겪은 경험</b></span>이 있는 비율이 높음도 확인할 수 있었습니다.
+        <font color="red"><b>북마크를 저장하기 위해 폴더를 지정하는데에 어려움을 겪은 경험</b></font>이 있는 비율이 높음도 확인할 수 있었습니다.
         <br>
         따라서 저희는 다음과 같이 서비스를 제공할 대상을 특정하였습니다.
     </div>
@@ -133,8 +133,8 @@
 
 # 4. 참고 자료
 
-### [발표 자료 PPT]()
-### [발표 영상]()
+- [발표 자료 PPT]()
+- [발표 영상]()
 
 
 # 5. Project Pipeline
