@@ -73,7 +73,7 @@ body{
 .f2{
   width:80px;
   height:30px;
-  background-color:#D2D8D8;
+  background-color:#F0E4D6;
   border-top-left-radius : 7px;
   border-top-right-radius : 7px;
     /* border: 1px solid black; */
@@ -121,7 +121,7 @@ body{
     border: 1px solid black;
 }
 
-#tags{
+.tags{
     display: block;
     overflow-y:scroll;
     height: 70%;
@@ -429,6 +429,8 @@ input:valid ~ span::after {
     width: 60%; /* Could be modified as needed */
     position: relative;
     border-radius: 7px;
+    align-items: center;
+    justify-content : center;
   }
 .tags-block-container-modal{
   display: block;

@@ -2,6 +2,7 @@ var userBookmark = [];
 var tags = new Set();
 var selectedTags = new Set();
 var $ = jQuery;
+let f2Counter = 0;
 
 $(document).ready(function() {
     // This part ensures the first character is always '#'
@@ -83,39 +84,67 @@ $(document).ready(function() {
 
         // f_add 버튼 요소를 가져옵니다.
         const fAddButton = document.getElementById('f_add');
-
-        // 모달 창과 닫기 버튼 요소를 가져옵니다.
-        const modal = document.getElementById('favoriteModal');
-        const closeBtn = document.querySelector('.close');
-
+        const f2Element = document.querySelector('.Favorites');
         // f_add 버튼에 클릭 이벤트를 추가합니다.
         fAddButton.addEventListener('click', function() {
-        // 모달 창을 표시합니다.
-            modal.style.display = 'block';
+
+            var selectedTagsFavorite = new Set();
+            selectedTagsFavorite = Array.from(selectedTags);
+            if (selectedTagsFavorite.length===0){}else{
+                var confirmAddFavorite = window.confirm('즐겨찾기를 추가하시겠습니까?:\n' + selectedTagsFavorite);
+                if (confirmAddFavorite) {
+                    console.log('yes-');
+                    var newContent = document.createElement('div');
+                    newContent.classList.add('f2'); // Add the class attribute
+                    newContent.setAttribute('id','f2_' + f2Counter);
+                    newContent.setAttribute('title', selectedTagsFavorite);
+                    f2Element.appendChild(newContent);
+                    console.log('만들어진 f2 ID:', f2Counter);
+                    f2Counter++; 
+
+
+                } else {
+                    console.log('no-');
+                }
+            }
+
         });
 
-        // var closeBtn = document.getElementsByClassName('close')[0];
-        closeBtn.addEventListener('click', closeModal);
-        // closeBtn.onclick = closeModal;
-        // Add an event listener to the overlay (modal) to close it when clicked outside the modal content
-        modal.addEventListener('click', function(event) {
-        if (event.target === modal) {
-            closeModal();
-        }
+    }
+    chooseFavorites();
+    function chooseFavorites(){
+        // const fChooseButton = document.getElementById('my-custom-id');
+        document.addEventListener('click', function(event) {
+            // Check if the clicked element has the class 'f2'
+            if (event.target.classList.contains('f2')) {
+                // Get the ID of the clicked f2 element
+                var clickedF2Id = event.target.id;
+                console.log('Clicked f2 ID:', clickedF2Id);
+                const fArray = document.getElementById(clickedF2Id).title.split(',').map(tag => tag.trim());
+                console.log('Clicked f2 ID:', fArray);
+                fArray.forEach(tag => {
+                    const elementsWithSameTag = document.querySelectorAll(`.tag`);
+                    elementsWithSameTag.forEach(element => {
+                        if (element.textContent.trim() === tag) {
+                            if (selectedTags.has(tag)) {
+                                selectedTags.delete(tag);
+                                element.classList.remove('selected-tag');
+                            } else {
+                                selectedTags.add(tag);
+                                element.classList.add('selected-tag');
+                            }
+                        }
+                    });
+                });
+                
+                showSelectedTags();
+                showSelectedRows();
+            }
         });
-            // Function to close the modal
-        function closeModal() {
-            var modal = document.getElementById('favoriteModal');
-            modal.style.display = 'none';
-        }
-        showFavorites()
-    }
-
-    function showFavorites(){
-
-        
 
     }
+
+
 
     function selectTags(tag,tagElement){   //클릭으로 태그를 선택하는 함수
 
@@ -387,8 +416,8 @@ $(document).ready(function() {
             button.className = 'modal-btn';
             // button.onclick = showModal;
             button.onclick = function() {
-                var bookmark = userBookmark[row.rowIndex - 1]; // Get the corresponding bookmark object
-                showModal(bookmark, userBookmark); // Pass the 'bookmark' object as an argument
+                // var bookmark = userBookmark[row.rowIndex - 1]; // Get the corresponding bookmark object
+                showModal(userBookmark[row.rowIndex - 1]); // Pass the 'bookmark' object as an argument
             };
             row.cells[2].appendChild(button);
         });
