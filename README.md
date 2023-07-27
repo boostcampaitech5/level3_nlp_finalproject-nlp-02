@@ -1,3 +1,7 @@
+<div>
+  <img src="asset/Logo.png"/>
+</div>
+
  # 🏷️ TagMyBookmark!
 
 - 팀명: 강남특공대
@@ -53,19 +57,73 @@
 ## 🤗 Demo
 &emsp; ![900x400](asset/demo.gif "TagMyBookmark Demo")
 ## 🤗 서비스 소개
-### `Tag My Bookmark`는  `북마크 페이지`에 대한 `태그`를 생성, 효과적인 `페이지 관리`를 돕는 서비스입니다.
+<!-- ### `Tag My Bookmark`는  `북마크 페이지`에 대한 `태그`를 생성, 효과적인 `페이지 관리`를 돕는 서비스입니다. -->
+<table>
+    <tr height="160px">
+        <td align="center" width="300px">
+            <img src="/opt/ml/level3_nlp_finalproject-nlp-02/web/myapp/static/image/Logo.png"/>
+        </td>
+        <td align="left" width="550px">
+        <h2><span style="color: #006ed4;background-color:#ffd800"><b>Tag My Bookmark</b></span>는 북마크 페이지</b></span>에 대한 <span style="color: #006ed4;background-color:#ffd800"><b>태그를 생성</b></span>, 효과적인 <span style="color: #006ed4;background-color:#ffd800"><b>북마크 페이지 관리</b></span>를 돕는 서비스입니다.</h1>
+        </td>
+    </tr>
+</table>
+크롬 익스텐션으로 간단하게 북마크 관리를 도와주는 도구입니다.
+
 ## 🤗 개발 이유
-💢 눈 깜짝할 사이에 쌓여버린 북마크    
-💢 그때 그 북마크, 어디에 저장했더라?    
-💢 어디에 정리하죠, 내 북마크?    
-### 파일 구조로 정리하는 게 최선일까? 자동으로 정리해 주면 좋을 텐데!
-### `북마크 관리, 필요하지 않으세요?`
+   
+<table>
+    <tr height="160px">
+        <td align="center" width="300px">
+            <img src="asset/problemstatement1.png"/>
+        </td>
+        <td align="center" width="300px">
+            <img src="asset/problemstatement2.png"/>
+        </td>
+        <td align="center" width="300px">
+         <img src="asset/problemstatement3.png"/>
+        </td>
+    </tr>
+    <tr height="5px" style="border-top: hidden;">
+        <td align="center" width="300px">
+        <span>💢 눈 깜짝할 사이에 쌓여버린 북마크</span>
+        </td>
+        <td align="center" width="300px">
+        <span>💢 그때 그 북마크, 어디에 저장했더라?</span>
+        </td>
+        <td align="center" width="300px">
+        <span>💢 어디에 정리하죠, 내 북마크?</span>
+        </td>
+    </tr>
+</table>
+
+### &emsp; &emsp; 파일 구조로 정리하는 게 최선일까? 자동으로 정리해 주면 좋을 텐데!
+### &emsp; &emsp; `북마크 관리, 필요하지 않으세요?`
 
 ## 🤗 서비스 대상
-- 북마크를 `자료 수집용`으로 사용하는 유저
-- `블로그 포스트`를 북마킹 하는 유저
-- 북마크를 `저장할 폴더 지정이 어려운` 유저
-- 저장해 둔 `북마크 검색`에 어려움을 겪는 유저
+<details>
+<summary><b>서비스 대상과 방향</b>을 구체화 하기 위해 사람들이 북마크를 어떻게 쓰는지 <b>설문조사</b>를 해 봤습니다.</summary>
+<div markdown="1">
+    <div style="padding-left: 20px;">
+        &emsp; 
+        <img src="asset/Survey.png"/>
+        분석 결과 설문 참여자의 38%가 북마크를 <span style="color: #006ed4;background-color:#ffd800"><b>자료수집</b></span> 용도로 사용한다는 것을 알 수 있었으며,    
+        주로 <span style="color: #006ed4;background-color:#ffd800"><b>블로그 포스트</b></span>를 북마크에 저장한다는 것을 알 수 있었습니다.
+        <br>
+        또한 예상했던 바와 같이 <span style="color: #006ed4;background-color:#ffd800"><b>북마크를 찾기 위해 헤멘 경험</b></span>이 있거나 
+        <span style="color: #006ed4;background-color:#ffd800"><b>북마크를 저장하기 위해 폴더를 지정하는데에 어려움을 겪은 경험</b></span>이 있는 비율이 높음도 확인할 수 있었습니다.
+        <br>
+        따라서 저희는 다음과 같이 서비스를 제공할 대상을 특정하였습니다.
+    </div>
+
+</div>
+</details>
+&emsp;     
+
+- 북마크를 <b>`자료 수집용`</b>으로 사용하는 유저
+- <b>`블로그 포스트`</b>를 북마킹 하는 유저
+- 북마크를 <b>`저장할 폴더 지정이 어려운`</b> 유저
+- 저장해 둔 <b>`북마크 검색`</b>에 어려움을 겪는 유저
 ## 🤗 서비스 개발 방향
 - 기존 크롬 북마크 사용자 유입
 - 사용자 편의 - 액션 최소화
@@ -90,3 +148,12 @@
 - [RestAPI]()
 ### Model
 - [Taggeneration Model]()
+
+
+
+&emsp;     
+&emsp;     
+&emsp;     
+&emsp;     
+&emsp;     
+&emsp;     
