@@ -1,0 +1,322 @@
+* {
+    box-sizing: border-box;
+  }
+  body {
+    font-size: 14px;
+  }
+  
+  .v1_10 {
+    width: 400px;
+    height: 280px;
+    background: rgba(230,228,228,1);
+    opacity: 1;
+    position: relative;
+    top: 0px;
+    left: 0px;
+    border-top-left-radius: 2px;
+    border-top-right-radius: 2px;
+    border-bottom-left-radius: 2px;
+    border-bottom-right-radius: 2px;
+    overflow: hidden;
+  }
+  
+  
+  /* Tags__________________________________________________ */
+  .NAME {
+    width: 14px;
+    color: rgb(134, 133, 133);
+    position: absolute;
+    top: 22px;
+    left: 21px;
+    font-family: Inter;
+    font-weight: Thin;
+    font-size: 13px;
+    opacity: 1;
+    text-align: left;
+  }
+  
+  .flexible-textbox {
+    resize: both;
+    overflow: auto;
+    width: 370px;
+    height: 40px;
+    
+    background: rgba(255,255,255,1);
+    opacity: 1;
+    position: absolute;
+    top: 40px;
+    left: 21px;
+    border: 1px solid #c5c5c5;
+  }
+  
+  .flexible-textbox .textbox {
+    resize: both;
+    width: 100%;
+    height: 100%;
+    border: 1px solid #7c2e2e;
+    outline: none;
+    background: transparent;
+  }
+  
+  .flexible-textbox:focus-within {
+    border-color: #ff0000;
+  }
+  
+  /* Folder__________________________________________________ */
+  .Folder {
+    width: 15px;
+    color:  rgb(134, 133, 133);
+    position: absolute;
+    top: 103px;
+    left: 21px;
+    font-family: Inter;
+    font-weight: Thin;
+    font-size: 13px;
+    opacity: 1;
+    text-align: left;
+  }
+  .flexible-textbox2 {
+    overflow: auto;
+    width: 370px;
+    height: 40px;
+    text-align: center;
+    font-family: Inter;
+    font-size: 18px;
+    color:  rgb(134, 133, 133);
+    padding-left: 20px;
+    background: rgba(255,255,255,1);
+    opacity: 1;
+    position: absolute;
+    top: 120px;
+    left: 21px;
+    border: 1px solid #c5c5c5;
+    display: flex;
+    justify-content: left;
+    align-items: center;
+  }
+
+  .flexible-textbox2:focus-within {
+    border-color: #ff0000;
+  }
+
+/* 토글__________________________________________________ */
+
+.toggle {
+  width: 40px;
+  height: 40px;
+  background: rgb(255, 255, 255);
+  opacity: 1;
+  position: absolute;
+  top: 120px;
+  left: 261px;
+  border: 1px solid #c5c5c5;
+  overflow: hidden;
+}
+/* 버튼 __________________________________________________ */
+.button_save {
+  color: #ffffff;
+
+  border: none;
+  cursor: pointer;
+  position: absolute;
+  top: 190px;
+  left: 21px;
+
+}
+
+.app_button {
+  color: #ffffff;
+
+  top: 12px;
+  right: 90px;
+  width: 60px;
+  height: 25px;
+  border: none;
+  cursor: pointer;
+  position: absolute;
+}
+
+.export_button {
+  color: #ffffff;
+
+  top: 12px;
+  right: 25px;
+  width: 60px;
+  height: 25px;
+  border: none;
+  cursor: pointer;
+  position: absolute;
+}
+
+#openModal{
+  color: #ffffff;
+
+  border: none;
+  cursor: pointer;
+  position: absolute;
+  top: 240px;
+  left: 21px;
+}
+
+/* 추가적인 스타일 속성 */
+
+button {
+  /* 버튼 요소에 대한 추가적인 스타일을 정의합니다 */
+  /* 예시: */
+  background-color: #7aacfc;
+  padding: 10px 20px;
+  text-decoration: none;
+  color: #fff;
+  font-size: 14px;
+  border-radius: 3px;
+  border: 0;
+  padding: 0px 16px;
+  width: 370px;
+  height: 30px;
+  text-align: center;
+
+  /* Add these lines */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+
+
+.button_save button:disabled {
+  background-color: gray;
+  color: #999; /* This will make the text also appear "grayed out". Remove if not needed. */
+}
+
+textarea {
+  font-size: 13px; /* 원하는 글자 크기로 설정합니다 */
+}
+
+/* modal 내부 __________________________________________________ */
+
+#bookmarkTree > li{
+  margin-top:10px
+}
+
+ul.tree > li {
+  margin-left: 0px;
+  margin-bottom: 0px;
+  width: 225px
+}
+
+ul.tree ul {
+  margin-top: 0;
+  margin-bottom: 0;
+  padding-top: 0;
+  padding-bottom: 0;
+  display: none;
+}
+
+ul.tree:empty {
+  margin: 0;
+  padding: 0;
+  display: none;
+}
+
+li.no-children > ul.tree {
+  margin: 0;
+  padding: 0;
+  display: none;
+}
+
+.tree{
+    margin-top: 5px;
+  }
+.tree, .tree ul{
+  list-style: none; /* Remove default list styles */
+  padding-left:10px;
+}
+.tree *:before{
+  width:1px;
+  height:1px;
+  display:inline-block;
+}
+
+.selectedLabel{
+  background: linear-gradient(to right, #7aacfc 75%, rgb(255, 255, 255));
+  color: white;
+  font-weight: bold
+}
+
+.selectedLabel:hover{
+  background: linear-gradient(to right, #7aacfc 75%, rgb(255, 255, 255)) !important;
+  color: white !important;
+  font-weight: bold !important
+}
+
+.material-icons-outlined{
+  padding-left: 0px;
+  margin-right: 10px;
+  margin-top: 2.5px;
+  vertical-align: middle;
+  color: rgb(107, 107, 107);
+}
+
+.tree label{
+  cursor: pointer;
+  font-family: 'Orbit', sans-serif !important;
+  font-size: 18px;
+  display: flex;         
+  align-items: center;
+  padding: 5px
+}
+.tree label:hover{
+  background-color: #fefefe;
+  color: #00AACC;
+}
+.tree label:before{
+  content: '';
+}
+.tree input[type="checkbox"] {
+  display: none;
+}
+.tree input[type="checkbox"]:checked~ul {
+  display: none;
+}
+.tree input[type="checkbox"]:checked+label:before{
+  content: ''
+}
+/* The Modal (background) */
+.modal {
+  display: none; /* Hidden by default */
+  position: absolute; /* Stay in place */
+  z-index: 1; /* Sit on top */
+  left: 0;
+  top: 0;
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  background-color: rgb(0,0,0); /* Fallback color */
+  background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+}
+
+/* Modal Content/Box */
+.modal-content {
+  background-color: #fefefe;
+  margin: 4% auto; /* 15% from the top and centered */
+  padding: 10px;
+  border: 1px solid #888;
+  width: 90%; /* Could be more or less, depending on screen size */
+  max-height: 260px;
+  overflow-y: auto;
+}
+
+/* The Close Button */
+.close {
+  margin-right: 10px;
+  color: #797979;
+  float: right;
+  font-size: 25px;
+  font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+  color: black;
+  text-decoration: none;
+  cursor: pointer;
+}

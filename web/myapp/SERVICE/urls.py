@@ -4,6 +4,7 @@ from django.conf.urls.static import static
 
 from . import views
 
+app_name = 'SERVICE'
 urlpatterns = [
     path('', views.index, name='index'),
     path('test_for_search/', views.search_tags, name='search_tags'),

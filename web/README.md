@@ -1,30 +1,47 @@
-# 서버 구동 방법
+# web 디렉토리 설명
 
-# 설치
+## /extension
 
-`django`와 `ifconfig` 명령어를 사용하기 위해 아래처럼 설치
+`Chrome Extension` 소스코드 패키지
 
-```bash
-pip install django
-apt install net-tools
+열려있는 탭에 대해 다음과 같은 작업들을 수행
+
+* 지정한 위치에 **북마크 생성**
+* 내용을 **스크랩하여 서버로 전송**
+* **태그 생성 결과** 확인
+* ~ 페이지 **링크 버튼**
+
+
+```html
+|-- extension/
+|   |
+|   |-- background/ # 크롬 드라이버 백그라운드의 동작을 제어
+|   |   `-- background.js
+|   |
+|   |-- css/ # 익스텐션 팝업 레이아웃 설정
+|   |   `-- main.css
+|   |
+|   |-- contentScript.js # 개별 Tab에 대한 접근(Ex. DOM, ...)
+|   |-- icon.png
+|   |-- icon2.png
+|   |-- manifest.json # 익스텐션 configuration
+|   |-- popup.html # 익스텐션 클릭 시 나오는 팝업 창 html
+|   |-- popup.js # 팝업 창을 제어
+|   `-- README.md
+`----------------------
 ```
 
-# 서버 IP 및 Port 확인
+설치 방법은 **extension 폴더 내의 README.md** 확인 바람
 
-서버 구동을 위해 3가지  정보가 필요함
+## /myapp
 
-필요한 정보
-- `public server ip`: ai stages에서 서버 정보에 나와있는 IP (ssh 접속을 위한 IP)
-- `private server ip`: `ifconfig`를 통해 얻은 서버 IP
-  - 터미널에서 `ifconfig` 입력하면 네트워크 정보가 출력되는데 맨 위에 `inet xxx.xxx.xxx.xxx` 부분이 `private server ip`임
-- `port`: ai stages에서 서버 정보에 나와있는 port
+`django`를 사용해 구현된 백엔드 서버
 
-# 서버 구동
+다음과 같은 작업들을 수행 
 
-```bash
-cd web/myapp # 현재 root 기준
-python manager.py runserver {private server ip}:{port}
-```
+* Extension을 통해 받아온 **페이지 정보**를 **추론 모델로 전송**
+* Extension을 통해 받아온 **유저 정보**를 **추론 결과와 함께 DB에 저장**
 
-그러면 서버가 정상 작동되고 `http://{public server ip}:{port}` 주소로 web 접속 가능
-(*https 지원 안 함)
+서버 구동 관련 자세한 사항은 **myapp 폴더 내의 README.md** 확인 바람
+
+## /ServicePage

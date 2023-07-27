@@ -1,14 +1,22 @@
 import json
-
 from django.shortcuts import render
 from django.http import HttpResponse, JsonResponse
 from rest_framework.decorators import api_view
 from API.models import UserInfo, Bookmarks, Bookmark, Bookmark_Of_Customer
 from django.contrib.sessions.models import Session
-
+from django.core.serializers.json import DjangoJSONEncoder
 
 def index(request):
-    return HttpResponse("SERVICE 앱의 index 테스트 성공")
+    user_bookmark = request.session['my_data']  # response 형식의 데이터를 return
+    user_bookmark_json = json.dumps(user_bookmark, cls=DjangoJSONEncoder)
+    customer_id = request.session['customer_id']
+
+    context = {
+        'user_bookmark_json': user_bookmark_json,
+        'customer_id': customer_id,
+    }
+    
+    return render(request, 'SERVICE/index.html', context)
 
 
 @api_view(['POST'])
