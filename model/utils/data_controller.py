@@ -94,7 +94,7 @@ class Dataloader(pl.LightningDataModule):
 
             else:
                 answers_list = [f"{row['tag1']}, {row['tag2']}, {row['tag3']}, {row['tag4']}, {row['tag5']}" for _ , row in x.iterrows()]
-                
+            
             inputs = self.tokenizer(
                 prompts_list,
                 answers_list,
@@ -122,10 +122,18 @@ class Dataloader(pl.LightningDataModule):
             # x = DA.process(x)         
             
             # 텍스트 데이터 토큰화
-            train_x, val_x = train_test_split(x,
-                                            test_size=self.CFG['train']['test_size'],
-                                            shuffle=True,
-                                            random_state=self.CFG['seed'])
+            
+            # 1st finetuning
+            if 'snob' not in self.CFG['train']['model_name']:
+                train_x, val_x = train_test_split(x,
+                                                test_size=self.CFG['train']['test_size'],
+                                                shuffle=True,
+                                                random_state=self.CFG['seed'])
+                
+            # 2nd finetuning
+            else:
+                val_x = x.sample(n=73, random_state=self.CFG['seed'])
+                train_x = x.drop(val_x.index)
             
             train_inputs = self.tokenizing(train_x, train=True)
             train_tags = [', '.join([row['tag1'], row['tag2'], row['tag3'], row['tag4'], row['tag5']]) for _, row in train_x.iterrows()]
@@ -246,8 +254,15 @@ def load_data():
     with open('./config/use_config.yaml') as f:
         CFG = yaml.load(f, Loader=yaml.FullLoader)
         
-    df = pd.read_csv('./dataset/dataset.csv')
+    # 1st finetuning
+    if 'snob' not in CFG['train']['model_name']:   
+        df = pd.read_csv('./dataset/dataset.csv') 
+        train_valid_df, predict_df = train_test_split(df, test_size=CFG['train']['test_size'], random_state=CFG['seed'])
     
-    train_valid_df, predict_df = train_test_split(df, test_size=CFG['train']['test_size'], random_state=CFG['seed'])
+    # 2nd finetuning
+    else:
+        df = pd.read_csv('./dataset/dataset_2nd_finetune_v1.0.csv')
+        predict_df = df.sample(n=100, random_state=CFG['seed'])
+        train_valid_df = df.drop(predict_df.index)
         
     return train_valid_df, predict_df

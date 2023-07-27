@@ -43,7 +43,11 @@ if __name__ == "__main__":
 
     """---Train---"""
     # 데이터 로더와 모델 가져오기
-    tokenizer = AutoTokenizer.from_pretrained(CFG['train']['model_name'])
+    if 'snob' not in CFG['train']['model_name']:
+        tokenizer = AutoTokenizer.from_pretrained(CFG['train']['model_name'])
+    else:
+        tokenizer = AutoTokenizer.from_pretrained(PeftConfig.from_pretrained(CFG['train']['model_name']).base_model_name_or_path)    
+    
     tokenizer.pad_token = tokenizer.eos_token
     #CFG['train']['special_tokens_list'] = utils.get_add_special_tokens()
     #tokenizer.add_special_tokens({
@@ -52,10 +56,35 @@ if __name__ == "__main__":
     
     dataloader = data_controller.Dataloader(tokenizer, CFG)
     
-    #QLoRA
-    if CFG['adapt']['peft'] == 'QLoRA':
+    #Already Wrapped by PEFT
+    if 'snob' in CFG['train']['model_name']:
+        bnb_config = BitsAndBytesConfig(
+            load_in_4bit=True,
+            bnb_4bit_use_double_quant=True,
+            bnb_4bit_quant_type="nf4",
+            bnb_4bit_compute_dtype=torch.bfloat16)
         
-        bnb_config = bnb_config = BitsAndBytesConfig(
+        config = PeftConfig.from_pretrained(CFG['train']['model_name'])
+        
+        base_model = AutoModelForCausalLM.from_pretrained(
+            config.base_model_name_or_path,
+            quantization_config=bnb_config,
+            device_map={"":0},
+            low_cpu_mem_usage=True)
+        
+        base_model.gradient_checkpointing_enable()
+        base_model = prepare_model_for_kbit_training(base_model)
+        
+        LM = PeftModel.from_pretrained(base_model, CFG['train']['model_name'])
+        
+        for name, param in LM.named_parameters():
+            if "lora" in name or "Lora" in name:
+             param.requires_grad = True
+    
+    #QLoRA
+    elif CFG['adapt']['peft'] == 'QLoRA':
+        
+        bnb_config = BitsAndBytesConfig(
             load_in_4bit=True,
             bnb_4bit_use_double_quant=True,
             bnb_4bit_quant_type="nf4",
