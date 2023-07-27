@@ -20,43 +20,23 @@ body{
     justify-content: center; 
     font-family: 'IBM Plex Sans KR', sans-serif;
 }
-.h_container{
-  width:100%;
-  display: flex;
-  margin: 0;
-  justify-content: center; 
-  align-items: center;
-}
 .header{
-    height: 145px;
-    width:80%;
-    margin: 0;
-    position: relative;
-    background: rgba(248,249,250,1);
-    display: flex;
-    margin-bottom: 30px;
-    position: relative;
-    justify-content : center;
-    align-items: center;
+  height: 145px;
+  position: relative;
+  background: rgba(248,249,250,1);
+  display: flex;
+  align-items: center;
+  margin-bottom: 30px;
 }
 
-.img{
-    height: 100px;
-    width: auto;
-    display: flex;
-    margin-right: 30px;
-    /* transform: translate(250%); */
-    /* position: absolute;
-    top: 37%;
-    left: 50%;
-    transform: translate(-50%, -50%); */
-}
-.web_title{
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 90px;
-    font-weight: bold;
+.header img{
+  height: 130px;
+  width: auto;
+  /* transform: translate(250%); */
+  position: absolute;
+  top: 37%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 }
 .Favorites{
   display: block;
