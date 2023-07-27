@@ -153,8 +153,8 @@ $(document).ready(function() {
             html += '<tr>';
             // html += '<td>'+'<a href="http://' + bookmark.url + '">' + bookmark.title + '</a>'+'</td>';
             // html += '<tr onClick="window.open(\'' + bookmark.url + '\')">';
-            html += '<td onClick="window.open(\'' + bookmark.url + '\')" title="'+bookmark.url+'" style="font-weight: bold;">'+bookmark.name+'</td>';
-            html += '<td onClick="window.open(\'' + bookmark.url + '\')" title="'+bookmark.url+'">';
+            html += '<td ondblclick="window.open(\'' + bookmark.url + '\')" title="'+bookmark.url+'" style="font-weight: bold;">'+bookmark.name+'</td>';
+            html += '<td ondblclick="window.open(\'' + bookmark.url + '\')" title="'+bookmark.url+'">';
             if (bookmark.tags === null){
                 
             }
