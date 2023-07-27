@@ -16,4 +16,5 @@ urlpatterns = [
     path('get_my_data/', views.get_my_data, name='get_my_data'),
     path('test_create_data/', views.test_create_data, name='test_create_data'),
     path('tag_update', views.tag_update, name='tag_update'),
+    path('remove_bookmark/', views.remove_bookmark, name='remove_bookmark'),
 ]
