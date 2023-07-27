@@ -145,9 +145,15 @@
 
 
 # 5. Project Pipeline
-&emsp; ![600x400](asset/Project_Pipeline.png "TagMyBookmark Demo")
-### Data
-- [Data 수집 방법]()
+### Service Architecture    
+    
+&emsp; ![600x400](asset/Project_Pipeline.png "Service Architecture")
+
+### Dataset
+- Dataset 구축
+    - 수집 방법: Selenium, BeautifulSoup
+    - 출처: 블로그 포스트(Tistory, Naver, Velog)
+- [OpenAI API를 이용한 정답 라벨 생성]()
 ### Front-End
 - [Web/Extention]()
 - [Web/ServicePage]()
