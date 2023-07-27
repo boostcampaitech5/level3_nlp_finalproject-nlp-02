@@ -78,7 +78,44 @@ $(document).ready(function() {
           }
         });
       });
-      
+    addFavorites();
+    function addFavorites(){
+
+        // f_add 버튼 요소를 가져옵니다.
+        const fAddButton = document.getElementById('f_add');
+
+        // 모달 창과 닫기 버튼 요소를 가져옵니다.
+        const modal = document.getElementById('favoriteModal');
+        const closeBtn = document.querySelector('.close');
+
+        // f_add 버튼에 클릭 이벤트를 추가합니다.
+        fAddButton.addEventListener('click', function() {
+        // 모달 창을 표시합니다.
+            modal.style.display = 'block';
+        });
+
+        // var closeBtn = document.getElementsByClassName('close')[0];
+        closeBtn.addEventListener('click', closeModal);
+        // closeBtn.onclick = closeModal;
+        // Add an event listener to the overlay (modal) to close it when clicked outside the modal content
+        modal.addEventListener('click', function(event) {
+        if (event.target === modal) {
+            closeModal();
+        }
+        });
+            // Function to close the modal
+        function closeModal() {
+            var modal = document.getElementById('favoriteModal');
+            modal.style.display = 'none';
+        }
+        showFavorites()
+    }
+
+    function showFavorites(){
+
+        
+
+    }
 
     function selectTags(tag,tagElement){   //클릭으로 태그를 선택하는 함수
 

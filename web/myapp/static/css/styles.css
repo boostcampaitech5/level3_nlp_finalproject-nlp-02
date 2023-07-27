@@ -51,7 +51,7 @@ body{
   background-color:transparent;
     float: left;
 }
-.f1{
+#f_add{
   width:80px;
   height:30px;
   background-color:#E3EAF4;
@@ -59,6 +59,16 @@ body{
   border-top-right-radius : 7px;
     /* border: 1px solid black; */
     float: left;
+    /* padding-top: 15px; */
+    text-align: center;
+    color: #a3a3a3;
+    font-weight: bold;
+    font-size: 20px;
+    border-color: transparent;
+}
+#f_add:hover {
+  /* font-size: 120%; */
+  color: #006ED4;
 }
 .f2{
   width:80px;
@@ -124,7 +134,7 @@ body{
     justify-content : center;
     align-items: center;
     margin-bottom: 15px;
-    font-size: 16px
+    font-size: 16px;
 }
 
 #input-tag{
@@ -411,7 +421,15 @@ input:valid ~ span::after {
     position: relative;
     border-radius: 7px;
   }
-
+  .modal-content-f {
+    background-color: #fefefe;
+    margin: 15% auto; /* 15% from the top and centered */
+    padding: 100px;
+    /* border: 1px solid #888; */
+    width: 60%; /* Could be modified as needed */
+    position: relative;
+    border-radius: 7px;
+  }
 .tags-block-container-modal{
   display: block;
     width:100%;
