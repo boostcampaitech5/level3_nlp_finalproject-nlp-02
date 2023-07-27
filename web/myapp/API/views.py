@@ -234,6 +234,36 @@ def tag_update(request):
     else:
         logger.error("[ERROR] Illegal request is requested.")
         return JsonResponse({'success': False}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
+    
+
+@api_view(['POST'])
+def check_bookmark(request):
+    '''
+    extensions이 활성화 되었을 때 현재 url이 북마크로 저장되어 있는지 True | False를 반환해주는 메소드
+
+    현재 url이 DB에 저장되어 있으면, True와 해당 url에 대한 태그를 return
+    아니라면, False만 return
+    '''
+    if request.method == 'POST':
+        response = {'success': True}
+
+        data = json.loads(request.body.decode('utf-8'))     # string type으로 전달된다.
+        customer_id = data['customer_id']
+        url = data['url']
+        
+        # 북마크 체크
+        bookmark = Bookmark.objects.filter(url=data['url'])
+
+        # 북마크 DB에 해당 url이 없거나 유저 북마크 DB에 해당 bookmark_no이 없으면 False
+        try:
+            bookmark_no = bookmark[0].no
+            bookmark_of_customer = Bookmark_Of_Customer.objects.filter(customer_id=customer_id, bookmark_no=bookmark_no)
+
+            response['tags'] = bookmark_of_customer[0].tags
+        except (AttributeError, IndexError) as e:
+            response['success'] = False
+        
+        return JsonResponse(response)
         
 def test_create_data(request):
     customer_columns = ["id", "email", "pwd", "name", "birth"]
