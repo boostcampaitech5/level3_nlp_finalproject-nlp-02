@@ -305,7 +305,7 @@ input:valid ~ span::after {
 
 .selected-tags-block {
     margin-top: 5px;
-    margin-left: 5px;
+    margin-left: 10px;
     display: inline-flex;
     align-items: center;
     justify-content : center;
@@ -365,6 +365,8 @@ input:valid ~ span::after {
   
   #bookmarks_whole td:nth-child(1) {
     width: 30%;
+    padding-left: 15px;
+    padding-right: 15px;
   }
   
   /* Apply styles to the second column (index 2) */
@@ -507,7 +509,7 @@ a:link{
   text-decoration: none;
 }
 a:hover {
-  color : rgb(70, 63, 212);
+  color :#006ED4;
 }
 a:visited {
   color : #888;
