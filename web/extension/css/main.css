@@ -126,7 +126,7 @@
   border: none;
   cursor: pointer;
   position: absolute;
-  top: 190px;
+  top: 240px;
   left: 21px;
 
 }
@@ -161,7 +161,7 @@
   border: none;
   cursor: pointer;
   position: absolute;
-  top: 240px;
+  top: 190px;
   left: 21px;
 }
 
@@ -184,8 +184,8 @@ button {
 
   /* Add these lines */
   display: flex;
-  justify-content: center;
   align-items: center;
+  justify-content: center;
 }
 
 
@@ -262,6 +262,10 @@ li.no-children > ul.tree {
   margin-top: 2.5px;
   vertical-align: middle;
   color: rgb(107, 107, 107);
+}
+
+.material-symbols-outlined{
+  margin-right: 6px;
 }
 
 .tree label{

@@ -202,7 +202,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // 북마크 추가 버튼('collect page info') 를 눌렀을 때의 Event Handler
   collectInfoButton.addEventListener("click", function () {
-    tagsInput.value = "적절한 태그를 추론하는 중..................................................................";
+    tagsInput.value = "적절한 태그를 추론하는 중...";
     tagsInput.readOnly = true;
 
     // Get current tab
