@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "TagMyBookmark",
-  "version": "0.5",
+  "version": "1.0",
   "description": "Automatically tags your pages",
   "permissions": [
     "bookmarks",
@@ -30,5 +30,8 @@
   ],
   "host_permissions": [
     "<all_urls>"
-  ]
+  ],
+  "icons": {
+    "128": "icon.png"
+  }
 }

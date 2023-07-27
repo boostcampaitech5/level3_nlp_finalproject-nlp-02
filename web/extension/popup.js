@@ -202,7 +202,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // 북마크 추가 버튼('collect page info') 를 눌렀을 때의 Event Handler
   collectInfoButton.addEventListener("click", function () {
-    tagsInput.value = "적절한 태그를 추론하는 중...";
+    tagsInput.value = "적절한 태그를 추론하는 중..................................................................";
+    tagsInput.readOnly = true;
 
     // Get current tab
     chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
@@ -246,7 +247,16 @@ document.addEventListener("DOMContentLoaded", function () {
         .then(response => {
           console.log(response)
           tags_result = response.tags_result
+          
+          let tagsArray = tags_result.split(',');
 
+          tagsArray = tagsArray.map(tag => {
+              let startIdx = tag.indexOf('(');
+              let endIdx = tag.indexOf(')');
+              return tag.substring(startIdx+1, endIdx);
+          });
+
+          tags_result = tagsArray.join(' | ');
           tagsInput.value = tags_result;  // 태그 추론 결과가 익스텐션에 나타나게 된다.
         })
         .catch(error => {

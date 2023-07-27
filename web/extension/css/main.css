@@ -37,16 +37,23 @@
   
   .flexible-textbox {
     resize: both;
-    overflow: auto;
     width: 370px;
     height: 40px;
-    
     background: rgba(255,255,255,1);
     opacity: 1;
     position: absolute;
     top: 40px;
     left: 21px;
     border: 1px solid #c5c5c5;
+    text-align: left;
+    font-family: Inter;
+    font-size: 18px;
+    color:  rgb(134, 133, 133);
+    padding-left: 10px;
+    justify-content: left;
+    overflow-x: auto;  /* Add horizontal scrollbar if needed */
+    overflow-y: hidden;  /* Prevent vertical scrollbar */
+    white-space: nowrap;  /* Ensure text doesn't wrap onto new lines */
   }
   
   .flexible-textbox .textbox {
@@ -83,7 +90,7 @@
     font-family: Inter;
     font-size: 18px;
     color:  rgb(134, 133, 133);
-    padding-left: 20px;
+    padding-left: 10px;
     background: rgba(255,255,255,1);
     opacity: 1;
     position: absolute;
