@@ -2,7 +2,6 @@ import os
 import sys
 import json
 import logging
-import pickle
 
 from django.urls import reverse
 from django.shortcuts import render, redirect
@@ -198,7 +197,7 @@ def save_single_bookmark(data):
         'customer_id': data['customer_id'],
         'bookmark_no': url_no,
         'tags': tags_result,
-        'name': "",
+        'name': data['title'],
         # 'create_date': "",
         # 'update_date': "",
         'save_path_at_chrome': "",
@@ -303,61 +302,79 @@ def get_my_data(request):
     '''
     Extensions에서 id와 email을 POST로 받아와
     처음 접속이라면 테이블 customer에 유저 정보를 저장하고
-    해당 유저에 대한 bookmark 정보를 response로 보내줌
+    해당 유저에 대한 bookmark 정보를 request.session으로 저장함.
+    이후 크롬 익스텐션에서 새 탭을 열면서 SERVICE/index를 오픈하면서 해당 값들을 사용함.
     '''
     if request.method == 'POST':
         """
-            request: {'id': id, 'email': emai}
+        request: {'customer_id': id, 'email': emai}'
+        return: JsonResponse
         """
-        try:
-            data = json.loads(request.body.decode('utf-8'))
-            print("In get_my_data, Received: ", data)
-            return JsonResponse({'message': 'User info received successfully'})
-        except:
-            return JsonResponse({'error': 'Invalid JSON data'}, status=400)
-
-    
-    if request.method == 'GET':
-        """
-            request: {'id': id, 'email': emai}
-        """
-        # data = json.loads(request.body.decode('utf-8'))
-
-        # 처음 접속했다면 테이블 customer에 저장
-        # code
-
         # 해당 유저에 대한 bookmark 정보 가져오기
         # table_bookmark_of_customer = Bookmark_Of_Customer.objects.filter(customer_id=data['id'])
-        print("request id: ", request.GET['id'], type(request.GET['id']))
-        table_bookmark_of_customer = Bookmark_Of_Customer.objects.filter(customer_id=request.GET['id']) # test
-        table_bookmark = Bookmark.objects.filter(no__in=table_bookmark_of_customer)
-        
-        # 데이터를 리스트 data에 저장
-        datas = []
-        for bookmark_of_customer_row, bookmark_row  in zip(table_bookmark_of_customer, table_bookmark):
-            data = {
-                "bookmark_no": bookmark_row.no,
-                "name": bookmark_of_customer_row.name, "tags": bookmark_of_customer_row.tags,
-                "save_path_at_outs": bookmark_of_customer_row.save_path_at_ours,
-                "url": bookmark_row.url, "summarize": bookmark_row.summarize, "topic": bookmark_row.topic,
-            }
+        data = json.loads(request.body.decode('utf-8'))
+        print("POST is called, Received: ", data)
 
-            datas.append(data)
-        
+        bookmark_data = get_my_data_func(data['customer_id'])
         # dict to json
         # data_json = json.dumps({datas})
         # 세션에 bookmarks 데이터 저장
-        request.session['my_data'] = datas
-        request.session['customer_id'] = request.GET['id']
+        request.session['update'] = True
+        request.session['my_data'] = bookmark_data
+        request.session['customer_id'] = data['customer_id']
         
         host_url = request.get_host()
         redirect_url = reverse('SERVICE:index')
         full_redirect_url = f"http://{host_url}{redirect_url}"
         
-        print("full_redirect_url: ", full_redirect_url)
-        return redirect(full_redirect_url)
+        print("New tab url: ", full_redirect_url)
+        
+        return JsonResponse({'redirect_url': full_redirect_url}) # response 로 변경
+    
+    elif request.method == 'GET':
+        """
+        request: None
+        return: 업데이트 된 유저의 bookmark정보
+        """
+        try:
+            # data = json.loads(request.body.decode('utf-8'))
+            # print("In get_my_data, Received: ", data)
+            bookmark_data = get_my_data_func(request.session['customer_id'])
+
+            request.session['update'] = True
+            request.session['my_data'] = bookmark_data
+            
+            host_url = request.get_host()
+            redirect_url = reverse('SERVICE:index')
+            full_redirect_url = f"http://{host_url}{redirect_url}"
+            
+            logger.info("Bookmark data is updated!")
+            # return JsonResponse({'redirect_url': full_redirect_url}) # response 로 변경
+            return redirect(full_redirect_url)
+        
+        except:
+            return JsonResponse({'error': 'Invalid JSON data'}, status=400)
     else:
-        raise Http404("Question does not exist") 
+        raise Http404("Question does not exist")
+
+
+# 데이터 로드 함수 개별 호출을 위한 함수화
+def get_my_data_func(id):
+    table_bookmark_of_customer = Bookmark_Of_Customer.objects.filter(customer_id=id) # test
+    table_bookmark = Bookmark.objects.filter(no__in=table_bookmark_of_customer)
+    
+    # 데이터를 리스트 data에 저장
+    bookmark_data = []
+    for bookmark_of_customer_row, bookmark_row  in zip(table_bookmark_of_customer, table_bookmark):
+        single_bookmark = {
+            "bookmark_no": bookmark_row.no,
+            "name": bookmark_of_customer_row.name, "tags": bookmark_of_customer_row.tags,
+            "save_path_at_outs": bookmark_of_customer_row.save_path_at_ours,
+            "url": bookmark_row.url, "summarize": bookmark_row.summarize, "topic": bookmark_row.topic,
+        }
+
+        bookmark_data.append(single_bookmark)
+    return bookmark_data
 
 
 @api_view(['POST'])
