@@ -153,8 +153,8 @@ $(document).ready(function() {
             html += '<tr>';
             // html += '<td>'+'<a href="http://' + bookmark.url + '">' + bookmark.title + '</a>'+'</td>';
             // html += '<tr onClick="window.open(\'' + bookmark.url + '\')">';
-            html += '<td onClick="window.open(\'' + bookmark.url + '\')">'+bookmark.name+'</td>';
-            html += '<td onClick="window.open(\'' + bookmark.url + '\')">';
+            html += '<td onClick="window.open(\'' + bookmark.url + '\')" title="'+bookmark.url+'">'+bookmark.title+'</td>';
+            html += '<td onClick="window.open(\'' + bookmark.url + '\')" title="'+bookmark.url+'">';
             if (bookmark.tags === null){
                 
             }
@@ -167,11 +167,24 @@ $(document).ready(function() {
                 }
             html += '</td>';
             html += '<td>' + '<div class="tags-block-container"></div>' + '</td>';
+            html += '<td><input type="checkbox" class="check_btn" ></td>';
             html += '</tr>';
             }
         dynamicTbody.innerHTML = html;  
         showModalBtn()
     }
+
+    $('.check_all').click(function(){ 
+    console.log('check');
+    if($("input:checkbox[id='check_btn']").prop("checked")){
+        $("input[type=checkbox]").prop("checked",true);
+    } else{
+        $("input[type=checkbox]").prop("checked",true);
+    }
+     
+    });
+
+
     function showSelectedRows() {
         const rows = document.getElementById("bookmarks_whole").querySelectorAll('tr');
         for (const row of rows) {
@@ -196,7 +209,7 @@ $(document).ready(function() {
         bookmarkInfoElement.innerHTML = ''; // Clear previous content
 
         // Get the bookmark data for the clicked row
-        var bookmarkTitle = bookmark.name;
+        var bookmarkTitle = bookmark.title;
         var bookmarkURL = bookmark.url;
         var bookmarkTags = bookmark.tags;
 
@@ -208,7 +221,7 @@ $(document).ready(function() {
         urlElement.innerHTML = 'URL: <a href="' + bookmarkURL + '" target="_blank">' + bookmarkURL + '</a>';
 
         var tagsElement = document.createElement('p');
-        tagsElement.className = 'tags-block-container';
+        tagsElement.className = 'tags-block-container-modal';
         tagsElement.setAttribute('data-index', bookmarkIndex); 
 
         tagsElement.innerHTML = '';
