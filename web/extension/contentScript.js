@@ -67,14 +67,19 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
     ) {
       console.log("This is tistoryBlog page");
 
-      sourceInfo = {
-        title: document.querySelector('meta[name="title"]').content,
-        content: document.querySelector("div.contents_style").innerText,
-        clue: document
+      try {
+        clueValue = document
           .querySelector("div.another_category")
           .querySelector("h4")
           .innerText.split(" 카테고리의 다른 글")[0]
-          .split(" > "),
+          .split(" > ")
+      } catch (error) {
+        clueValue = ""
+      }
+      sourceInfo = {
+        title: document.querySelector('meta[name="title"]').content,
+        content: document.querySelector("div.contents_style").innerText,
+        clue: clueValue
       };
     } else {
       console.log("Not assigned blog");
