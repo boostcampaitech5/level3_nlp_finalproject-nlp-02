@@ -140,7 +140,7 @@
 ## 🧭 서비스 개발 방향
 - 기존 크롬 북마크 사용자 유입
 - 사용자 편의 - 액션 최소화
-- 
+- 북마크 관리 편의성
 
 # 3. How to use
 - [시연 영상]()
@@ -150,6 +150,7 @@
 
 - [발표 자료 PPT]()
 - [발표 영상]()
+- [Wrap-up Report]()
 
 
 # 5. Project Pipeline
@@ -161,15 +162,16 @@
 - Dataset 구축
     - 수집 방법: Selenium, BeautifulSoup
     - 출처: 블로그 포스트(Tistory, Naver, Velog)
-- [OpenAI API를 이용한 정답 라벨 생성]()
+- [OpenAI API를 이용한 정답 라벨 생성](https://github.com/boostcampaitech5/level3_nlp_finalproject-nlp-02/tree/main/data)
 ### 💻 Front-End
-- [Web/Extention]()
-- [Web/ServicePage]()
+- [Web](https://github.com/boostcampaitech5/level3_nlp_finalproject-nlp-02/tree/main/web)
+    - [Web/Extention](https://github.com/boostcampaitech5/level3_nlp_finalproject-nlp-02/tree/main/web/extension)
+    - [Web/ServicePage](https://github.com/boostcampaitech5/level3_nlp_finalproject-nlp-02/tree/main/web/myapp)
 ### 📦 Back-End
 - [Django]()
 - [RestAPI]()
 ### 🤗 Model
-- [Tag generation Model]()
+- [Tag generation Model](https://github.com/boostcampaitech5/level3_nlp_finalproject-nlp-02/tree/main/model)
 
 
 
