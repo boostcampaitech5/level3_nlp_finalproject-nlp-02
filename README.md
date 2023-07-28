@@ -148,8 +148,8 @@
 
 # 4. 참고 자료 🗂️
 
-- [발표 자료 PPT]()
-- [발표 영상]()
+- [발표 자료 PPT](asset/TagMyBookmark!_소개자료.pdf)
+- [발표 영상](https://youtu.be/9Tr7LaUR-ok)
 - [Wrap-up Report]()
 
 
