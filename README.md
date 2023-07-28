@@ -14,18 +14,18 @@
 # 0. 목차
 [1. 팀원](#1-팀원)    
 [2. Tag My Bookmark!](#2-tagmybookmark!)    
-&emsp; [2-1. 📺 Demo](#📺-demo)    
-&emsp; [2-2. 🔎 서비스 소개](#🔎-서비스-소개)    
-&emsp; [2-3. 💡 개발 이유](#💡-개발-이유)    
-&emsp; [2-4. 👨‍👩‍👧‍👦 서비스 대상](#👨‍👩‍👧‍👦-서비스-대상)       
+&emsp; [📺 Demo](#📺-demo) 
+&emsp; [🔎 서비스 소개](#🔎-서비스-소개)
+&emsp; [💡 개발 이유](#💡-개발-이유)
+&emsp; [👨‍👩‍👧‍👦 서비스 대상](#👨‍👩‍👧‍👦-서비스-대상)     
 [3. How to use](#3-how-to-use)    
 [4. 참고 자료 🗂️](#4-참고-자료-🗂️)    
 [5. Project Pipeline](#5-project-pipeline)    
-&emsp; [5-1. 🛠️ Service Architecture](#🛠️-service-architecture)    
-&emsp; [5-2. 📑 Dataset](#📑-dataset)    
-&emsp; [5-3. 💻 Front-End](#💻-front-end)    
-&emsp; [5-4. 📦 Back-End](#📦-back-end)    
-&emsp; [5-5. 🤗 Model](#🤗-model)    
+&emsp; [🛠️ Service Architecture](#🛠️-service-architecture)
+&emsp; [📑 Dataset](#📑-dataset)
+&emsp; [💻 Front-End](#💻-front-end)
+&emsp; [📦 Back-End](#📦-back-end)
+&emsp; [🤗 Model](#🤗-model)    
 
 # 1. 팀원
 
