@@ -9,6 +9,7 @@ model/config/use_config.yaml
 model/results/*
 model/dataset
 test.ipynb
+model/ko_*
 .*
 web/ServicePage/Logo.png
 model/config/use_config.yaml

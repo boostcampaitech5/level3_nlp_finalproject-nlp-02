@@ -10,8 +10,9 @@ chrome.bookmarks.onCreated.addListener(function (bookmark) {
   });
 });
 
-// message listener  
+// 북마크 추가 버튼 클릭과 관련된 이벤트 반응 함수
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+  // 단일 북마크 추가 시
   if (request.message === 'collect_page_info') {
     let pageInfo = request.pageInfo;
 
@@ -24,22 +25,30 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       console.log(totalInfo)
       console.log(typeof totalInfo)
 
-      // 북마크 정보 전송
+      // 북마크 정보를 서버로 전송
       simpleFetcher(SERVER_URL, totalInfo)
         .then(responseData => {
           if (responseData) {
             console.log("Sending bookmark is done!, ", responseData);
+
+            // contentScript.js 로 태그 결과를 응답으로 전송
+            sendResponse({ tags_result:responseData['tags_result'] });
           }
         })
+        .catch((error) =>{
+          console.log("error in background...")
+        })
     });
+    
+    return true;
   }
-
+  
   if (request.anotherPage) {
     // Handle the extracted content here
     console.log("background, ", request.anotherPage);
   }
 
-  // 북마크 정보 수신 후 fetch
+  // 북마크 모두 내보내기 버튼 클릭시 수행하는 함수
   if (request.message === 'export_bookmark_history'){
     // console.log("export_bookmark_history message received!")  // 동작 확인 완료
 
@@ -50,6 +59,9 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       .then(responseData => {
         if (responseData) {
           console.log("Sending bookmarkHistory is done!, ", responseData);
+
+          // contentScript.js 로 태그 결과를 응답으로 전송
+          sendResponse({ tags_result:responseData['tags_result'] });
         }
       })
   }

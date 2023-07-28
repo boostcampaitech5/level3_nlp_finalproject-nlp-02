@@ -23,6 +23,7 @@ train:
   save_top_k: 3         # Inference할 top k개의 모델.
   halfprecision: True
   gradient_accumulation: 1    # 배치사이즈=16 이고 이 옵션이 2일때, batch=32와 같은 효과.
+  korean_first: True
 select_DC:
   - # data_cleaning_demo
 select_DA:

@@ -4,6 +4,7 @@ import torch
 import yaml
 import pandas as pd
 import pytorch_lightning as pl
+import re
 
 from sklearn.model_selection import train_test_split
 from torch.utils.data import Dataset, DataLoader
@@ -57,16 +58,19 @@ class Dataloader(pl.LightningDataModule):
     def tokenizing(self, x, train=False):
         
         """ 
-        데이터셋 구축 후 구현 예정
-
         Arguments:
         x: pd.DataFrame
 
         Returns:
         inputs: Dict({'input_ids', 'attention_mask', 'labels', ...}), 각 tensor(num_data, max_length)
         """
+        
         instruction = '다음의 블로그 글에 어울리는 태그 5개를 생성하시오. 태그의 형식은 다음과 같음. [#영어(한글), #영어(한글), #영어(한글), #영어(한글), #영어(한글)]'
         x['instruction'] = instruction
+        
+        x['context'] = x['context'].apply(lambda x: x.replace(u"\u200b", u""))
+        x['context'] = x['context'].apply(lambda sample: re.sub('\s+', ' ', sample))
+        x['context'] = x['context'].apply(lambda sample: re.sub('https://.*?\s', '[LINK]', sample))
         
         if self.CFG['train']['prompts'] == 'topic_title_summarize':
             prompts_list = [f"### Instruction(명령어):\n{row['instruction']}\n\n### Input(입력):\n주제는 [{row['small_topic']}], 제목은 [{row['title']}], 한 줄 요약은 [{row['summarize']}]이다.\n\n### Response(응답): " for _ , row in x.iterrows()]
@@ -74,11 +78,22 @@ class Dataloader(pl.LightningDataModule):
         elif self.CFG['train']['prompts'] == 'topic_title_context':
             prompts_list = [f"### Instruction(명령어):\n{row['instruction']}\n\n### Input(입력):\n주제는 [{row['small_topic']}], 제목은 [{row['title']}], 본문은 [{row['context']}]이다.\n\n### Response(응답): \n" for _ , row in x.iterrows()]
         
+        elif self.CFG['train']['prompts'] == 'title_context':
+            prompts_list = [f"### Instruction(명령어):\n{row['instruction']}\n\n### Input(입력):\n제목은 [{row['title']}], 본문은 [{row['context']}]이다.\n\n### Response(응답): \n" for _ , row in x.iterrows()]
+        
         else:
             raise ValueError('unappropriate prompts')
             
         if train:
-            answers_list = [f"{row['tag1']}, {row['tag2']}, {row['tag3']}, {row['tag4']}, {row['tag5']}" for _ , row in x.iterrows()]
+            if self.CFG['train']['korean_first']:
+                answers_list = [
+                    f"#{row['tag1'][1:].split('(')[1][:-1]}({row['tag1'][1:].split('(')[0]}), #{row['tag2'][1:].split('(')[1][:-1]}({row['tag2'][1:].split('(')[0]}), #{row['tag3'][1:].split('(')[1][:-1]}({row['tag3'][1:].split('(')[0]}), #{row['tag4'][1:].split('(')[1][:-1]}({row['tag4'][1:].split('(')[0]}), #{row['tag5'][1:].split('(')[1][:-1]}({row['tag5'][1:].split('(')[0]})"
+                    for _, row in x.iterrows()
+                ]
+
+
+            else:
+                answers_list = [f"{row['tag1']}, {row['tag2']}, {row['tag3']}, {row['tag4']}, {row['tag5']}" for _ , row in x.iterrows()]
             
             inputs = self.tokenizer(
                 prompts_list,
@@ -107,10 +122,18 @@ class Dataloader(pl.LightningDataModule):
             # x = DA.process(x)         
             
             # 텍스트 데이터 토큰화
-            train_x, val_x = train_test_split(x,
-                                            test_size=self.CFG['train']['test_size'],
-                                            shuffle=True,
-                                            random_state=self.CFG['seed'])
+            
+            # 1st finetuning
+            if 'snob' not in self.CFG['train']['model_name']:
+                train_x, val_x = train_test_split(x,
+                                                test_size=self.CFG['train']['test_size'],
+                                                shuffle=True,
+                                                random_state=self.CFG['seed'])
+                
+            # 2nd finetuning
+            else:
+                val_x = x.sample(n=73, random_state=self.CFG['seed'])
+                train_x = x.drop(val_x.index)
             
             train_inputs = self.tokenizing(train_x, train=True)
             train_tags = [', '.join([row['tag1'], row['tag2'], row['tag3'], row['tag4'], row['tag5']]) for _, row in train_x.iterrows()]
@@ -231,8 +254,15 @@ def load_data():
     with open('./config/use_config.yaml') as f:
         CFG = yaml.load(f, Loader=yaml.FullLoader)
         
-    df = pd.read_csv('./dataset/dataset.csv')
+    # 1st finetuning
+    if 'snob' not in CFG['train']['model_name']:   
+        df = pd.read_csv('./dataset/dataset.csv') 
+        train_valid_df, predict_df = train_test_split(df, test_size=CFG['train']['test_size'], random_state=CFG['seed'])
     
-    train_valid_df, predict_df = train_test_split(df, test_size=CFG['train']['test_size'], random_state=CFG['seed'])
+    # 2nd finetuning
+    else:
+        df = pd.read_csv('./dataset/dataset_2nd_finetune_v1.0.csv')
+        predict_df = df.sample(n=100, random_state=CFG['seed'])
+        train_valid_df = df.drop(predict_df.index)
         
     return train_valid_df, predict_df
