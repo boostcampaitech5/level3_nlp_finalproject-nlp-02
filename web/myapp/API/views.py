@@ -385,18 +385,21 @@ def remove_bookmark(request):
     if request.method == 'POST':
         data = json.loads(request.body.decode('utf-8'))
         customer_id = data['customer_id']
-        url = data['url']
+        bookmark_no = int(data['bookmark_no'])
 
         try:
-            find_row = Bookmark_Of_Customer.objects.filter(customer_id=customer_id, url=url)[0]
-            find_row.delete()
+            Bookmark_Of_Customer.objects.filter(customer_id=customer_id, bookmark_no=bookmark_no).delete()
+            print("데이터 삭제 완료")
         except:
+            print(f"{customer_id}와 {bookmark_no}를 찾을 수 없음")
             pass
         
         datas = request.session['my_data']
         for idx, data in enumerate(datas):
-            if data['url'] == url:
-                del data # 삭제가 안 되면 datas.pop(idx)
+            if data['bookmark_no'] == bookmark_no:
+                datas.pop(idx)
+                print(datas)
+                print(len(datas))
                 break
 
         request.session['my_data'] = datas
