@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
+    <meta charset="UTF-8">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inter&display=swap" />
     <link rel="stylesheet" href="./css/main.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,-25" />
@@ -25,18 +26,20 @@
       <button id="openAppPage", class="app_button", title="App">App</button>
       <button id="exportBookmarkHistory", class="export_button", title="Export">Export</button>
 
-      <input type="text" class="flexible-textbox" />
+      <textarea class="flexible-textbox" id="tagsInput" readonly></textarea>
       <span class="NAME">Tags</span>
 
       <div id="selectedFolderName" class="flexible-textbox2"></div>
       <span class="Folder">Folder</span>
 
       <!-- <div class="toggle"></div> -->
-
-      <button id="openModal">Open Bookmarks</button>
+      <div>
+        <button id="openModal">
+          <span class="material-symbols-outlined">folder</span>북마크 경로 설정</button>
+      </div>
       <div class="button_save">
         <button id="collectInfo" disabled>
-            <span class="material-symbols-outlined">manage_search</span>Collect Page Info</button>
+            <span class="material-symbols-outlined">bookmark_added</span>Tag My Bookmark!</button>
       </div>
       <!-- The Modal -->
       <div id="myModal" class="modal">
