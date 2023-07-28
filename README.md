@@ -166,10 +166,10 @@
 ### 💻 Front-End
 - [Web](https://github.com/boostcampaitech5/level3_nlp_finalproject-nlp-02/tree/main/web)
     - [Web/Extention](https://github.com/boostcampaitech5/level3_nlp_finalproject-nlp-02/tree/main/web/extension)
-    - [Web/ServicePage](https://github.com/boostcampaitech5/level3_nlp_finalproject-nlp-02/tree/main/web/myapp)
+    - [Web/ServicePage](https://github.com/boostcampaitech5/level3_nlp_finalproject-nlp-02/tree/main/web/myapp/SERVICE)
 ### 📦 Back-End
-- [Django]()
-- [RestAPI]()
+- [Django](https://github.com/boostcampaitech5/level3_nlp_finalproject-nlp-02/tree/main/web/myapp)
+- [RestAPI](https://github.com/boostcampaitech5/level3_nlp_finalproject-nlp-02/tree/main/web/myapp/API)
 ### 🤗 Model
 - [Tag generation Model](https://github.com/boostcampaitech5/level3_nlp_finalproject-nlp-02/tree/main/model)
 
