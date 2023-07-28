@@ -43,3 +43,5 @@
 * Extension을 통해 받아온 **유저 정보**를 **추론 결과와 함께 DB에 저장**
 
 서버 구동 관련 자세한 사항은 **myapp 폴더 내의 README.md** 확인 바람
+
+## /ServicePage

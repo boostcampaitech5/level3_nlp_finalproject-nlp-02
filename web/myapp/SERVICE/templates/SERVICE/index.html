@@ -1,0 +1,127 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/styles.css' %}">
+    <script src="https://code.jquery.com/jquery-3.4.1.js"></script>
+    <script src="{% static 'js/main.js' %}"></script>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inter&display=swap" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,-25" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@300&family=Orbit&display=swap" rel="stylesheet">
+
+    <!-- jQuery UI CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.css" />
+
+    <!-- jQuery and jQuery UI JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+
+    <title>Service Page</title>
+
+    <script>
+      var userBookmark = JSON.parse('{{ user_bookmark_json | escapejs }}');
+      var customer_id = '{{ customer_id | escapejs}}';
+      var SERVER_URL = "{% url 'API:tag_update' %}";
+    </script>
+
+    <style>
+        textarea {
+          font-size: 3px;
+        }
+        table {
+          width: 100%;
+        }
+        th {
+          padding: 10px; /* 원하는 간격으로 조정 */
+        }
+    </style>
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no">
+</head>
+<body>
+    <div class="header">
+      <img class='img' src="{% static 'image/Logo.png' %}">
+    </div>
+
+      <div class="container">
+        <div class="Favorites">
+          <div class="f_tmp"></div>
+          <button id="f_add">&#43;</button>
+          <!-- <div class="f2"></div> -->
+          <!-- <div class="f3"></div> -->
+          <div class="Refresh">&#11118;</div>
+        </div>
+        <div class="content1", id="content1">
+          <!-- <div class="flexible-textbox"></div> -->
+          <!-- <label for="site-search">Search the tag:</label> -->
+          <div class='search_tag'>
+            <input 
+              type="text" style="font-family: 'Noto Sans KR', sans-serif;" class="flexible-textbox" id = 'input-tag' placeholder="  검색할 태그를 입력해 주세요: 형식은 #tag" 
+            />
+          </div>
+          <!-- <img src="https://s3.ap-northeast-2.amazonaws.com/cdn.wecode.co.kr/icon/search.png"> -->
+          <!-- <button><span class="material-symbols-outlined">manage_search</span></button></button> -->
+          <div id="tags"></div>
+  
+        </div>  
+        <div class="content2">
+            <div class="tag_box_current">
+                <div id="selected-tags"></div>
+            </div>    
+        </div>  
+  
+        <div class="content3">
+          <div class="url_box" >
+
+            <table>
+              <thead>
+                  <tr>
+                      <th>제목</th>
+                      <th>태그</th>
+                      <!-- <th>Tags_block</th> -->
+                      <th>수정</th>
+                      <th>삭제</th>
+                  </tr>
+              </thead>
+              <tbody id="bookmarks_whole"> </tbody>
+            </table>
+
+          </div>
+  
+        </div>  
+       
+      </div>
+      <!-- Modal -->
+      <div id="myModal" class="modal" style="display:hidden">
+        <!-- <div class="modal-title">Add label name</div> -->
+        <div class="modal-content">
+          <div id="bookmark-info">
+            <!-- 북마크 정보를 여기에 동적으로 추가할 예정 -->
+          </div>
+          <span class="close">&times;</span>
+          <!-- Content of the modal goes here -->
+        </div>
+        
+      </div>
+
+      <!-- Modal -->
+      <div id="favoriteModal" class="modal" style="display:hidden;">
+        <!-- <div class="modal-title">Add label name</div> -->
+        <div class="modal-content-f">
+          
+          <span class="close">&times;</span>
+          <div id="modalContent"></div>
+          <!-- Content of the modal goes here -->
+        </div>
+        
+      </div>
+  
+      {% comment %} <div class="footer">
+        <div id="tag-output"></div>
+      </div> {% endcomment %}
+
+</body>
+</html>
