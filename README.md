@@ -143,7 +143,7 @@
 - 북마크 관리 편의성
 
 # 3. How to use
-- [시연 영상]()
+- [시연 영상](https://youtu.be/AtSmRwAwZrM)
 - [TagMyBookmark 사용 설명서](https://github.com/boostcampaitech5/level3_nlp_finalproject-nlp-02/blob/readme/asset/Tag%20My%20Bookmark!.pdf)
 
 # 4. 참고 자료 🗂️
