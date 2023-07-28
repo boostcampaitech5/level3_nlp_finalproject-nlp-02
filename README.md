@@ -7,7 +7,7 @@
 - 팀명: NLP 02조 강남특공대
 - 인원: 5명
 - 주최: 부스트캠프 ai tech 5기 | 최종 프로젝트
-- 프로젝트 기간: 2023년 6월 30일 ~ 2023년 8월 2일
+- 프로젝트 기간: 2023년 6월 30일 ~ 2023년 7월 28일
 - 주제: 북마크 자동 분류
 - 개발 스택: `REST API` , `Django` , `Chrome Extensions` , `SQLite` , `Hugging Face` , `JavaScript`
 
