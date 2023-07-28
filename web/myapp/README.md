@@ -26,5 +26,21 @@ cd web/myapp # 현재 root 기준
 python manager.py runserver {private server ip}:{port}
 ```
 
+<details>
+<summary>이전 절차</summary>
+<div markdown="1">
+    <div style="padding-left: 20px;">
+        python manage.py makemigrations
+        </br>
+        python manage.py migrate
+        </br>
+        ifconfig
+    </div>
+</div>
+</details>
 그러면 서버가 정상 작동되고 `http://{public server ip}:{port}` 주소로 web 접속 가능
 (*https 지원 안 함)
+
+서비스 페이지: `http://{public server ip}:{port}/SEVICE`    
+admin 페이지: `http://{public server ip}:{port}/admin`    
+서버 구동 후 extention upload
