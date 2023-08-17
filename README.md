@@ -13,7 +13,7 @@
 
 # 0. 목차
 [1. 팀원](#1-팀원)    
-[2. Tag My Bookmark!](#2-tagmybookmark!)    
+[2. Tag My Bookmark!](#2-tagmybookmark)    
 &emsp; [📺 Demo](#📺-demo) 
 &emsp; [🔎 서비스 소개](#🔎-서비스-소개)
 &emsp; [💡 개발 이유](#💡-개발-이유)
@@ -144,14 +144,13 @@
 
 # 3. How to use
 - [시연 영상](https://youtu.be/AtSmRwAwZrM)
-- [TagMyBookmark 사용 설명서](https://github.com/boostcampaitech5/level3_nlp_finalproject-nlp-02/blob/readme/asset/Tag%20My%20Bookmark!.pdf)
+- [TagMyBookmark 사용 설명서](https://github.com/boostcampaitech5/level3_nlp_finalproject-nlp-02/blob/main/asset/Tag%20My%20Bookmark!.pdf)
 
 # 4. 참고 자료 🗂️
 
 - [발표 자료 PPT](asset/TagMyBookmark!_소개자료.pdf)
 - [발표 영상](https://youtu.be/9Tr7LaUR-ok)
-- [Wrap-up Report]()
-
+- [Wrap-up Report](https://github.com/boostcampaitech5/level3_nlp_finalproject-nlp-02/blob/main/asset/TagMyBookmark!%20최종%20프로젝트%20랩업%20리포트.pdf)
 
 # 5. Project Pipeline
 ### 🛠️ Service Architecture    
