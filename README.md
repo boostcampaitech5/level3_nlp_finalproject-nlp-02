@@ -14,18 +14,18 @@
 # 0. 목차
 [1. 팀원](#1-팀원)    
 [2. Tag My Bookmark!](#2-tagmybookmark)    
-&emsp; [📺 Demo](#📺-demo) 
-&emsp; [🔎 서비스 소개](#🔎-서비스-소개)
-&emsp; [💡 개발 이유](#💡-개발-이유)
-&emsp; [👨‍👩‍👧‍👦 서비스 대상](#👨‍👩‍👧‍👦-서비스-대상)     
+&emsp; [📺 Demo](#-demo) 
+&emsp; [🔎 서비스 소개](#-서비스-소개)
+&emsp; [💡 개발 이유](#-개발-이유)
+&emsp; [👨‍👩‍👧‍👦 서비스 대상](#-서비스-대상)     
 [3. How to use](#3-how-to-use)    
-[4. 참고 자료 🗂️](#4-참고-자료-🗂️)    
+[4. 참고 자료 🗂️](https://github.com/boostcampaitech5/level3_nlp_finalproject-nlp-02/tree/main#4-%EC%B0%B8%EA%B3%A0-%EC%9E%90%EB%A3%8C-%EF%B8%8F)    
 [5. Project Pipeline](#5-project-pipeline)    
-&emsp; [🛠️ Service Architecture](#🛠️-service-architecture)
-&emsp; [📑 Dataset](#📑-dataset)
-&emsp; [💻 Front-End](#💻-front-end)
-&emsp; [📦 Back-End](#📦-back-end)
-&emsp; [🤗 Model](#🤗-model)    
+&emsp; [🛠️ Service Architecture](https://github.com/boostcampaitech5/level3_nlp_finalproject-nlp-02/tree/main#%EF%B8%8F-service-architecture)
+&emsp; [📑 Dataset](#-dataset)
+&emsp; [💻 Front-End](#-front-end)
+&emsp; [📦 Back-End](#-back-end)
+&emsp; [🤗 Model](#-model)    
 
 # 1. 팀원
 
